@@ -1,569 +1,917 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Control de Circuito CHI‑03 – Grupo Tagalo (Informe Completo PDF)</title>
-<!-- Librerías -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
-<style>
-* { box-sizing:border-box; margin:0; padding:0; font-family:'Segoe UI',sans-serif; }
-body { background:#f0f2f5; color:#333; }
-.app { max-width:1300px; margin:20px auto; background:white; border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,0.1); overflow:hidden; }
-nav { background:#2c3e50; display:flex; }
-nav button { flex:1; background:transparent; border:none; padding:15px; color:white; font-size:16px; cursor:pointer; transition:0.3s; }
-nav button:hover, nav button.active { background:#34495e; }
-.tab { padding:20px; display:none; }
-.tab.active { display:block; }
-h2 { margin-bottom:15px; color:#2c3e50; }
-table { width:100%; border-collapse:collapse; margin-top:10px; }
-th, td { border:1px solid #ddd; padding:8px; text-align:left; font-size:14px; }
-th { background:#ecf0f1; }
-.btn { background:#3498db; color:white; border:none; padding:8px 16px; border-radius:6px; cursor:pointer; font-size:14px; margin:2px; transition:0.2s; }
-.btn:hover { background:#2980b9; }
-.btn-sm { padding:5px 12px; font-size:13px; }
-.badge { padding:4px 10px; border-radius:12px; font-size:12px; color:white; }
-.bg-green { background:#2ecc71; }
-.bg-orange { background:#e67e22; }
-.bg-purple { background:#9b59b6; }
-.bg-blue { background:#3498db; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Circuito CHI‑03 · Control de Visitas</title>
+
+    <!-- Google Fonts y Material Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@300;400;500;700&family=Material+Icons+Outlined" rel="stylesheet">
+
+    <!-- Librerías -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+
+    <style>
+        :root {
+            --google-blue: #1a73e8;
+            --google-red: #ea4335;
+            --google-yellow: #fbbc04;
+            --google-green: #34a853;
+            --gray-50: #f8f9fa;
+            --gray-100: #f1f3f4;
+            --gray-200: #e8eaed;
+            --gray-300: #dadce0;
+            --gray-500: #9aa0a6;
+            --gray-700: #5f6368;
+            --gray-900: #202124;
+            --white: #ffffff;
+            --shadow-sm: 0 1px 2px 0 rgba(60,64,67,.3), 0 1px 3px 1px rgba(60,64,67,.15);
+            --shadow-md: 0 1px 3px 0 rgba(60,64,67,.3), 0 4px 8px 3px rgba(60,64,67,.15);
+            --radius: 8px;
+            --radius-pill: 24px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: var(--gray-50);
+            color: var(--gray-900);
+            line-height: 1.5;
+            min-height: 100vh;
+        }
+
+        .app-bar {
+            background: var(--white);
+            border-bottom: 1px solid var(--gray-200);
+            padding: 8px 24px;
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .app-bar-logo {
+            font-family: 'Google Sans', sans-serif;
+            font-size: 22px;
+            font-weight: 500;
+            color: var(--gray-900);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .app-bar-logo .material-icons-outlined {
+            color: var(--google-blue);
+            font-size: 28px;
+        }
+
+        .tab-bar {
+            display: flex;
+            gap: 0;
+            margin-left: auto;
+        }
+
+        .tab-button {
+            background: transparent;
+            border: none;
+            padding: 12px 16px;
+            font-family: 'Google Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--gray-700);
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .tab-button .material-icons-outlined {
+            font-size: 20px;
+        }
+
+        .tab-button:hover {
+            background: var(--gray-100);
+            color: var(--google-blue);
+        }
+
+        .tab-button.active {
+            color: var(--google-blue);
+            border-bottom-color: var(--google-blue);
+        }
+
+        .main-content {
+            max-width: 1200px;
+            margin: 24px auto;
+            padding: 0 24px;
+            display: none;
+        }
+
+        .main-content.active {
+            display: block;
+        }
+
+        .page-title {
+            font-family: 'Google Sans', sans-serif;
+            font-size: 24px;
+            font-weight: 500;
+            margin-bottom: 16px;
+            color: var(--gray-900);
+        }
+
+        .card {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
+            transition: box-shadow 0.2s;
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .card-title {
+            font-family: 'Google Sans', sans-serif;
+            font-size: 18px;
+            font-weight: 500;
+            color: var(--gray-900);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .cong-card {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius);
+            padding: 16px;
+            cursor: default;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .cong-card:hover {
+            box-shadow: var(--shadow-md);
+            border-color: var(--google-blue);
+        }
+
+        .cong-card h3 {
+            font-family: 'Google Sans', sans-serif;
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--gray-900);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cong-card .info-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: var(--gray-700);
+        }
+
+        .cong-card .info-label {
+            color: var(--gray-500);
+        }
+
+        .badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            background: var(--gray-100);
+            color: var(--gray-700);
+        }
+
+        .badge-primary {
+            background: #e8f0fe;
+            color: var(--google-blue);
+        }
+
+        .badge-success {
+            background: #e6f4ea;
+            color: var(--google-green);
+        }
+
+        .badge-warning {
+            background: #fef7e0;
+            color: #f9ab00;
+        }
+
+        .button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 24px;
+            border-radius: var(--radius-pill);
+            font-family: 'Google Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: none;
+            border: 1px solid transparent;
+        }
+
+        .button-primary {
+            background: var(--google-blue);
+            color: white;
+            border: none;
+        }
+
+        .button-primary:hover {
+            background: #1669c1;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .button-outline {
+            background: transparent;
+            color: var(--google-blue);
+            border: 1px solid var(--gray-300);
+        }
+
+        .button-outline:hover {
+            background: #e8f0fe;
+            border-color: var(--google-blue);
+        }
+
+        .button-sm {
+            padding: 4px 16px;
+            font-size: 12px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .data-table thead {
+            background: var(--gray-100);
+            border-bottom: 1px solid var(--gray-300);
+        }
+
+        .data-table th {
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 500;
+            color: var(--gray-700);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .data-table td {
+            padding: 10px 16px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .data-table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-top: 16px;
+        }
+
+        .stat-box {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 16px;
+            border: 1px solid var(--gray-200);
+            text-align: center;
+        }
+
+        .stat-box .value {
+            font-family: 'Google Sans', sans-serif;
+            font-size: 32px;
+            font-weight: 500;
+            color: var(--google-blue);
+        }
+
+        .stat-box .label {
+            font-size: 12px;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+
+        canvas#chart {
+            width: 100% !important;
+            max-height: 300px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: var(--gray-500);
+        }
+
+        .empty-state .material-icons-outlined {
+            font-size: 48px;
+            margin-bottom: 16px;
+            color: var(--gray-300);
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .app-bar {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 12px;
+            }
+            .tab-bar {
+                margin-left: 0;
+                width: 100%;
+                overflow-x: auto;
+            }
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
-<div class="app">
-  <nav>
-    <button class="tab-link active" data-tab="cong">🏠 Congregaciones</button>
-    <button class="tab-link" data-tab="agenda">📅 Agenda</button>
-    <button class="tab-link" data-tab="historial">📂 Historial</button>
-  </nav>
 
-  <div id="cong" class="tab active">
-    <h2>📋 Congregaciones del Circuito</h2>
-    <table id="tablaCong">
-      <thead><tr><th>Código</th><th>Congregación</th><th>Última visita</th><th>Próx. visita</th><th>Acción</th></tr></thead>
-      <tbody></tbody>
-    </table>
-    <div style="margin-top:10px;"><button class="btn" onclick="agregarCongregacion()">➕ Agregar Congregación</button></div>
-  </div>
-
-  <div id="agenda" class="tab">
-    <h2>📅 Agenda</h2>
-    <table id="tablaAgenda">
-      <thead><tr><th>Sem.</th><th>Inicio</th><th>Fin</th><th>Actividad</th><th>Tipo</th></tr></thead>
-      <tbody></tbody>
-    </table>
-  </div>
-
-  <div id="historial" class="tab">
-    <h2>📂 Historial de visitas</h2>
-    <table id="tablaHist">
-      <thead><tr><th>Congregación</th><th>Fecha</th><th>Pub.Act.</th><th>Prec.Reg.</th><th>Prec.Aux.</th><th>Excel</th><th>PDF</th></tr></thead>
-      <tbody></tbody>
-    </table>
-  </div>
+<div class="app-bar">
+    <div class="app-bar-logo">
+        <span class="material-icons-outlined">sync_alt</span>
+        Circuito CHI‑03
+    </div>
+    <div class="tab-bar">
+        <button class="tab-button active" data-tab="congregaciones">
+            <span class="material-icons-outlined">groups</span> Congregaciones
+        </button>
+        <button class="tab-button" data-tab="agenda">
+            <span class="material-icons-outlined">calendar_month</span> Agenda
+        </button>
+        <button class="tab-button" data-tab="historial">
+            <span class="material-icons-outlined">history</span> Historial
+        </button>
+        <button class="tab-button" data-tab="dashboard">
+            <span class="material-icons-outlined">insights</span> Dashboard
+        </button>
+    </div>
 </div>
 
-<input type="file" id="fileInput" accept=".xlsx, .xls" style="display:none" />
+<!-- Contenido principal: Congregaciones -->
+<div id="content-congregaciones" class="main-content active">
+    <div class="page-title">Congregaciones del Circuito</div>
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title">
+                <span class="material-icons-outlined">list_alt</span> 19 congregaciones
+            </div>
+            <button class="button button-outline button-sm" onclick="agregarCongregacion()">
+                <span class="material-icons-outlined">add</span> Agregar
+            </button>
+        </div>
+        <div class="grid" id="congGrid"></div>
+    </div>
+</div>
+
+<!-- Contenido: Agenda -->
+<div id="content-agenda" class="main-content">
+    <div class="page-title">Agenda</div>
+    <div class="card">
+        <div class="card-title" style="margin-bottom:16px;">
+            <span class="material-icons-outlined">event_note</span> Próximas visitas
+        </div>
+        <table class="data-table" id="tablaAgenda">
+            <thead><tr><th>Semana</th><th>Inicio</th><th>Fin</th><th>Actividad</th></tr></thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Contenido: Historial -->
+<div id="content-historial" class="main-content">
+    <div class="page-title">Historial de visitas</div>
+    <div class="card">
+        <div class="card-title" style="margin-bottom:16px;">
+            <span class="material-icons-outlined">folder_open</span> Archivos guardados
+        </div>
+        <table class="data-table" id="tablaHist">
+            <thead><tr><th>Congregación</th><th>Fecha</th><th>Pub.Act.</th><th>PR</th><th>PA</th><th>Excel</th><th>PDF</th></tr></thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Contenido: Dashboard -->
+<div id="content-dashboard" class="main-content">
+    <div class="page-title">Dashboard</div>
+    <div class="dashboard-grid">
+        <div class="stat-box">
+            <div class="value" id="totalVisitas">0</div>
+            <div class="label">Visitas registradas</div>
+        </div>
+        <div class="stat-box">
+            <div class="value" id="promPubActivos">—</div>
+            <div class="label">Promedio Pub. Activos</div>
+        </div>
+    </div>
+    <div class="card" style="margin-top:24px;">
+        <div class="card-title" style="margin-bottom:16px;">Gráfico comparativo</div>
+        <canvas id="chart"></canvas>
+    </div>
+</div>
+
+<!-- Input oculto para cargar Excel -->
+<input type="file" id="fileInput" accept=".xlsx, .xls" />
 
 <script>
-// ==================== BASE DE DATOS IndexedDB ====================
+// ==================== BASE DE DATOS ====================
 const DB_NAME = 'CircuitoCHI03DB';
 let db;
 const request = indexedDB.open(DB_NAME, 1);
 request.onupgradeneeded = e => {
-  db = e.target.result;
-  if (!db.objectStoreNames.contains('informes')) {
-    db.createObjectStore('informes', { keyPath: 'id' });
-  }
+    db = e.target.result;
+    if (!db.objectStoreNames.contains('informes')) {
+        db.createObjectStore('informes', { keyPath: 'id' });
+    }
 };
 request.onsuccess = e => { db = e.target.result; cargarDatos(); };
-request.onerror = () => alert('No se pudo abrir la base de datos local.');
+request.onerror = () => console.error('Error IndexedDB');
 
-// ==================== DATOS LOCALES ====================
-const STORAGE_KEY = 'circuito_chi03_meta';
+// ==================== DATOS EN MEMORIA ====================
+const STORAGE_KEY = 'circuito_chi03_data';
 let congregaciones = [];
-let agendaExtra = [];
 let historialMeta = [];
 
-function guardarMeta() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify({ congregaciones, agendaExtra, historialMeta }));
+function guardar() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ congregaciones, historialMeta }));
 }
 
 function cargarDatos() {
-  const json = localStorage.getItem(STORAGE_KEY);
-  if (json) {
-    const data = JSON.parse(json);
-    congregaciones = data.congregaciones || [];
-    agendaExtra = data.agendaExtra || [];
-    historialMeta = data.historialMeta || [];
-  } else {
-    // Datos iniciales de las 19 congregaciones (CHI-03)
-    congregaciones = [
-      { codigo: "7898", nombre: "Omega-Cd. Juárez", ultimaVisita: "", proxVisita: "" },
-      { codigo: "74799", nombre: "Anémona-Cd. Juárez", ultimaVisita: "", proxVisita: "" },
-      { codigo: "76570", nombre: "Bambú-Juárez", ultimaVisita: "", proxVisita: "" },
-      { codigo: "272260", nombre: "Cañaveral-Juárez", ultimaVisita: "", proxVisita: "" },
-      { codigo: "70581", nombre: "Cártamo-Juárez", ultimaVisita: "", proxVisita: "" },
-      { codigo: "7542", nombre: "Del Real-Cd. Juárez", ultimaVisita: "", proxVisita: "" },
-      { codigo: "7609", nombre: "El Granjero-Juárez", ultimaVisita: "", proxVisita: "" },
-      { codigo: "102350", nombre: "Grama-Juárez", ultimaVisita: "", proxVisita: "" },
-      { codigo: "126177", nombre: "Hacienda de las Torres-Juárez", ultimaVisita: "", proxVisita: "" },
-      { codigo: "265736", nombre: "Jardines del Valle-Juárez", ultimaVisita: "", proxVisita: "" },
-      { codigo: "88732", nombre: "Juárez Nuevo-Juárez", ultimaVisita: "", proxVisita: "" },
-      { codigo: "39362", nombre: "Montes Himalaya-Juárez", ultimaVisita: "", proxVisita: "" },
-      { codigo: "115964", nombre: "Nueva Zelanda-Juárez", ultimaVisita: "", proxVisita: "" },
-      { codigo: "45567", nombre: "Oasis-Juárez", ultimaVisita: "", proxVisita: "" },
-      { codigo: "222794", nombre: "Parajes del Sol-Juárez", ultimaVisita: "", proxVisita: "" },
-      { codigo: "108738", nombre: "Roma-Juárez", ultimaVisita: "", proxVisita: "" },
-      { codigo: "115287", nombre: "Satélite-Juárez", ultimaVisita: "", proxVisita: "" },
-      { codigo: "126300", nombre: "Solidaridad-Juárez", ultimaVisita: "", proxVisita: "" },
-      { codigo: "50989", nombre: "Waterfill-Juárez", ultimaVisita: "", proxVisita: "" }
-    ];
-  }
-  calcularProximasVisitas();
-  renderCongregaciones();
-  renderAgenda();
-  renderHistorial();
+    const json = localStorage.getItem(STORAGE_KEY);
+    if (json) {
+        const data = JSON.parse(json);
+        congregaciones = data.congregaciones || [];
+        historialMeta = data.historialMeta || [];
+    } else {
+        // Inicializar las 19 congregaciones
+        congregaciones = [
+            { codigo: "7898", nombre: "Omega-Cd. Juárez", ultimaVisita: "", proxVisita: "" },
+            { codigo: "74799", nombre: "Anémona-Cd. Juárez", ultimaVisita: "", proxVisita: "" },
+            { codigo: "76570", nombre: "Bambú-Juárez", ultimaVisita: "", proxVisita: "" },
+            { codigo: "272260", nombre: "Cañaveral-Juárez", ultimaVisita: "", proxVisita: "" },
+            { codigo: "70581", nombre: "Cártamo-Juárez", ultimaVisita: "", proxVisita: "" },
+            { codigo: "7542", nombre: "Del Real-Cd. Juárez", ultimaVisita: "", proxVisita: "" },
+            { codigo: "7609", nombre: "El Granjero-Juárez", ultimaVisita: "", proxVisita: "" },
+            { codigo: "102350", nombre: "Grama-Juárez", ultimaVisita: "", proxVisita: "" },
+            { codigo: "126177", nombre: "Hacienda de las Torres-Juárez", ultimaVisita: "", proxVisita: "" },
+            { codigo: "265736", nombre: "Jardines del Valle-Juárez", ultimaVisita: "", proxVisita: "" },
+            { codigo: "88732", nombre: "Juárez Nuevo-Juárez", ultimaVisita: "", proxVisita: "" },
+            { codigo: "39362", nombre: "Montes Himalaya-Juárez", ultimaVisita: "", proxVisita: "" },
+            { codigo: "115964", nombre: "Nueva Zelanda-Juárez", ultimaVisita: "", proxVisita: "" },
+            { codigo: "45567", nombre: "Oasis-Juárez", ultimaVisita: "", proxVisita: "" },
+            { codigo: "222794", nombre: "Parajes del Sol-Juárez", ultimaVisita: "", proxVisita: "" },
+            { codigo: "108738", nombre: "Roma-Juárez", ultimaVisita: "", proxVisita: "" },
+            { codigo: "115287", nombre: "Satélite-Juárez", ultimaVisita: "", proxVisita: "" },
+            { codigo: "126300", nombre: "Solidaridad-Juárez", ultimaVisita: "", proxVisita: "" },
+            { codigo: "50989", nombre: "Waterfill-Juárez", ultimaVisita: "", proxVisita: "" }
+        ];
+        historialMeta = [];
+    }
+    calcularProximasVisitas();
+    renderCongregaciones();
+    renderAgenda();
+    renderHistorial();
+    actualizarDashboard();
 }
 
 function calcularProximasVisitas() {
-  congregaciones.forEach(c => {
-    if (c.ultimaVisita && !isNaN(new Date(c.ultimaVisita).getTime())) {
-      let f = new Date(c.ultimaVisita);
-      f.setDate(f.getDate() + 182);
-      c.proxVisita = f.toISOString().split('T')[0];
-    } else {
-      c.proxVisita = '';
-    }
-  });
+    congregaciones.forEach(c => {
+        if (c.ultimaVisita && !isNaN(new Date(c.ultimaVisita).getTime())) {
+            let f = new Date(c.ultimaVisita);
+            f.setDate(f.getDate() + 182);
+            c.proxVisita = f.toISOString().split('T')[0];
+        } else {
+            c.proxVisita = '';
+        }
+    });
 }
 
 // ==================== NAVEGACIÓN ====================
-document.querySelectorAll('.tab-link').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.tab-link').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById(btn.dataset.tab).classList.add('active');
-  });
+document.querySelectorAll('.tab-button').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.main-content').forEach(c => c.classList.remove('active'));
+        btn.classList.add('active');
+        const tabId = btn.dataset.tab;
+        document.getElementById(`content-${tabId}`).classList.add('active');
+        if (tabId === 'dashboard') actualizarDashboard();
+    });
 });
 
-// ==================== CONGREGACIONES ====================
+// ==================== RENDERIZADO ====================
 function renderCongregaciones() {
-  const tbody = document.querySelector('#tablaCong tbody');
-  tbody.innerHTML = '';
-  congregaciones.forEach((c, i) => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${c.codigo}</td>
-      <td>${c.nombre}</td>
-      <td>${c.ultimaVisita || '—'}</td>
-      <td>${c.proxVisita || '—'}</td>
-      <td><button class="btn btn-sm" onclick="subirExcel(${i})">📤 Subir Excel visita</button></td>`;
-    tbody.appendChild(tr);
-  });
+    const grid = document.getElementById('congGrid');
+    grid.innerHTML = '';
+    const hoy = new Date();
+    congregaciones.forEach((c, i) => {
+        const proxDate = c.proxVisita ? new Date(c.proxVisita) : null;
+        const diasRestantes = proxDate ? Math.ceil((proxDate - hoy) / (1000*60*60*24)) : null;
+        let badge = '';
+        if (diasRestantes !== null && diasRestantes <= 30 && diasRestantes > 0) {
+            badge = '<span class="badge badge-warning">Próxima</span>';
+        } else if (diasRestantes !== null && diasRestantes <= 0) {
+            badge = '<span class="badge badge-success">✅ Realizada</span>';
+        }
+        const div = document.createElement('div');
+        div.className = 'cong-card';
+        div.innerHTML = `
+            <h3>${c.nombre} ${badge}</h3>
+            <div style="font-size:12px; color:var(--gray-500);">Código: ${c.codigo}</div>
+            <div class="info-row">
+                <span><span class="info-label">Última:</span> ${c.ultimaVisita || '—'}</span>
+                <span><span class="info-label">Próxima:</span> ${c.proxVisita || '—'}</span>
+            </div>
+            <button class="button button-primary button-sm" onclick="subirExcel(${i})">
+                <span class="material-icons-outlined">upload_file</span> Subir Excel
+            </button>
+        `;
+        grid.appendChild(div);
+    });
 }
 
-function agregarCongregacion() {
-  const cod = prompt('Código:');
-  const nom = prompt('Nombre:');
-  if (cod && nom) {
-    congregaciones.push({ codigo: cod, nombre: nom, ultimaVisita: '', proxVisita: '' });
-    guardarMeta();
-    renderCongregaciones();
-  }
+function renderAgenda() {
+    const tbody = document.querySelector('#tablaAgenda tbody');
+    tbody.innerHTML = '';
+    let filas = [];
+    congregaciones.forEach(c => {
+        if (c.proxVisita && !isNaN(new Date(c.proxVisita).getTime())) {
+            let f = new Date(c.proxVisita);
+            let inicio = new Date(f);
+            inicio.setDate(f.getDate() - f.getDay() + 1);
+            let fin = new Date(inicio);
+            fin.setDate(inicio.getDate() + 6);
+            filas.push({
+                semana: ISOWeekNum(f),
+                inicio: inicio.toLocaleDateString(),
+                fin: fin.toLocaleDateString(),
+                actividad: `Visita a ${c.nombre}`
+            });
+        }
+    });
+    filas.sort((a,b) => a.semana - b.semana);
+    filas.forEach(f => {
+        tbody.innerHTML += `<tr><td>${f.semana}</td><td>${f.inicio}</td><td>${f.fin}</td><td>${f.actividad}</td></tr>`;
+    });
 }
 
+function renderHistorial() {
+    const tbody = document.querySelector('#tablaHist tbody');
+    tbody.innerHTML = '';
+    historialMeta.forEach(h => {
+        tbody.innerHTML += `<tr>
+            <td>${h.congregacion}</td>
+            <td>${h.fecha}</td>
+            <td>${h.pubActivos || '—'}</td>
+            <td>${h.precReg || '—'}</td>
+            <td>${h.precAux || '—'}</td>
+            <td><button class="button button-outline button-sm" onclick="descargarExcel('${h.id}')">Excel</button></td>
+            <td><button class="button button-outline button-sm" onclick="descargarPDF('${h.id}')">PDF</button></td>
+        </tr>`;
+    });
+}
+
+function actualizarDashboard() {
+    document.getElementById('totalVisitas').textContent = historialMeta.length;
+    const pubs = historialMeta.map(h => parseFloat(h.pubActivos)).filter(v => !isNaN(v));
+    const prom = pubs.length ? (pubs.reduce((a,b)=>a+b,0) / pubs.length).toFixed(1) : '—';
+    document.getElementById('promPubActivos').textContent = prom;
+
+    // Gráfico
+    const ctx = document.getElementById('chart').getContext('2d');
+    if (window.miChart) window.miChart.destroy();
+    const labels = historialMeta.map(h => h.congregacion.substring(0,15));
+    window.miChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Publicadores Activos',
+                data: pubs,
+                backgroundColor: '#1a73e8',
+                borderRadius: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false }
+            }
+        }
+    });
+}
+
+// ==================== SUBIR EXCEL ====================
 function subirExcel(index) {
-  const input = document.getElementById('fileInput');
-  input.index = index;
-  input.click();
+    const input = document.getElementById('fileInput');
+    input.index = index;
+    input.click();
 }
 
 document.getElementById('fileInput').addEventListener('change', function(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  const index = this.index;
-  const reader = new FileReader();
-  reader.onload = function(ev) {
-    const data = new Uint8Array(ev.target.result);
-    const wb = XLSX.read(data, { type: 'array' });
-    procesarExcel(wb, file, index);
-  };
-  reader.readAsArrayBuffer(file);
+    const file = e.target.files[0];
+    if (!file) return;
+    const index = this.index;
+    const reader = new FileReader();
+    reader.onload = ev => {
+        const data = new Uint8Array(ev.target.result);
+        const wb = XLSX.read(data, { type: 'array' });
+        procesarExcel(wb, file, index);
+    };
+    reader.readAsArrayBuffer(file);
+    this.value = '';
 });
 
 function procesarExcel(wb, file, index) {
-  // Obtener hojas necesarias
-  const hojaPub = wb.Sheets['PUB'];
-  const hojaPA = wb.Sheets['PA'];
-  const hojaPR = wb.Sheets['PR'];
-  const hojaREUDON = wb.Sheets['REU-DON'];
-  if (!hojaPub) return alert('El archivo debe contener la hoja "PUB".');
+    const pubSheet = wb.Sheets['PUB'];
+    if (!pubSheet) return alert('El archivo debe contener la hoja "PUB".');
 
-  const getCell = (sheet, cell) => sheet[cell] ? sheet[cell].v : '';
+    const get = (sh, cell) => sh[cell] ? sh[cell].v : '';
+    const nombre = get(pubSheet, 'C2')?.toString() || '';
+    const fechaRaw = get(pubSheet, 'C16')?.toString() || '';
+    let fechaVisita = '';
+    const match = fechaRaw.match(/(\d{2})\/(\d{2})\/(\d{4})/);
+    if (match) fechaVisita = `${match[3]}-${match[2]}-${match[1]}`;
+    else {
+        const d = new Date(fechaRaw);
+        if (!isNaN(d)) fechaVisita = d.toISOString().split('T')[0];
+    }
+    if (!fechaVisita) return alert('Fecha no legible en C16.');
 
-  // Datos de congregación y fecha
-  const nombreCong = getCell(hojaPub, 'C2')?.toString() || '';
-  const fechaVisitaRaw = getCell(hojaPub, 'C16')?.toString() || '';
-  let fechaVisita = '';
-  const match = fechaVisitaRaw.match(/(\d{2})\/(\d{2})\/(\d{4})/);
-  if (match) {
-    fechaVisita = `${match[3]}-${match[2]}-${match[1]}`;
-  } else {
-    const d = new Date(fechaVisitaRaw);
-    if (!isNaN(d)) fechaVisita = d.toISOString().split('T')[0];
-  }
-  if (!fechaVisita) return alert('No se pudo determinar la fecha de visita (celda C16).');
+    const datos = {
+        nombreCong: nombre,
+        fechaVisita,
+        pubActivos: get(pubSheet, 'K4'),
+        precReg: get(pubSheet, 'K6'),
+        precAux: get(pubSheet, 'K8'),
+        pubMeses: [],
+        paMeses: [],
+        prMeses: [],
+        reuMeses: [],
+        donMeses: []
+    };
 
-  // Extraer datos para el historial y el PDF
-  const datosPDF = {
-    nombreCong,
-    fechaVisitaRaw,
-    fechaVisita,
-    // Hoja PUB
-    pubMeses: [],
-    pubActivos: getCell(hojaPub, 'K4'),
-    precReg: getCell(hojaPub, 'K6'),
-    precAux: getCell(hojaPub, 'K8'),
-    totalPub: getCell(hojaPub, 'B12'),
-    totalHoras: getCell(hojaPub, 'D12'),
-    totalCursos: getCell(hojaPub, 'F12'),
-    promPub: getCell(hojaPub, 'B13'),
-    promHoras: getCell(hojaPub, 'D13'),
-    promCursos: getCell(hojaPub, 'F13'),
-    // Hoja PA
-    paMeses: [],
-    // Hoja PR
-    prMeses: [],
-    // Hoja REU-DON
-    reuMeses: [],
-    donMeses: []
-  };
-
-  // Rellenar meses PUB (filas 5 a 11)
-  const mesesNombres = ['Jul','Ago','Sept','Oct','Nov','Dic','Ene'];
-  for (let i=0; i<7; i++) {
-    const f = 5 + i;
-    datosPDF.pubMeses.push({
-      mes: mesesNombres[i],
-      publicadores: getCell(hojaPub, `B${f}`),
-      horas: getCell(hojaPub, `D${f}`),
-      cursos: getCell(hojaPub, `F${f}`)
-    });
-  }
-
-  // PA (filas 5 a 11, columnas B, C, D)
-  if (hojaPA) {
+    const meses = ['Jul','Ago','Sept','Oct','Nov','Dic','Ene'];
     for (let i=0; i<7; i++) {
-      const f = 5 + i;
-      datosPDF.paMeses.push({
-        mes: mesesNombres[i],
-        pa: getCell(hojaPA, `B${f}`),
-        horas: getCell(hojaPA, `C${f}`),
-        cursos: getCell(hojaPA, `D${f}`)
-      });
+        const f = 5+i;
+        datos.pubMeses.push({
+            mes: meses[i],
+            pub: get(pubSheet, `B${f}`),
+            horas: get(pubSheet, `D${f}`),
+            cursos: get(pubSheet, `F${f}`)
+        });
     }
-  }
 
-  // PR (filas 6 a 12, columnas B, C, D)
-  if (hojaPR) {
-    for (let i=1; i<7; i++) {  // Empezar en Ago (fila 6)
-      const f = 5 + i;
-      datosPDF.prMeses.push({
-        mes: mesesNombres[i],
-        pr: getCell(hojaPR, `B${f}`),
-        horas: getCell(hojaPR, `C${f}`),
-        cursos: getCell(hojaPR, `D${f}`)
-      });
+    const paSheet = wb.Sheets['PA'];
+    if (paSheet) {
+        for (let i=0; i<7; i++) {
+            const f = 5+i;
+            datos.paMeses.push({
+                mes: meses[i],
+                cant: get(paSheet, `B${f}`),
+                horas: get(paSheet, `C${f}`),
+                cursos: get(paSheet, `D${f}`)
+            });
+        }
     }
-  }
 
-  // REU-DON: Asistencia (filas 5 a 11, columnas B, C)
-  if (hojaREUDON) {
-    for (let i=0; i<7; i++) {
-      const f = 5 + i;
-      datosPDF.reuMeses.push({
-        mes: mesesNombres[i],
-        entreSemana: getCell(hojaREUDON, `B${f}`),
-        finSemana: getCell(hojaREUDON, `C${f}`)
-      });
+    const prSheet = wb.Sheets['PR'];
+    if (prSheet) {
+        for (let i=1; i<7; i++) {
+            const f = 5+i;
+            datos.prMeses.push({
+                mes: meses[i],
+                cant: get(prSheet, `B${f}`),
+                horas: get(prSheet, `C${f}`),
+                cursos: get(prSheet, `D${f}`)
+            });
+        }
     }
-    // Donaciones: columnas F a J (filas 5 a 11)
-    for (let i=0; i<7; i++) {
-      const f = 5 + i;
-      datosPDF.donMeses.push({
-        mes: mesesNombres[i],
-        om: getCell(hojaREUDON, `F${f}`),
-        resOm: getCell(hojaREUDON, `G${f}`),
-        cong: getCell(hojaREUDON, `H${f}`),
-        gastos: getCell(hojaREUDON, `I${f}`),
-        fnmtoSR: getCell(hojaREUDON, `J${f}`)
-      });
+
+    const reuSheet = wb.Sheets['REU-DON'];
+    if (reuSheet) {
+        for (let i=0; i<7; i++) {
+            const f = 5+i;
+            datos.reuMeses.push({
+                mes: meses[i],
+                entreSem: get(reuSheet, `B${f}`),
+                finSem: get(reuSheet, `C${f}`)
+            });
+            datos.donMeses.push({
+                mes: meses[i],
+                om: get(reuSheet, `F${f}`),
+                resOm: get(reuSheet, `G${f}`),
+                cong: get(reuSheet, `H${f}`),
+                gastos: get(reuSheet, `I${f}`),
+                fnmto: get(reuSheet, `J${f}`)
+            });
+        }
     }
-  }
 
-  // Actualizar congregación
-  const cong = congregaciones[index];
-  cong.ultimaVisita = fechaVisita;
-  let prox = new Date(fechaVisita);
-  prox.setDate(prox.getDate() + 182);
-  cong.proxVisita = prox.toISOString().split('T')[0];
-  guardarMeta();
-  renderCongregaciones();
+    // Actualizar congregación
+    const cong = congregaciones[index];
+    cong.ultimaVisita = fechaVisita;
+    let prox = new Date(fechaVisita);
+    prox.setDate(prox.getDate() + 182);
+    cong.proxVisita = prox.toISOString().split('T')[0];
+    guardar();
+    renderCongregaciones();
+    renderAgenda();
 
-  // Guardar archivo Excel en IndexedDB
-  const id = Date.now().toString() + '_' + index;
-  const blob = new Blob([new Uint8Array(file.slice(0, file.size))], { type: file.type });
-  const trans = db.transaction(['informes'], 'readwrite');
-  const store = trans.objectStore('informes');
-  store.put({ id, index, nombre: cong.nombre, fecha: fechaVisita, blob });
-
-  // Guardar metadatos
-  historialMeta.push({
-    id,
-    congregacion: cong.nombre,
-    fecha: fechaVisita,
-    pubActivos: datosPDF.pubActivos,
-    precReg: datosPDF.precReg,
-    precAux: datosPDF.precAux
-  });
-  guardarMeta();
-  renderHistorial();
-
-  // Generar PDF completo y almacenarlo
-  generarPDFCompleto(datosPDF, id, cong.nombre, fechaVisita);
-
-  alert(`✅ Datos guardados.\nPróxima visita: ${cong.proxVisita}`);
-}
-
-// ==================== GENERAR PDF COMPLETO CON TODAS LAS HOJAS ====================
-function generarPDFCompleto(datos, id, nombreCong, fechaVisita) {
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF('p', 'mm', 'a4');
-  let y = 20;
-
-  // Título principal
-  doc.setFontSize(16);
-  doc.text('PROMEDIO DE ACTIVIDAD POR PUBLICADORES', 105, y, { align: 'center' });
-  y += 8;
-  doc.setFontSize(12);
-  doc.text(`CONGREGACIÓN: ${datos.nombreCong}`, 14, y);
-  y += 6;
-  doc.text(`VISITA: ${datos.fechaVisitaRaw}`, 14, y);
-  y += 10;
-
-  // ----- Sección PUB -----
-  doc.setFontSize(14);
-  doc.text('Publicadores', 14, y);
-  y += 8;
-  const pubHeaders = [['Mes', 'Publicadores', 'Horas', 'Cursos B.']];
-  const pubData = datos.pubMeses.map(m => [m.mes, m.publicadores, m.horas, m.cursos]);
-  pubData.push(['TOTALES', datos.totalPub, datos.totalHoras, datos.totalCursos]);
-  pubData.push(['PROMEDIOS', datos.promPub, datos.promHoras, datos.promCursos]);
-  doc.autoTable({
-    startY: y,
-    head: pubHeaders,
-    body: pubData,
-    theme: 'grid',
-    styles: { fontSize: 10 },
-    headStyles: { fillColor: [44, 62, 80] }
-  });
-  y = doc.lastAutoTable.finalY + 8;
-
-  // Indicadores extra
-  doc.setFontSize(12);
-  doc.text(`Publicadores Activos: ${datos.pubActivos || ''}`, 14, y);
-  y += 6;
-  doc.text(`Precursores Regulares: ${datos.precReg || ''}`, 14, y);
-  y += 6;
-  doc.text(`Precursores Auxiliares: ${datos.precAux || ''}`, 14, y);
-  y += 8;
-
-  // ----- Sección PA (Precursores Auxiliares) -----
-  if (datos.paMeses.length > 0) {
-    doc.addPage();
-    y = 20;
-    doc.setFontSize(14);
-    doc.text('PROMEDIO DE ACTIVIDAD POR PRECURSORES AUXILIARES', 14, y);
-    y += 10;
-    const paHeaders = [['Mes', 'PA', 'Horas', 'Cursos B.']];
-    const paData = datos.paMeses.map(m => [m.mes, m.pa, m.horas, m.cursos]);
-    doc.autoTable({
-      startY: y,
-      head: paHeaders,
-      body: paData,
-      theme: 'grid',
-      styles: { fontSize: 10 },
-      headStyles: { fillColor: [44, 62, 80] }
+    // Guardar en IndexedDB
+    const id = Date.now().toString() + '_' + index;
+    const blob = new Blob([new Uint8Array(file.slice(0, file.size))], { type: file.type });
+    const trans = db.transaction(['informes'], 'readwrite');
+    const store = trans.objectStore('informes');
+    store.put({ id, index, nombre: cong.nombre, fecha: fechaVisita, blob });
+    historialMeta.push({
+        id,
+        congregacion: cong.nombre,
+        fecha: fechaVisita,
+        pubActivos: datos.pubActivos,
+        precReg: datos.precReg,
+        precAux: datos.precAux
     });
-    y = doc.lastAutoTable.finalY + 10;
-  }
+    guardar();
+    renderHistorial();
+    actualizarDashboard();
 
-  // ----- Sección PR (Precursores Regulares) -----
-  if (datos.prMeses.length > 0) {
-    doc.addPage();
-    y = 20;
-    doc.setFontSize(14);
-    doc.text('PROMEDIO DE ACTIVIDAD POR PRECURSORES REGULARES', 14, y);
-    y += 10;
-    const prHeaders = [['Mes', 'PR', 'Horas', 'Cursos B.']];
-    const prData = datos.prMeses.map(m => [m.mes, m.pr, m.horas, m.cursos]);
-    doc.autoTable({
-      startY: y,
-      head: prHeaders,
-      body: prData,
-      theme: 'grid',
-      styles: { fontSize: 10 },
-      headStyles: { fillColor: [44, 62, 80] }
-    });
-    y = doc.lastAutoTable.finalY + 10;
-  }
+    // Generar PDF
+    generarPDFProfesional(datos, id, cong.nombre);
+    alert(`✅ Datos guardados.\nPróxima visita: ${cong.proxVisita}`);
+}
 
-  // ----- Sección REU-DON: Asistencia -----
-  if (datos.reuMeses.length > 0) {
-    doc.addPage();
-    y = 20;
-    doc.setFontSize(14);
-    doc.text('PROMEDIO DE ASISTENCIA A LAS REUNIONES', 14, y);
-    y += 10;
-    const reuHeaders = [['Mes', 'Entre Semana', 'Fin de Semana']];
-    const reuData = datos.reuMeses.map(m => [m.mes, m.entreSemana, m.finSemana]);
-    doc.autoTable({
-      startY: y,
-      head: reuHeaders,
-      body: reuData,
-      theme: 'grid',
-      styles: { fontSize: 10 },
-      headStyles: { fillColor: [44, 62, 80] }
-    });
-    y = doc.lastAutoTable.finalY + 10;
-  }
+// ==================== PDF ====================
+function generarPDFProfesional(datos, id, nombreCong) {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF('p', 'mm', 'a4');
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const margin = 12;
+    let y = margin + 4;
 
-  // ----- Sección REU-DON: Donaciones -----
-  if (datos.donMeses.length > 0) {
-    // Verificar si hay datos (no todos vacíos)
-    const tieneDatos = datos.donMeses.some(m => m.om || m.resOm || m.cong || m.gastos || m.fnmtoSR);
-    if (tieneDatos) {
-      doc.addPage();
-      y = 20;
-      doc.setFontSize(14);
-      doc.text('DONACIONES DE CONGREGACIÓN', 14, y);
-      y += 10;
-      const donHeaders = [['Mes', 'OM', 'RES/OM', 'CONG', 'GASTOS', 'FNMTO SR']];
-      const donData = datos.donMeses.map(m => [m.mes, m.om, m.resOm, m.cong, m.gastos, m.fnmtoSR]);
-      doc.autoTable({
-        startY: y,
-        head: donHeaders,
-        body: donData,
-        theme: 'grid',
-        styles: { fontSize: 10 },
-        headStyles: { fillColor: [44, 62, 80] }
-      });
+    doc.setFillColor(26, 38, 57);
+    doc.rect(0, 0, pageWidth, 18, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(11);
+    doc.text('CIRCUITO CHI-03 · INFORME DE VISITA', pageWidth / 2, 11, { align: 'center' });
+    doc.setFontSize(8);
+    doc.text(`Generado: ${new Date().toLocaleDateString()}`, pageWidth - 14, 11, { align: 'right' });
+
+    doc.setTextColor(44, 62, 80);
+    doc.setFontSize(13);
+    doc.text(`Congregación: ${datos.nombreCong}`, margin, y);
+    y += 6;
+    doc.setFontSize(10);
+    doc.text(`Visita: ${datos.fechaVisita}    Pub.Act.: ${datos.pubActivos||'—'}    PR: ${datos.precReg||'—'}    PA: ${datos.precAux||'—'}`, margin, y);
+    y += 8;
+
+    function tablaCompacta(titulo, headers, data) {
+        if (y > 250) { doc.addPage(); y = 20; }
+        doc.setFontSize(11);
+        doc.setTextColor(26, 38, 57);
+        doc.text(titulo, margin, y);
+        y += 5;
+        doc.autoTable({
+            startY: y,
+            head: [headers],
+            body: data,
+            theme: 'plain',
+            styles: { fontSize: 8.5, cellPadding: 2 },
+            headStyles: { fillColor: [26, 38, 57], textColor: [255, 255, 255], fontSize: 9 },
+            margin: { left: margin, right: margin }
+        });
+        y = doc.lastAutoTable.finalY + 6;
     }
-  }
 
-  // Guardar PDF como blob
-  const pdfBlob = doc.output('blob');
-  const trans = db.transaction(['informes'], 'readwrite');
-  const store = trans.objectStore('informes');
-  store.get(id).onsuccess = function(e) {
-    const record = e.target.result;
-    if (record) {
-      record.pdfBlob = pdfBlob;
-      store.put(record);
-      // Descargar automáticamente
-      doc.save(`Informe_${nombreCong.replace(/ /g,'_')}_${fechaVisita}.pdf`);
+    const pubData = datos.pubMeses.map(m => [m.mes, m.pub, m.horas, m.cursos]);
+    tablaCompacta('Publicadores', ['Mes', 'Pub', 'Horas', 'Cursos'], pubData);
+
+    if (datos.paMeses.some(m => m.cant)) {
+        tablaCompacta('Prec. Auxiliares', ['Mes', 'PA', 'Horas', 'Cursos'], datos.paMeses.map(m => [m.mes, m.cant, m.horas, m.cursos]));
     }
-  };
-}
-
-// ==================== AGENDA ====================
-function renderAgenda() {
-  let filas = [];
-  congregaciones.forEach(c => {
-    if (c.proxVisita && !isNaN(new Date(c.proxVisita).getTime())) {
-      let f = new Date(c.proxVisita);
-      let inicio = new Date(f);
-      inicio.setDate(f.getDate() - f.getDay() + 1);
-      let fin = new Date(inicio);
-      fin.setDate(inicio.getDate() + 6);
-      let semana = ISOWeekNum(f);
-      filas.push({ semana, inicio: inicio.toISOString().split('T')[0], fin: fin.toISOString().split('T')[0], descripcion: 'Visita ' + c.nombre, tipo: 'Visita' });
+    if (datos.prMeses.some(m => m.cant)) {
+        tablaCompacta('Prec. Regulares', ['Mes', 'PR', 'Horas', 'Cursos'], datos.prMeses.map(m => [m.mes, m.cant, m.horas, m.cursos]));
     }
-  });
-  agendaExtra.forEach(e => filas.push(e));
-  filas.sort((a,b) => a.semana - b.semana);
-  const tbody = document.querySelector('#tablaAgenda tbody');
-  tbody.innerHTML = '';
-  filas.forEach(f => {
-    let clase = f.tipo === 'Visita' ? 'bg-green' : f.tipo === 'Asamblea' ? 'bg-orange' : f.tipo === 'Clase' ? 'bg-purple' : 'bg-blue';
-    tbody.innerHTML += `<tr><td>${f.semana}</td><td>${f.inicio}</td><td>${f.fin}</td><td><span class="badge ${clase}">${f.tipo}</span> ${f.descripcion}</td><td>${f.tipo}</td></tr>`;
-  });
+    if (datos.reuMeses.length > 0) {
+        tablaCompacta('Asistencia', ['Mes', 'Entre Sem.', 'Fin Sem.'], datos.reuMeses.map(m => [m.mes, m.entreSem, m.finSem]));
+    }
+    if (datos.donMeses.some(m => m.om || m.cong)) {
+        tablaCompacta('Donaciones', ['Mes', 'OM', 'RES/OM', 'CONG', 'GASTOS', 'FNMTO'], datos.donMeses.map(m => [m.mes, m.om, m.resOm, m.cong, m.gastos, m.fnmto]));
+    }
+
+    const pdfBlob = doc.output('blob');
+    const trans = db.transaction(['informes'], 'readwrite');
+    const store = trans.objectStore('informes');
+    store.get(id).onsuccess = e => {
+        const rec = e.target.result;
+        if (rec) { rec.pdfBlob = pdfBlob; store.put(rec); }
+        doc.save(`Informe_${nombreCong.replace(/ /g,'_')}_${datos.fechaVisita}.pdf`);
+    };
 }
 
-function ISOWeekNum(d) {
-  d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
-  d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay()||7));
-  var yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
-  return Math.ceil((((d - yearStart) / 86400000) + 1)/7);
-}
-
-// ==================== HISTORIAL ====================
-function renderHistorial() {
-  const tbody = document.querySelector('#tablaHist tbody');
-  tbody.innerHTML = '';
-  historialMeta.forEach(h => {
-    tbody.innerHTML += `<tr>
-      <td>${h.congregacion}</td>
-      <td>${h.fecha}</td>
-      <td>${h.pubActivos || '—'}</td>
-      <td>${h.precReg || '—'}</td>
-      <td>${h.precAux || '—'}</td>
-      <td><button class="btn btn-sm" onclick="descargarExcel('${h.id}')">⬇️ Excel</button></td>
-      <td><button class="btn btn-sm" onclick="descargarPDF('${h.id}')">⬇️ PDF</button></td>
-    </tr>`;
-  });
-}
-
+// ==================== DESCARGAS ====================
 function descargarExcel(id) {
-  const trans = db.transaction(['informes'], 'readonly');
-  const store = trans.objectStore('informes');
-  store.get(id).onsuccess = (e) => {
-    const record = e.target.result;
-    if (record && record.blob) {
-      const url = URL.createObjectURL(record.blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${record.nombre.replace(/ /g,'_')}_${record.fecha}.xlsx`;
-      a.click();
-      URL.revokeObjectURL(url);
-    } else alert('Archivo no encontrado.');
-  };
+    const trans = db.transaction(['informes'], 'readonly');
+    trans.objectStore('informes').get(id).onsuccess = e => {
+        const r = e.target.result;
+        if (r?.blob) {
+            const url = URL.createObjectURL(r.blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${r.nombre.replace(/ /g,'_')}_${r.fecha}.xlsx`;
+            a.click();
+            URL.revokeObjectURL(url);
+        } else alert('Archivo no encontrado.');
+    };
 }
 
 function descargarPDF(id) {
-  const trans = db.transaction(['informes'], 'readonly');
-  const store = trans.objectStore('informes');
-  store.get(id).onsuccess = (e) => {
-    const record = e.target.result;
-    if (record && record.pdfBlob) {
-      const url = URL.createObjectURL(record.pdfBlob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `Informe_${record.nombre.replace(/ /g,'_')}_${record.fecha}.pdf`;
-      a.click();
-      URL.revokeObjectURL(url);
-    } else {
-      alert('PDF no disponible. Vuelve a subir el Excel.');
-    }
-  };
+    const trans = db.transaction(['informes'], 'readonly');
+    trans.objectStore('informes').get(id).onsuccess = e => {
+        const r = e.target.result;
+        if (r?.pdfBlob) {
+            const url = URL.createObjectURL(r.pdfBlob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Informe_${r.nombre.replace(/ /g,'_')}_${r.fecha}.pdf`;
+            a.click();
+            URL.revokeObjectURL(url);
+        } else alert('PDF no disponible.');
+    };
 }
 
-// Inicialización
+// ==================== AGREGAR CONGREGACIÓN ====================
+function agregarCongregacion() {
+    const cod = prompt('Código:');
+    const nom = prompt('Nombre:');
+    if (cod && nom) {
+        congregaciones.push({ codigo: cod, nombre: nom, ultimaVisita: '', proxVisita: '' });
+        guardar();
+        renderCongregaciones();
+        renderAgenda();
+    }
+}
+
+// ==================== UTILIDADES ====================
+function ISOWeekNum(d) {
+    d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+    d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
+    const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+    return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+}
+
+// Inicializar
 cargarDatos();
 </script>
+
 </body>
 </html>
