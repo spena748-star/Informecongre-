@@ -15,6 +15,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
 
     <style>
         :root {
@@ -36,11 +37,7 @@
             --radius-pill: 24px;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             font-family: 'Roboto', sans-serif;
@@ -61,6 +58,7 @@
             top: 0;
             z-index: 100;
             box-shadow: var(--shadow-sm);
+            flex-wrap: wrap;
         }
 
         .app-bar-logo {
@@ -73,16 +71,9 @@
             gap: 8px;
         }
 
-        .app-bar-logo .material-icons-outlined {
-            color: var(--google-blue);
-            font-size: 28px;
-        }
+        .app-bar-logo .material-icons-outlined { color: var(--google-blue); font-size: 28px; }
 
-        .tab-bar {
-            display: flex;
-            gap: 0;
-            margin-left: auto;
-        }
+        .tab-bar { display: flex; gap: 0; margin-left: auto; flex-wrap: wrap; }
 
         .tab-button {
             background: transparent;
@@ -101,30 +92,12 @@
             white-space: nowrap;
         }
 
-        .tab-button .material-icons-outlined {
-            font-size: 20px;
-        }
+        .tab-button .material-icons-outlined { font-size: 20px; }
+        .tab-button:hover { background: var(--gray-100); color: var(--google-blue); }
+        .tab-button.active { color: var(--google-blue); border-bottom-color: var(--google-blue); }
 
-        .tab-button:hover {
-            background: var(--gray-100);
-            color: var(--google-blue);
-        }
-
-        .tab-button.active {
-            color: var(--google-blue);
-            border-bottom-color: var(--google-blue);
-        }
-
-        .main-content {
-            max-width: 1200px;
-            margin: 24px auto;
-            padding: 0 24px;
-            display: none;
-        }
-
-        .main-content.active {
-            display: block;
-        }
+        .main-content { max-width: 1200px; margin: 24px auto; padding: 0 24px; display: none; }
+        .main-content.active { display: block; }
 
         .page-title {
             font-family: 'Google Sans', sans-serif;
@@ -144,15 +117,15 @@
             transition: box-shadow 0.2s;
         }
 
-        .card:hover {
-            box-shadow: var(--shadow-md);
-        }
+        .card:hover { box-shadow: var(--shadow-md); }
 
         .card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 12px;
         }
 
         .card-title {
@@ -165,12 +138,7 @@
             gap: 8px;
         }
 
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 16px;
-            margin-top: 16px;
-        }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; margin-top: 16px; }
 
         .cong-card {
             background: var(--white);
@@ -184,10 +152,7 @@
             gap: 12px;
         }
 
-        .cong-card:hover {
-            box-shadow: var(--shadow-md);
-            border-color: var(--google-blue);
-        }
+        .cong-card:hover { box-shadow: var(--shadow-md); border-color: var(--google-blue); }
 
         .cong-card h3 {
             font-family: 'Google Sans', sans-serif;
@@ -199,16 +164,8 @@
             align-items: center;
         }
 
-        .cong-card .info-row {
-            display: flex;
-            justify-content: space-between;
-            font-size: 13px;
-            color: var(--gray-700);
-        }
-
-        .cong-card .info-label {
-            color: var(--gray-500);
-        }
+        .cong-card .info-row { display: flex; justify-content: space-between; font-size: 13px; color: var(--gray-700); }
+        .cong-card .info-label { color: var(--gray-500); }
 
         .badge {
             padding: 4px 10px;
@@ -219,20 +176,9 @@
             color: var(--gray-700);
         }
 
-        .badge-primary {
-            background: #e8f0fe;
-            color: var(--google-blue);
-        }
-
-        .badge-success {
-            background: #e6f4ea;
-            color: var(--google-green);
-        }
-
-        .badge-warning {
-            background: #fef7e0;
-            color: #f9ab00;
-        }
+        .badge-primary { background: #e8f0fe; color: var(--google-blue); }
+        .badge-success { background: #e6f4ea; color: var(--google-green); }
+        .badge-warning { background: #fef7e0; color: #f9ab00; }
 
         .button {
             display: inline-flex;
@@ -249,44 +195,14 @@
             border: 1px solid transparent;
         }
 
-        .button-primary {
-            background: var(--google-blue);
-            color: white;
-            border: none;
-        }
+        .button-primary { background: var(--google-blue); color: white; border: none; }
+        .button-primary:hover { background: #1669c1; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+        .button-outline { background: transparent; color: var(--google-blue); border: 1px solid var(--gray-300); }
+        .button-outline:hover { background: #e8f0fe; border-color: var(--google-blue); }
+        .button-sm { padding: 4px 16px; font-size: 12px; }
 
-        .button-primary:hover {
-            background: #1669c1;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-        }
-
-        .button-outline {
-            background: transparent;
-            color: var(--google-blue);
-            border: 1px solid var(--gray-300);
-        }
-
-        .button-outline:hover {
-            background: #e8f0fe;
-            border-color: var(--google-blue);
-        }
-
-        .button-sm {
-            padding: 4px 16px;
-            font-size: 12px;
-        }
-
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-        }
-
-        .data-table thead {
-            background: var(--gray-100);
-            border-bottom: 1px solid var(--gray-300);
-        }
-
+        .data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .data-table thead { background: var(--gray-100); border-bottom: 1px solid var(--gray-300); }
         .data-table th {
             padding: 12px 16px;
             text-align: left;
@@ -296,23 +212,10 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
+        .data-table td { padding: 10px 16px; border-bottom: 1px solid var(--gray-200); }
+        .data-table tbody tr:hover { background: #f8f9fa; }
 
-        .data-table td {
-            padding: 10px 16px;
-            border-bottom: 1px solid var(--gray-200);
-        }
-
-        .data-table tbody tr:hover {
-            background: #f8f9fa;
-        }
-
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 24px;
-            margin-top: 16px;
-        }
-
+        .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 16px; }
         .stat-box {
             background: var(--white);
             border-radius: var(--radius);
@@ -320,56 +223,21 @@
             border: 1px solid var(--gray-200);
             text-align: center;
         }
+        .stat-box .value { font-family: 'Google Sans', sans-serif; font-size: 32px; font-weight: 500; color: var(--google-blue); }
+        .stat-box .label { font-size: 12px; color: var(--gray-500); text-transform: uppercase; margin-top: 4px; }
 
-        .stat-box .value {
-            font-family: 'Google Sans', sans-serif;
-            font-size: 32px;
-            font-weight: 500;
-            color: var(--google-blue);
-        }
+        canvas#chart { width: 100% !important; max-height: 300px; }
 
-        .stat-box .label {
-            font-size: 12px;
-            color: var(--gray-500);
-            text-transform: uppercase;
-            margin-top: 4px;
-        }
+        .empty-state { text-align: center; padding: 40px; color: var(--gray-500); }
+        .empty-state .material-icons-outlined { font-size: 48px; margin-bottom: 16px; color: var(--gray-300); }
 
-        canvas#chart {
-            width: 100% !important;
-            max-height: 300px;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 40px;
-            color: var(--gray-500);
-        }
-
-        .empty-state .material-icons-outlined {
-            font-size: 48px;
-            margin-bottom: 16px;
-            color: var(--gray-300);
-        }
-
-        input[type="file"] {
-            display: none;
-        }
+        input[type="file"] { display: none; }
+        select { padding: 8px 12px; border-radius: 6px; border: 1px solid var(--gray-300); font-size: 14px; background: white; }
 
         @media (max-width: 768px) {
-            .app-bar {
-                flex-direction: column;
-                align-items: flex-start;
-                padding: 12px;
-            }
-            .tab-bar {
-                margin-left: 0;
-                width: 100%;
-                overflow-x: auto;
-            }
-            .dashboard-grid {
-                grid-template-columns: 1fr;
-            }
+            .app-bar { flex-direction: column; align-items: flex-start; padding: 12px; }
+            .tab-bar { margin-left: 0; width: 100%; overflow-x: auto; }
+            .dashboard-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -393,17 +261,18 @@
         <button class="tab-button" data-tab="dashboard">
             <span class="material-icons-outlined">insights</span> Dashboard
         </button>
+        <button class="tab-button" data-tab="registros">
+            <span class="material-icons-outlined">description</span> Registros S‑21
+        </button>
     </div>
 </div>
 
-<!-- Contenido principal: Congregaciones -->
+<!-- Contenido: Congregaciones -->
 <div id="content-congregaciones" class="main-content active">
     <div class="page-title">Congregaciones del Circuito</div>
     <div class="card">
         <div class="card-header">
-            <div class="card-title">
-                <span class="material-icons-outlined">list_alt</span> 19 congregaciones
-            </div>
+            <div class="card-title"><span class="material-icons-outlined">list_alt</span> 19 congregaciones</div>
             <button class="button button-outline button-sm" onclick="agregarCongregacion()">
                 <span class="material-icons-outlined">add</span> Agregar
             </button>
@@ -412,13 +281,11 @@
     </div>
 </div>
 
-<!-- Contenido: Agenda -->
+<!-- Agenda -->
 <div id="content-agenda" class="main-content">
     <div class="page-title">Agenda</div>
     <div class="card">
-        <div class="card-title" style="margin-bottom:16px;">
-            <span class="material-icons-outlined">event_note</span> Próximas visitas
-        </div>
+        <div class="card-title" style="margin-bottom:16px;"><span class="material-icons-outlined">event_note</span> Próximas visitas</div>
         <table class="data-table" id="tablaAgenda">
             <thead><tr><th>Semana</th><th>Inicio</th><th>Fin</th><th>Actividad</th></tr></thead>
             <tbody></tbody>
@@ -426,13 +293,11 @@
     </div>
 </div>
 
-<!-- Contenido: Historial -->
+<!-- Historial -->
 <div id="content-historial" class="main-content">
     <div class="page-title">Historial de visitas</div>
     <div class="card">
-        <div class="card-title" style="margin-bottom:16px;">
-            <span class="material-icons-outlined">folder_open</span> Archivos guardados
-        </div>
+        <div class="card-title" style="margin-bottom:16px;"><span class="material-icons-outlined">folder_open</span> Archivos guardados</div>
         <table class="data-table" id="tablaHist">
             <thead><tr><th>Congregación</th><th>Fecha</th><th>Pub.Act.</th><th>PR</th><th>PA</th><th>Excel</th><th>PDF</th></tr></thead>
             <tbody></tbody>
@@ -440,7 +305,7 @@
     </div>
 </div>
 
-<!-- Contenido: Dashboard -->
+<!-- Dashboard -->
 <div id="content-dashboard" class="main-content">
     <div class="page-title">Dashboard</div>
     <div class="dashboard-grid">
@@ -459,19 +324,55 @@
     </div>
 </div>
 
-<!-- Input oculto para cargar Excel -->
-<input type="file" id="fileInput" accept=".xlsx, .xls" />
+<!-- Registros S-21 -->
+<div id="content-registros" class="main-content">
+    <div class="page-title">Registros S‑21 de Publicadores</div>
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title"><span class="material-icons-outlined">person_add</span> Cargar PDF de Registro</div>
+            <div style="display:flex; gap:12px; align-items:center;">
+                <select id="selectCongregacionPDF" style="padding:8px 12px;">
+                    <option value="">Selecciona congregación...</option>
+                </select>
+                <button class="button button-primary button-sm" onclick="document.getElementById('inputPDF').click()">
+                    <span class="material-icons-outlined">upload_file</span> Subir PDF
+                </button>
+            </div>
+        </div>
+        <p style="color:var(--gray-700); margin-bottom:16px;">Selecciona la congregación a la que pertenece el publicador y luego sube el formulario <strong>S‑21</strong> en PDF.</p>
+        <input type="file" id="inputPDF" accept=".pdf" style="display:none" onchange="procesarPDF(this)" />
+        <div id="resultadoPDF" style="margin-top:16px;"></div>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title"><span class="material-icons-outlined">summarize</span> Registros acumulados</div>
+            <select id="filtroCongregacion" onchange="renderRegistros()" style="padding:8px 12px;">
+                <option value="">Todas las congregaciones</option>
+            </select>
+        </div>
+        <table class="data-table" id="tablaRegistros">
+            <thead><tr><th>Nombre</th><th>Congregación</th><th>Tipo</th><th>Horas totales</th><th>Cursos bíblicos</th><th>Participación</th></tr></thead>
+            <tbody></tbody>
+        </table>
+        <div id="sinRegistros" class="empty-state">
+            <span class="material-icons-outlined">folder_off</span>
+            <p>No hay registros cargados todavía.</p>
+        </div>
+    </div>
+</div>
 
 <script>
+// ==================== CONFIGURACIÓN DE PDF.JS ====================
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+
 // ==================== BASE DE DATOS ====================
 const DB_NAME = 'CircuitoCHI03DB';
 let db;
 const request = indexedDB.open(DB_NAME, 1);
 request.onupgradeneeded = e => {
     db = e.target.result;
-    if (!db.objectStoreNames.contains('informes')) {
-        db.createObjectStore('informes', { keyPath: 'id' });
-    }
+    if (!db.objectStoreNames.contains('informes')) db.createObjectStore('informes', { keyPath: 'id' });
+    if (!db.objectStoreNames.contains('registros')) db.createObjectStore('registros', { keyPath: 'id' });
 };
 request.onsuccess = e => { db = e.target.result; cargarDatos(); };
 request.onerror = () => console.error('Error IndexedDB');
@@ -480,9 +381,10 @@ request.onerror = () => console.error('Error IndexedDB');
 const STORAGE_KEY = 'circuito_chi03_data';
 let congregaciones = [];
 let historialMeta = [];
+let registrosS21 = [];  // { id, nombre, congregacion, tipo, horas, cursos, participacion }
 
 function guardar() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ congregaciones, historialMeta }));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ congregaciones, historialMeta, registrosS21 }));
 }
 
 function cargarDatos() {
@@ -491,8 +393,8 @@ function cargarDatos() {
         const data = JSON.parse(json);
         congregaciones = data.congregaciones || [];
         historialMeta = data.historialMeta || [];
+        registrosS21 = data.registrosS21 || [];
     } else {
-        // Inicializar las 19 congregaciones
         congregaciones = [
             { codigo: "7898", nombre: "Omega-Cd. Juárez", ultimaVisita: "", proxVisita: "" },
             { codigo: "74799", nombre: "Anémona-Cd. Juárez", ultimaVisita: "", proxVisita: "" },
@@ -514,13 +416,16 @@ function cargarDatos() {
             { codigo: "126300", nombre: "Solidaridad-Juárez", ultimaVisita: "", proxVisita: "" },
             { codigo: "50989", nombre: "Waterfill-Juárez", ultimaVisita: "", proxVisita: "" }
         ];
+        registrosS21 = [];
         historialMeta = [];
     }
     calcularProximasVisitas();
     renderCongregaciones();
     renderAgenda();
     renderHistorial();
+    renderRegistros();
     actualizarDashboard();
+    actualizarSelectoresCongregacion();
 }
 
 function calcularProximasVisitas() {
@@ -535,6 +440,19 @@ function calcularProximasVisitas() {
     });
 }
 
+function actualizarSelectoresCongregacion() {
+    const selectPDF = document.getElementById('selectCongregacionPDF');
+    const filtro = document.getElementById('filtroCongregacion');
+    const html = '<option value="">Selecciona congregación...</option>';
+    const htmlFiltro = '<option value="">Todas las congregaciones</option>';
+    congregaciones.forEach(c => {
+        html += `<option value="${c.nombre}">${c.nombre}</option>`;
+        htmlFiltro += `<option value="${c.nombre}">${c.nombre}</option>`;
+    });
+    selectPDF.innerHTML = html;
+    filtro.innerHTML = htmlFiltro;
+}
+
 // ==================== NAVEGACIÓN ====================
 document.querySelectorAll('.tab-button').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -544,6 +462,7 @@ document.querySelectorAll('.tab-button').forEach(btn => {
         const tabId = btn.dataset.tab;
         document.getElementById(`content-${tabId}`).classList.add('active');
         if (tabId === 'dashboard') actualizarDashboard();
+        if (tabId === 'registros') renderRegistros();
     });
 });
 
@@ -608,11 +527,7 @@ function renderHistorial() {
     tbody.innerHTML = '';
     historialMeta.forEach(h => {
         tbody.innerHTML += `<tr>
-            <td>${h.congregacion}</td>
-            <td>${h.fecha}</td>
-            <td>${h.pubActivos || '—'}</td>
-            <td>${h.precReg || '—'}</td>
-            <td>${h.precAux || '—'}</td>
+            <td>${h.congregacion}</td><td>${h.fecha}</td><td>${h.pubActivos || '—'}</td><td>${h.precReg || '—'}</td><td>${h.precAux || '—'}</td>
             <td><button class="button button-outline button-sm" onclick="descargarExcel('${h.id}')">Excel</button></td>
             <td><button class="button button-outline button-sm" onclick="descargarPDF('${h.id}')">PDF</button></td>
         </tr>`;
@@ -625,7 +540,6 @@ function actualizarDashboard() {
     const prom = pubs.length ? (pubs.reduce((a,b)=>a+b,0) / pubs.length).toFixed(1) : '—';
     document.getElementById('promPubActivos').textContent = prom;
 
-    // Gráfico
     const ctx = document.getElementById('chart').getContext('2d');
     if (window.miChart) window.miChart.destroy();
     const labels = historialMeta.map(h => h.congregacion.substring(0,15));
@@ -642,10 +556,33 @@ function actualizarDashboard() {
         },
         options: {
             responsive: true,
-            plugins: {
-                legend: { display: false }
-            }
+            plugins: { legend: { display: false } }
         }
+    });
+}
+
+function renderRegistros() {
+    const tbody = document.querySelector('#tablaRegistros tbody');
+    tbody.innerHTML = '';
+    const sinReg = document.getElementById('sinRegistros');
+    const filtro = document.getElementById('filtroCongregacion').value;
+    const registrosFiltrados = filtro ? registrosS21.filter(r => r.congregacion === filtro) : registrosS21;
+    if (registrosFiltrados.length === 0) {
+        sinReg.style.display = 'block';
+        document.querySelector('#tablaRegistros thead').style.display = 'none';
+        return;
+    }
+    sinReg.style.display = 'none';
+    document.querySelector('#tablaRegistros thead').style.display = '';
+    registrosFiltrados.forEach(r => {
+        tbody.innerHTML += `<tr>
+            <td>${r.nombre}</td>
+            <td>${r.congregacion}</td>
+            <td>${r.tipo}</td>
+            <td>${r.horas}</td>
+            <td>${r.cursos}</td>
+            <td>${r.participacion}</td>
+        </tr>`;
     });
 }
 
@@ -655,7 +592,6 @@ function subirExcel(index) {
     input.index = index;
     input.click();
 }
-
 document.getElementById('fileInput').addEventListener('change', function(e) {
     const file = e.target.files[0];
     if (!file) return;
@@ -672,218 +608,132 @@ document.getElementById('fileInput').addEventListener('change', function(e) {
 
 function procesarExcel(wb, file, index) {
     const pubSheet = wb.Sheets['PUB'];
-    if (!pubSheet) return alert('El archivo debe contener la hoja "PUB".');
-
+    if (!pubSheet) return alert('Falta hoja PUB');
     const get = (sh, cell) => sh[cell] ? sh[cell].v : '';
-    const nombre = get(pubSheet, 'C2')?.toString() || '';
+    const nombreCong = get(pubSheet, 'C2')?.toString() || '';
     const fechaRaw = get(pubSheet, 'C16')?.toString() || '';
     let fechaVisita = '';
     const match = fechaRaw.match(/(\d{2})\/(\d{2})\/(\d{4})/);
     if (match) fechaVisita = `${match[3]}-${match[2]}-${match[1]}`;
-    else {
-        const d = new Date(fechaRaw);
-        if (!isNaN(d)) fechaVisita = d.toISOString().split('T')[0];
-    }
+    else { const d = new Date(fechaRaw); if (!isNaN(d)) fechaVisita = d.toISOString().split('T')[0]; }
     if (!fechaVisita) return alert('Fecha no legible en C16.');
 
-    const datos = {
-        nombreCong: nombre,
-        fechaVisita,
-        pubActivos: get(pubSheet, 'K4'),
-        precReg: get(pubSheet, 'K6'),
-        precAux: get(pubSheet, 'K8'),
-        pubMeses: [],
-        paMeses: [],
-        prMeses: [],
-        reuMeses: [],
-        donMeses: []
-    };
+    // Obtener registros S-21 de esta congregación para sumarlos
+    const registrosCong = registrosS21.filter(r => r.congregacion === nombreCong);
+    const totalHorasS21 = registrosCong.reduce((sum, r) => sum + parseFloat(r.horas || 0), 0);
+    const totalCursosS21 = registrosCong.reduce((sum, r) => sum + parseFloat(r.cursos || 0), 0);
 
+    const datos = {
+        nombreCong, fechaVisita,
+        pubActivos: get(pubSheet, 'K4'), precReg: get(pubSheet, 'K6'), precAux: get(pubSheet, 'K8'),
+        pubMeses: [], paMeses: [], prMeses: [], reuMeses: [], donMeses: [],
+        horasS21: totalHorasS21,
+        cursosS21: totalCursosS21
+    };
     const meses = ['Jul','Ago','Sept','Oct','Nov','Dic','Ene'];
     for (let i=0; i<7; i++) {
         const f = 5+i;
-        datos.pubMeses.push({
-            mes: meses[i],
-            pub: get(pubSheet, `B${f}`),
-            horas: get(pubSheet, `D${f}`),
-            cursos: get(pubSheet, `F${f}`)
-        });
+        datos.pubMeses.push({ mes: meses[i], pub: get(pubSheet, `B${f}`), horas: get(pubSheet, `D${f}`), cursos: get(pubSheet, `F${f}`) });
     }
-
-    const paSheet = wb.Sheets['PA'];
-    if (paSheet) {
+    ['PA','PR'].forEach(hoja => {
+        const sh = wb.Sheets[hoja];
+        if (sh) {
+            const arr = hoja==='PA'? datos.paMeses : datos.prMeses;
+            for (let i=(hoja==='PA'?0:1); i<7; i++) {
+                const f = 5+i;
+                arr.push({ mes: meses[i], cant: get(sh, `B${f}`), horas: get(sh, `C${f}`), cursos: get(sh, `D${f}`) });
+            }
+        }
+    });
+    const reu = wb.Sheets['REU-DON'];
+    if (reu) {
         for (let i=0; i<7; i++) {
             const f = 5+i;
-            datos.paMeses.push({
-                mes: meses[i],
-                cant: get(paSheet, `B${f}`),
-                horas: get(paSheet, `C${f}`),
-                cursos: get(paSheet, `D${f}`)
-            });
+            datos.reuMeses.push({ mes: meses[i], entreSem: get(reu, `B${f}`), finSem: get(reu, `C${f}`) });
+            datos.donMeses.push({ mes: meses[i], om: get(reu, `F${f}`), resOm: get(reu, `G${f}`), cong: get(reu, `H${f}`), gastos: get(reu, `I${f}`), fnmto: get(reu, `J${f}`) });
         }
     }
-
-    const prSheet = wb.Sheets['PR'];
-    if (prSheet) {
-        for (let i=1; i<7; i++) {
-            const f = 5+i;
-            datos.prMeses.push({
-                mes: meses[i],
-                cant: get(prSheet, `B${f}`),
-                horas: get(prSheet, `C${f}`),
-                cursos: get(prSheet, `D${f}`)
-            });
-        }
-    }
-
-    const reuSheet = wb.Sheets['REU-DON'];
-    if (reuSheet) {
-        for (let i=0; i<7; i++) {
-            const f = 5+i;
-            datos.reuMeses.push({
-                mes: meses[i],
-                entreSem: get(reuSheet, `B${f}`),
-                finSem: get(reuSheet, `C${f}`)
-            });
-            datos.donMeses.push({
-                mes: meses[i],
-                om: get(reuSheet, `F${f}`),
-                resOm: get(reuSheet, `G${f}`),
-                cong: get(reuSheet, `H${f}`),
-                gastos: get(reuSheet, `I${f}`),
-                fnmto: get(reuSheet, `J${f}`)
-            });
-        }
-    }
-
-    // Actualizar congregación
     const cong = congregaciones[index];
     cong.ultimaVisita = fechaVisita;
-    let prox = new Date(fechaVisita);
-    prox.setDate(prox.getDate() + 182);
+    let prox = new Date(fechaVisita); prox.setDate(prox.getDate()+182);
     cong.proxVisita = prox.toISOString().split('T')[0];
-    guardar();
-    renderCongregaciones();
-    renderAgenda();
+    guardar(); renderCongregaciones(); renderAgenda();
 
-    // Guardar en IndexedDB
-    const id = Date.now().toString() + '_' + index;
-    const blob = new Blob([new Uint8Array(file.slice(0, file.size))], { type: file.type });
-    const trans = db.transaction(['informes'], 'readwrite');
-    const store = trans.objectStore('informes');
-    store.put({ id, index, nombre: cong.nombre, fecha: fechaVisita, blob });
-    historialMeta.push({
-        id,
-        congregacion: cong.nombre,
-        fecha: fechaVisita,
-        pubActivos: datos.pubActivos,
-        precReg: datos.precReg,
-        precAux: datos.precAux
-    });
-    guardar();
-    renderHistorial();
-    actualizarDashboard();
-
-    // Generar PDF
+    const id = Date.now().toString()+'_'+index;
+    const blob = new Blob([new Uint8Array(file.slice(0,file.size))], {type:file.type});
+    const trans = db.transaction(['informes'],'readwrite');
+    trans.objectStore('informes').put({ id, index, nombre:cong.nombre, fecha:fechaVisita, blob });
+    historialMeta.push({ id, congregacion:cong.nombre, fecha:fechaVisita, pubActivos:datos.pubActivos, precReg:datos.precReg, precAux:datos.precAux });
+    guardar(); renderHistorial(); actualizarDashboard();
     generarPDFProfesional(datos, id, cong.nombre);
-    alert(`✅ Datos guardados.\nPróxima visita: ${cong.proxVisita}`);
+    alert(`✅ Datos guardados.\nPróxima visita: ${cong.proxVisita}\nHoras S21 acumuladas: ${totalHorasS21}\nCursos S21 acumulados: ${totalCursosS21}`);
 }
 
-// ==================== PDF ====================
+// ==================== PDF DEL INFORME ====================
 function generarPDFProfesional(datos, id, nombreCong) {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF('p', 'mm', 'a4');
     const pageWidth = doc.internal.pageSize.getWidth();
     const margin = 12;
     let y = margin + 4;
-
-    doc.setFillColor(26, 38, 57);
-    doc.rect(0, 0, pageWidth, 18, 'F');
-    doc.setTextColor(255, 255, 255);
-    doc.setFont('helvetica', 'bold');
+    doc.setFillColor(26,38,57);
+    doc.rect(0,0,pageWidth,18,'F');
+    doc.setTextColor(255,255,255);
+    doc.setFont('helvetica','bold');
     doc.setFontSize(11);
-    doc.text('CIRCUITO CHI-03 · INFORME DE VISITA', pageWidth / 2, 11, { align: 'center' });
+    doc.text('CIRCUITO CHI-03 · INFORME DE VISITA', pageWidth/2, 11, {align:'center'});
     doc.setFontSize(8);
-    doc.text(`Generado: ${new Date().toLocaleDateString()}`, pageWidth - 14, 11, { align: 'right' });
-
-    doc.setTextColor(44, 62, 80);
+    doc.text(`Generado: ${new Date().toLocaleDateString()}`, pageWidth-14, 11, {align:'right'});
+    doc.setTextColor(44,62,80);
     doc.setFontSize(13);
-    doc.text(`Congregación: ${datos.nombreCong}`, margin, y);
-    y += 6;
+    doc.text(`Congregación: ${datos.nombreCong}`, margin, y); y += 6;
     doc.setFontSize(10);
     doc.text(`Visita: ${datos.fechaVisita}    Pub.Act.: ${datos.pubActivos||'—'}    PR: ${datos.precReg||'—'}    PA: ${datos.precAux||'—'}`, margin, y);
+    if (datos.horasS21 || datos.cursosS21) {
+        y += 6;
+        doc.text(`Horas S21: ${datos.horasS21}    Cursos S21: ${datos.cursosS21}`, margin, y);
+    }
     y += 8;
-
     function tablaCompacta(titulo, headers, data) {
         if (y > 250) { doc.addPage(); y = 20; }
-        doc.setFontSize(11);
-        doc.setTextColor(26, 38, 57);
-        doc.text(titulo, margin, y);
-        y += 5;
-        doc.autoTable({
-            startY: y,
-            head: [headers],
-            body: data,
-            theme: 'plain',
+        doc.setFontSize(11); doc.setTextColor(26,38,57); doc.text(titulo, margin, y); y += 5;
+        doc.autoTable({ startY: y, head: [headers], body: data, theme: 'plain',
             styles: { fontSize: 8.5, cellPadding: 2 },
-            headStyles: { fillColor: [26, 38, 57], textColor: [255, 255, 255], fontSize: 9 },
-            margin: { left: margin, right: margin }
-        });
+            headStyles: { fillColor: [26,38,57], textColor: [255,255,255], fontSize: 9 },
+            margin: { left: margin, right: margin } });
         y = doc.lastAutoTable.finalY + 6;
     }
-
-    const pubData = datos.pubMeses.map(m => [m.mes, m.pub, m.horas, m.cursos]);
-    tablaCompacta('Publicadores', ['Mes', 'Pub', 'Horas', 'Cursos'], pubData);
-
-    if (datos.paMeses.some(m => m.cant)) {
-        tablaCompacta('Prec. Auxiliares', ['Mes', 'PA', 'Horas', 'Cursos'], datos.paMeses.map(m => [m.mes, m.cant, m.horas, m.cursos]));
-    }
-    if (datos.prMeses.some(m => m.cant)) {
-        tablaCompacta('Prec. Regulares', ['Mes', 'PR', 'Horas', 'Cursos'], datos.prMeses.map(m => [m.mes, m.cant, m.horas, m.cursos]));
-    }
-    if (datos.reuMeses.length > 0) {
-        tablaCompacta('Asistencia', ['Mes', 'Entre Sem.', 'Fin Sem.'], datos.reuMeses.map(m => [m.mes, m.entreSem, m.finSem]));
-    }
-    if (datos.donMeses.some(m => m.om || m.cong)) {
-        tablaCompacta('Donaciones', ['Mes', 'OM', 'RES/OM', 'CONG', 'GASTOS', 'FNMTO'], datos.donMeses.map(m => [m.mes, m.om, m.resOm, m.cong, m.gastos, m.fnmto]));
-    }
-
+    tablaCompacta('Publicadores', ['Mes','Pub','Horas','Cursos'], datos.pubMeses.map(m=>[m.mes, m.pub, m.horas, m.cursos]));
+    if (datos.paMeses.some(m=>m.cant)) tablaCompacta('Prec. Auxiliares', ['Mes','PA','Horas','Cursos'], datos.paMeses.map(m=>[m.mes, m.cant, m.horas, m.cursos]));
+    if (datos.prMeses.some(m=>m.cant)) tablaCompacta('Prec. Regulares', ['Mes','PR','Horas','Cursos'], datos.prMeses.map(m=>[m.mes, m.cant, m.horas, m.cursos]));
+    if (datos.reuMeses.length) tablaCompacta('Asistencia', ['Mes','Entre Sem.','Fin Sem.'], datos.reuMeses.map(m=>[m.mes, m.entreSem, m.finSem]));
+    if (datos.donMeses.some(m=>m.om||m.cong)) tablaCompacta('Donaciones', ['Mes','OM','RES/OM','CONG','GASTOS','FNMTO'], datos.donMeses.map(m=>[m.mes, m.om, m.resOm, m.cong, m.gastos, m.fnmto]));
     const pdfBlob = doc.output('blob');
-    const trans = db.transaction(['informes'], 'readwrite');
-    const store = trans.objectStore('informes');
-    store.get(id).onsuccess = e => {
+    const trans = db.transaction(['informes'],'readwrite');
+    trans.objectStore('informes').get(id).onsuccess = e => {
         const rec = e.target.result;
-        if (rec) { rec.pdfBlob = pdfBlob; store.put(rec); }
+        if (rec) { rec.pdfBlob = pdfBlob; trans.objectStore('informes').put(rec); }
         doc.save(`Informe_${nombreCong.replace(/ /g,'_')}_${datos.fechaVisita}.pdf`);
     };
 }
 
 // ==================== DESCARGAS ====================
 function descargarExcel(id) {
-    const trans = db.transaction(['informes'], 'readonly');
-    trans.objectStore('informes').get(id).onsuccess = e => {
+    db.transaction(['informes'],'readonly').objectStore('informes').get(id).onsuccess = e => {
         const r = e.target.result;
         if (r?.blob) {
             const url = URL.createObjectURL(r.blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `${r.nombre.replace(/ /g,'_')}_${r.fecha}.xlsx`;
-            a.click();
+            const a = document.createElement('a'); a.href=url; a.download=`${r.nombre.replace(/ /g,'_')}_${r.fecha}.xlsx`; a.click();
             URL.revokeObjectURL(url);
         } else alert('Archivo no encontrado.');
     };
 }
-
 function descargarPDF(id) {
-    const trans = db.transaction(['informes'], 'readonly');
-    trans.objectStore('informes').get(id).onsuccess = e => {
+    db.transaction(['informes'],'readonly').objectStore('informes').get(id).onsuccess = e => {
         const r = e.target.result;
         if (r?.pdfBlob) {
             const url = URL.createObjectURL(r.pdfBlob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `Informe_${r.nombre.replace(/ /g,'_')}_${r.fecha}.pdf`;
-            a.click();
+            const a = document.createElement('a'); a.href=url; a.download=`Informe_${r.nombre.replace(/ /g,'_')}_${r.fecha}.pdf`; a.click();
             URL.revokeObjectURL(url);
         } else alert('PDF no disponible.');
     };
@@ -898,7 +748,71 @@ function agregarCongregacion() {
         guardar();
         renderCongregaciones();
         renderAgenda();
+        actualizarSelectoresCongregacion();
     }
+}
+
+// ==================== PROCESAR PDF S-21 ====================
+async function procesarPDF(input) {
+    const file = input.files[0];
+    if (!file) return;
+    const congregacion = document.getElementById('selectCongregacionPDF').value;
+    if (!congregacion) return alert('Selecciona la congregación antes de subir el PDF.');
+
+    const arrayBuffer = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+    let textoCompleto = '';
+    for (let i = 1; i <= pdf.numPages; i++) {
+        const page = await pdf.getPage(i);
+        const content = await page.getTextContent();
+        const strings = content.items.map(item => item.str).join(' ');
+        textoCompleto += strings + '\n';
+    }
+    const datos = extraerDatosS21(textoCompleto, congregacion);
+    registrosS21.push(datos);
+    guardar();
+    renderRegistros();
+    document.getElementById('resultadoPDF').innerHTML = `
+        <div class="card" style="background:#e8f0fe; border:1px solid var(--google-blue);">
+            <strong>Datos extraídos:</strong><br>
+            Nombre: ${datos.nombre}<br>
+            Congregación: ${datos.congregacion}<br>
+            Tipo: ${datos.tipo}<br>
+            Horas totales: ${datos.horas}<br>
+            Cursos bíblicos: ${datos.cursos}<br>
+            Participación: ${datos.participacion}
+        </div>`;
+    input.value = '';
+}
+
+function extraerDatosS21(texto, congregacion) {
+    const limpio = texto.replace(/\s+/g, ' ').trim();
+    const nombreMatch = limpio.match(/Nombre:\s*([^\n]+)/);
+    const nombre = nombreMatch ? nombreMatch[1].trim() : 'Desconocido';
+    let tipo = 'Publicador';
+    if (/☒\s*Precursor\s*regular/.test(limpio) || /☑\s*Precursor\s*regular/.test(limpio)) tipo = 'Precursor regular';
+    else if (/☒\s*Precursor\s*auxiliar/.test(limpio) || /☑\s*Precursor\s*auxiliar/.test(limpio)) tipo = 'Precursor auxiliar';
+    else if (/☒\s*Anciano/.test(limpio)) tipo = 'Anciano';
+    else if (/☒\s*Siervo\s*ministerial/.test(limpio)) tipo = 'Siervo ministerial';
+    if (tipo === 'Publicador') {
+        if (/Precursor\s*regular/.test(limpio) && !/☐\s*Precursor\s*regular/.test(limpio)) tipo = 'Precursor regular';
+        else if (/Precursor\s*auxiliar/.test(limpio) && !/☐\s*Precursor\s*auxiliar/.test(limpio)) tipo = 'Precursor auxiliar';
+    }
+    const lineas = limpio.split('\n');
+    let horas = 0, cursos = 0, participacion = 0;
+    const mesesRegex = /(Septiembre|Octubre|Noviembre|Diciembre|Enero|Febrero|Marzo|Abril|Mayo|Junio|Julio|Agosto)/i;
+    for (let linea of lineas) {
+        if (mesesRegex.test(linea)) {
+            const numeros = linea.match(/\d+(\.\d+)?/g);
+            if (numeros && numeros.length >= 3) {
+                participacion += parseFloat(numeros[0]) || 0;
+                cursos += parseFloat(numeros[1]) || 0;
+                if (numeros.length >= 4) horas += parseFloat(numeros[3]) || 0;
+                else if (numeros.length === 3) horas += parseFloat(numeros[2]) || 0;
+            }
+        }
+    }
+    return { id: Date.now().toString(), nombre, congregacion, tipo, horas: horas.toFixed(1), cursos, participacion };
 }
 
 // ==================== UTILIDADES ====================
@@ -912,6 +826,5 @@ function ISOWeekNum(d) {
 // Inicializar
 cargarDatos();
 </script>
-
 </body>
 </html>
