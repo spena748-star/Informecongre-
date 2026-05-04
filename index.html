@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Control de Circuito CHI‑03 – Grupo Tagalo (Informe Completo PDF)</title>
+<!-- Librerías -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+<style>
+* { box-sizing:border-box; margin:0; padding:0; font-family:'Segoe UI',sans-serif; }
+body { background:#f0f2f5; color:#333; }
+.app { max-width:1300px; margin:20px auto; background:white; border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,0.1); overflow:hidden; }
+nav { background:#2c3e50; display:flex; }
+nav button { flex:1; background:transparent; border:none; padding:15px; color:white; font-size:16px; cursor:pointer; transition:0.3s; }
+nav button:hover, nav button.active { background:#34495e; }
+.tab { padding:20px; display:none; }
+.tab.active { display:block; }
+h2 { margin-bottom:15px; color:#2c3e50; }
+table { width:100%; border-collapse:collapse; margin-top:10px; }
+th, td { border:1px solid #ddd; padding:8px; text-align:left; font-size:14px; }
+th { background:#ecf0f1; }
+.btn { background:#3498db; color:white; border:none; padding:8px 16px; border-radius:6px; cursor:pointer; font-size:14px; margin:2px; transition:0.2s; }
+.btn:hover { background:#2980b9; }
+.btn-sm { padding:5px 12px; font-size:13px; }
+.badge { padding:4px 10px; border-radius:12px; font-size:12px; color:white; }
+.bg-green { background:#2ecc71; }
+.bg-orange { background:#e67e22; }
+.bg-purple { background:#9b59b6; }
+.bg-blue { background:#3498db; }
+</style>
+</head>
+<body>
+<div class="app">
+  <nav>
+    <button class="tab-link active" data-tab="cong">🏠 Congregaciones</button>
+    <button class="tab-link" data-tab="agenda">📅 Agenda</button>
+    <button class="tab-link" data-tab="historial">📂 Historial</button>
+  </nav>
+
+  <div id="cong" class="tab active">
+    <h2>📋 Congregaciones del Circuito</h2>
+    <table id="tablaCong">
+      <thead><tr><th>Código</th><th>Congregación</th><th>Última visita</th><th>Próx. visita</th><th>Acción</th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <div style="margin-top:10px;"><button class="btn" onclick="agregarCongregacion()">➕ Agregar Congregación</button></div>
+  </div>
+
+  <div id="agenda" class="tab">
+    <h2>📅 Agenda</h2>
+    <table id="tablaAgenda">
+      <thead><tr><th>Sem.</th><th>Inicio</th><th>Fin</th><th>Actividad</th><th>Tipo</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <div id="historial" class="tab">
+    <h2>📂 Historial de visitas</h2>
+    <table id="tablaHist">
+      <thead><tr><th>Congregación</th><th>Fecha</th><th>Pub.Act.</th><th>Prec.Reg.</th><th>Prec.Aux.</th><th>Excel</th><th>PDF</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+
+<input type="file" id="fileInput" accept=".xlsx, .xls" style="display:none" />
+
+<script>
+// ==================== BASE DE DATOS IndexedDB ====================
+const DB_NAME = 'CircuitoCHI03DB';
+let db;
+const request = indexedDB.open(DB_NAME, 1);
+request.onupgradeneeded = e => {
+  db = e.target.result;
+  if (!db.objectStoreNames.contains('informes')) {
+    db.createObjectStore('informes', { keyPath: 'id' });
+  }
+};
+request.onsuccess = e => { db = e.target.result; cargarDatos(); };
+request.onerror = () => alert('No se pudo abrir la base de datos local.');
+
+// ==================== DATOS LOCALES ====================
+const STORAGE_KEY = 'circuito_chi03_meta';
+let congregaciones = [];
+let agendaExtra = [];
+let historialMeta = [];
+
+function guardarMeta() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({ congregaciones, agendaExtra, historialMeta }));
+}
+
+function cargarDatos() {
+  const json = localStorage.getItem(STORAGE_KEY);
+  if (json) {
+    const data = JSON.parse(json);
+    congregaciones = data.congregaciones || [];
+    agendaExtra = data.agendaExtra || [];
+    historialMeta = data.historialMeta || [];
+  } else {
+    // Datos iniciales de las 19 congregaciones (CHI-03)
+    congregaciones = [
+      { codigo: "7898", nombre: "Omega-Cd. Juárez", ultimaVisita: "", proxVisita: "" },
+      { codigo: "74799", nombre: "Anémona-Cd. Juárez", ultimaVisita: "", proxVisita: "" },
+      { codigo: "76570", nombre: "Bambú-Juárez", ultimaVisita: "", proxVisita: "" },
+      { codigo: "272260", nombre: "Cañaveral-Juárez", ultimaVisita: "", proxVisita: "" },
+      { codigo: "70581", nombre: "Cártamo-Juárez", ultimaVisita: "", proxVisita: "" },
+      { codigo: "7542", nombre: "Del Real-Cd. Juárez", ultimaVisita: "", proxVisita: "" },
+      { codigo: "7609", nombre: "El Granjero-Juárez", ultimaVisita: "", proxVisita: "" },
+      { codigo: "102350", nombre: "Grama-Juárez", ultimaVisita: "", proxVisita: "" },
+      { codigo: "126177", nombre: "Hacienda de las Torres-Juárez", ultimaVisita: "", proxVisita: "" },
+      { codigo: "265736", nombre: "Jardines del Valle-Juárez", ultimaVisita: "", proxVisita: "" },
+      { codigo: "88732", nombre: "Juárez Nuevo-Juárez", ultimaVisita: "", proxVisita: "" },
+      { codigo: "39362", nombre: "Montes Himalaya-Juárez", ultimaVisita: "", proxVisita: "" },
+      { codigo: "115964", nombre: "Nueva Zelanda-Juárez", ultimaVisita: "", proxVisita: "" },
+      { codigo: "45567", nombre: "Oasis-Juárez", ultimaVisita: "", proxVisita: "" },
+      { codigo: "222794", nombre: "Parajes del Sol-Juárez", ultimaVisita: "", proxVisita: "" },
+      { codigo: "108738", nombre: "Roma-Juárez", ultimaVisita: "", proxVisita: "" },
+      { codigo: "115287", nombre: "Satélite-Juárez", ultimaVisita: "", proxVisita: "" },
+      { codigo: "126300", nombre: "Solidaridad-Juárez", ultimaVisita: "", proxVisita: "" },
+      { codigo: "50989", nombre: "Waterfill-Juárez", ultimaVisita: "", proxVisita: "" }
+    ];
+  }
+  calcularProximasVisitas();
+  renderCongregaciones();
+  renderAgenda();
+  renderHistorial();
+}
+
+function calcularProximasVisitas() {
+  congregaciones.forEach(c => {
+    if (c.ultimaVisita && !isNaN(new Date(c.ultimaVisita).getTime())) {
+      let f = new Date(c.ultimaVisita);
+      f.setDate(f.getDate() + 182);
+      c.proxVisita = f.toISOString().split('T')[0];
+    } else {
+      c.proxVisita = '';
+    }
+  });
+}
+
+// ==================== NAVEGACIÓN ====================
+document.querySelectorAll('.tab-link').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-link').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.tab).classList.add('active');
+  });
+});
+
+// ==================== CONGREGACIONES ====================
+function renderCongregaciones() {
+  const tbody = document.querySelector('#tablaCong tbody');
+  tbody.innerHTML = '';
+  congregaciones.forEach((c, i) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${c.codigo}</td>
+      <td>${c.nombre}</td>
+      <td>${c.ultimaVisita || '—'}</td>
+      <td>${c.proxVisita || '—'}</td>
+      <td><button class="btn btn-sm" onclick="subirExcel(${i})">📤 Subir Excel visita</button></td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+function agregarCongregacion() {
+  const cod = prompt('Código:');
+  const nom = prompt('Nombre:');
+  if (cod && nom) {
+    congregaciones.push({ codigo: cod, nombre: nom, ultimaVisita: '', proxVisita: '' });
+    guardarMeta();
+    renderCongregaciones();
+  }
+}
+
+function subirExcel(index) {
+  const input = document.getElementById('fileInput');
+  input.index = index;
+  input.click();
+}
+
+document.getElementById('fileInput').addEventListener('change', function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const index = this.index;
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    const data = new Uint8Array(ev.target.result);
+    const wb = XLSX.read(data, { type: 'array' });
+    procesarExcel(wb, file, index);
+  };
+  reader.readAsArrayBuffer(file);
+});
+
+function procesarExcel(wb, file, index) {
+  // Obtener hojas necesarias
+  const hojaPub = wb.Sheets['PUB'];
+  const hojaPA = wb.Sheets['PA'];
+  const hojaPR = wb.Sheets['PR'];
+  const hojaREUDON = wb.Sheets['REU-DON'];
+  if (!hojaPub) return alert('El archivo debe contener la hoja "PUB".');
+
+  const getCell = (sheet, cell) => sheet[cell] ? sheet[cell].v : '';
+
+  // Datos de congregación y fecha
+  const nombreCong = getCell(hojaPub, 'C2')?.toString() || '';
+  const fechaVisitaRaw = getCell(hojaPub, 'C16')?.toString() || '';
+  let fechaVisita = '';
+  const match = fechaVisitaRaw.match(/(\d{2})\/(\d{2})\/(\d{4})/);
+  if (match) {
+    fechaVisita = `${match[3]}-${match[2]}-${match[1]}`;
+  } else {
+    const d = new Date(fechaVisitaRaw);
+    if (!isNaN(d)) fechaVisita = d.toISOString().split('T')[0];
+  }
+  if (!fechaVisita) return alert('No se pudo determinar la fecha de visita (celda C16).');
+
+  // Extraer datos para el historial y el PDF
+  const datosPDF = {
+    nombreCong,
+    fechaVisitaRaw,
+    fechaVisita,
+    // Hoja PUB
+    pubMeses: [],
+    pubActivos: getCell(hojaPub, 'K4'),
+    precReg: getCell(hojaPub, 'K6'),
+    precAux: getCell(hojaPub, 'K8'),
+    totalPub: getCell(hojaPub, 'B12'),
+    totalHoras: getCell(hojaPub, 'D12'),
+    totalCursos: getCell(hojaPub, 'F12'),
+    promPub: getCell(hojaPub, 'B13'),
+    promHoras: getCell(hojaPub, 'D13'),
+    promCursos: getCell(hojaPub, 'F13'),
+    // Hoja PA
+    paMeses: [],
+    // Hoja PR
+    prMeses: [],
+    // Hoja REU-DON
+    reuMeses: [],
+    donMeses: []
+  };
+
+  // Rellenar meses PUB (filas 5 a 11)
+  const mesesNombres = ['Jul','Ago','Sept','Oct','Nov','Dic','Ene'];
+  for (let i=0; i<7; i++) {
+    const f = 5 + i;
+    datosPDF.pubMeses.push({
+      mes: mesesNombres[i],
+      publicadores: getCell(hojaPub, `B${f}`),
+      horas: getCell(hojaPub, `D${f}`),
+      cursos: getCell(hojaPub, `F${f}`)
+    });
+  }
+
+  // PA (filas 5 a 11, columnas B, C, D)
+  if (hojaPA) {
+    for (let i=0; i<7; i++) {
+      const f = 5 + i;
+      datosPDF.paMeses.push({
+        mes: mesesNombres[i],
+        pa: getCell(hojaPA, `B${f}`),
+        horas: getCell(hojaPA, `C${f}`),
+        cursos: getCell(hojaPA, `D${f}`)
+      });
+    }
+  }
+
+  // PR (filas 6 a 12, columnas B, C, D)
+  if (hojaPR) {
+    for (let i=1; i<7; i++) {  // Empezar en Ago (fila 6)
+      const f = 5 + i;
+      datosPDF.prMeses.push({
+        mes: mesesNombres[i],
+        pr: getCell(hojaPR, `B${f}`),
+        horas: getCell(hojaPR, `C${f}`),
+        cursos: getCell(hojaPR, `D${f}`)
+      });
+    }
+  }
+
+  // REU-DON: Asistencia (filas 5 a 11, columnas B, C)
+  if (hojaREUDON) {
+    for (let i=0; i<7; i++) {
+      const f = 5 + i;
+      datosPDF.reuMeses.push({
+        mes: mesesNombres[i],
+        entreSemana: getCell(hojaREUDON, `B${f}`),
+        finSemana: getCell(hojaREUDON, `C${f}`)
+      });
+    }
+    // Donaciones: columnas F a J (filas 5 a 11)
+    for (let i=0; i<7; i++) {
+      const f = 5 + i;
+      datosPDF.donMeses.push({
+        mes: mesesNombres[i],
+        om: getCell(hojaREUDON, `F${f}`),
+        resOm: getCell(hojaREUDON, `G${f}`),
+        cong: getCell(hojaREUDON, `H${f}`),
+        gastos: getCell(hojaREUDON, `I${f}`),
+        fnmtoSR: getCell(hojaREUDON, `J${f}`)
+      });
+    }
+  }
+
+  // Actualizar congregación
+  const cong = congregaciones[index];
+  cong.ultimaVisita = fechaVisita;
+  let prox = new Date(fechaVisita);
+  prox.setDate(prox.getDate() + 182);
+  cong.proxVisita = prox.toISOString().split('T')[0];
+  guardarMeta();
+  renderCongregaciones();
+
+  // Guardar archivo Excel en IndexedDB
+  const id = Date.now().toString() + '_' + index;
+  const blob = new Blob([new Uint8Array(file.slice(0, file.size))], { type: file.type });
+  const trans = db.transaction(['informes'], 'readwrite');
+  const store = trans.objectStore('informes');
+  store.put({ id, index, nombre: cong.nombre, fecha: fechaVisita, blob });
+
+  // Guardar metadatos
+  historialMeta.push({
+    id,
+    congregacion: cong.nombre,
+    fecha: fechaVisita,
+    pubActivos: datosPDF.pubActivos,
+    precReg: datosPDF.precReg,
+    precAux: datosPDF.precAux
+  });
+  guardarMeta();
+  renderHistorial();
+
+  // Generar PDF completo y almacenarlo
+  generarPDFCompleto(datosPDF, id, cong.nombre, fechaVisita);
+
+  alert(`✅ Datos guardados.\nPróxima visita: ${cong.proxVisita}`);
+}
+
+// ==================== GENERAR PDF COMPLETO CON TODAS LAS HOJAS ====================
+function generarPDFCompleto(datos, id, nombreCong, fechaVisita) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF('p', 'mm', 'a4');
+  let y = 20;
+
+  // Título principal
+  doc.setFontSize(16);
+  doc.text('PROMEDIO DE ACTIVIDAD POR PUBLICADORES', 105, y, { align: 'center' });
+  y += 8;
+  doc.setFontSize(12);
+  doc.text(`CONGREGACIÓN: ${datos.nombreCong}`, 14, y);
+  y += 6;
+  doc.text(`VISITA: ${datos.fechaVisitaRaw}`, 14, y);
+  y += 10;
+
+  // ----- Sección PUB -----
+  doc.setFontSize(14);
+  doc.text('Publicadores', 14, y);
+  y += 8;
+  const pubHeaders = [['Mes', 'Publicadores', 'Horas', 'Cursos B.']];
+  const pubData = datos.pubMeses.map(m => [m.mes, m.publicadores, m.horas, m.cursos]);
+  pubData.push(['TOTALES', datos.totalPub, datos.totalHoras, datos.totalCursos]);
+  pubData.push(['PROMEDIOS', datos.promPub, datos.promHoras, datos.promCursos]);
+  doc.autoTable({
+    startY: y,
+    head: pubHeaders,
+    body: pubData,
+    theme: 'grid',
+    styles: { fontSize: 10 },
+    headStyles: { fillColor: [44, 62, 80] }
+  });
+  y = doc.lastAutoTable.finalY + 8;
+
+  // Indicadores extra
+  doc.setFontSize(12);
+  doc.text(`Publicadores Activos: ${datos.pubActivos || ''}`, 14, y);
+  y += 6;
+  doc.text(`Precursores Regulares: ${datos.precReg || ''}`, 14, y);
+  y += 6;
+  doc.text(`Precursores Auxiliares: ${datos.precAux || ''}`, 14, y);
+  y += 8;
+
+  // ----- Sección PA (Precursores Auxiliares) -----
+  if (datos.paMeses.length > 0) {
+    doc.addPage();
+    y = 20;
+    doc.setFontSize(14);
+    doc.text('PROMEDIO DE ACTIVIDAD POR PRECURSORES AUXILIARES', 14, y);
+    y += 10;
+    const paHeaders = [['Mes', 'PA', 'Horas', 'Cursos B.']];
+    const paData = datos.paMeses.map(m => [m.mes, m.pa, m.horas, m.cursos]);
+    doc.autoTable({
+      startY: y,
+      head: paHeaders,
+      body: paData,
+      theme: 'grid',
+      styles: { fontSize: 10 },
+      headStyles: { fillColor: [44, 62, 80] }
+    });
+    y = doc.lastAutoTable.finalY + 10;
+  }
+
+  // ----- Sección PR (Precursores Regulares) -----
+  if (datos.prMeses.length > 0) {
+    doc.addPage();
+    y = 20;
+    doc.setFontSize(14);
+    doc.text('PROMEDIO DE ACTIVIDAD POR PRECURSORES REGULARES', 14, y);
+    y += 10;
+    const prHeaders = [['Mes', 'PR', 'Horas', 'Cursos B.']];
+    const prData = datos.prMeses.map(m => [m.mes, m.pr, m.horas, m.cursos]);
+    doc.autoTable({
+      startY: y,
+      head: prHeaders,
+      body: prData,
+      theme: 'grid',
+      styles: { fontSize: 10 },
+      headStyles: { fillColor: [44, 62, 80] }
+    });
+    y = doc.lastAutoTable.finalY + 10;
+  }
+
+  // ----- Sección REU-DON: Asistencia -----
+  if (datos.reuMeses.length > 0) {
+    doc.addPage();
+    y = 20;
+    doc.setFontSize(14);
+    doc.text('PROMEDIO DE ASISTENCIA A LAS REUNIONES', 14, y);
+    y += 10;
+    const reuHeaders = [['Mes', 'Entre Semana', 'Fin de Semana']];
+    const reuData = datos.reuMeses.map(m => [m.mes, m.entreSemana, m.finSemana]);
+    doc.autoTable({
+      startY: y,
+      head: reuHeaders,
+      body: reuData,
+      theme: 'grid',
+      styles: { fontSize: 10 },
+      headStyles: { fillColor: [44, 62, 80] }
+    });
+    y = doc.lastAutoTable.finalY + 10;
+  }
+
+  // ----- Sección REU-DON: Donaciones -----
+  if (datos.donMeses.length > 0) {
+    // Verificar si hay datos (no todos vacíos)
+    const tieneDatos = datos.donMeses.some(m => m.om || m.resOm || m.cong || m.gastos || m.fnmtoSR);
+    if (tieneDatos) {
+      doc.addPage();
+      y = 20;
+      doc.setFontSize(14);
+      doc.text('DONACIONES DE CONGREGACIÓN', 14, y);
+      y += 10;
+      const donHeaders = [['Mes', 'OM', 'RES/OM', 'CONG', 'GASTOS', 'FNMTO SR']];
+      const donData = datos.donMeses.map(m => [m.mes, m.om, m.resOm, m.cong, m.gastos, m.fnmtoSR]);
+      doc.autoTable({
+        startY: y,
+        head: donHeaders,
+        body: donData,
+        theme: 'grid',
+        styles: { fontSize: 10 },
+        headStyles: { fillColor: [44, 62, 80] }
+      });
+    }
+  }
+
+  // Guardar PDF como blob
+  const pdfBlob = doc.output('blob');
+  const trans = db.transaction(['informes'], 'readwrite');
+  const store = trans.objectStore('informes');
+  store.get(id).onsuccess = function(e) {
+    const record = e.target.result;
+    if (record) {
+      record.pdfBlob = pdfBlob;
+      store.put(record);
+      // Descargar automáticamente
+      doc.save(`Informe_${nombreCong.replace(/ /g,'_')}_${fechaVisita}.pdf`);
+    }
+  };
+}
+
+// ==================== AGENDA ====================
+function renderAgenda() {
+  let filas = [];
+  congregaciones.forEach(c => {
+    if (c.proxVisita && !isNaN(new Date(c.proxVisita).getTime())) {
+      let f = new Date(c.proxVisita);
+      let inicio = new Date(f);
+      inicio.setDate(f.getDate() - f.getDay() + 1);
+      let fin = new Date(inicio);
+      fin.setDate(inicio.getDate() + 6);
+      let semana = ISOWeekNum(f);
+      filas.push({ semana, inicio: inicio.toISOString().split('T')[0], fin: fin.toISOString().split('T')[0], descripcion: 'Visita ' + c.nombre, tipo: 'Visita' });
+    }
+  });
+  agendaExtra.forEach(e => filas.push(e));
+  filas.sort((a,b) => a.semana - b.semana);
+  const tbody = document.querySelector('#tablaAgenda tbody');
+  tbody.innerHTML = '';
+  filas.forEach(f => {
+    let clase = f.tipo === 'Visita' ? 'bg-green' : f.tipo === 'Asamblea' ? 'bg-orange' : f.tipo === 'Clase' ? 'bg-purple' : 'bg-blue';
+    tbody.innerHTML += `<tr><td>${f.semana}</td><td>${f.inicio}</td><td>${f.fin}</td><td><span class="badge ${clase}">${f.tipo}</span> ${f.descripcion}</td><td>${f.tipo}</td></tr>`;
+  });
+}
+
+function ISOWeekNum(d) {
+  d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay()||7));
+  var yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+  return Math.ceil((((d - yearStart) / 86400000) + 1)/7);
+}
+
+// ==================== HISTORIAL ====================
+function renderHistorial() {
+  const tbody = document.querySelector('#tablaHist tbody');
+  tbody.innerHTML = '';
+  historialMeta.forEach(h => {
+    tbody.innerHTML += `<tr>
+      <td>${h.congregacion}</td>
+      <td>${h.fecha}</td>
+      <td>${h.pubActivos || '—'}</td>
+      <td>${h.precReg || '—'}</td>
+      <td>${h.precAux || '—'}</td>
+      <td><button class="btn btn-sm" onclick="descargarExcel('${h.id}')">⬇️ Excel</button></td>
+      <td><button class="btn btn-sm" onclick="descargarPDF('${h.id}')">⬇️ PDF</button></td>
+    </tr>`;
+  });
+}
+
+function descargarExcel(id) {
+  const trans = db.transaction(['informes'], 'readonly');
+  const store = trans.objectStore('informes');
+  store.get(id).onsuccess = (e) => {
+    const record = e.target.result;
+    if (record && record.blob) {
+      const url = URL.createObjectURL(record.blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${record.nombre.replace(/ /g,'_')}_${record.fecha}.xlsx`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } else alert('Archivo no encontrado.');
+  };
+}
+
+function descargarPDF(id) {
+  const trans = db.transaction(['informes'], 'readonly');
+  const store = trans.objectStore('informes');
+  store.get(id).onsuccess = (e) => {
+    const record = e.target.result;
+    if (record && record.pdfBlob) {
+      const url = URL.createObjectURL(record.pdfBlob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Informe_${record.nombre.replace(/ /g,'_')}_${record.fecha}.pdf`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } else {
+      alert('PDF no disponible. Vuelve a subir el Excel.');
+    }
+  };
+}
+
+// Inicialización
+cargarDatos();
+</script>
+</body>
+</html>
