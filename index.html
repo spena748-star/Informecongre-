@@ -1,244 +1,452 @@
 <!DOCTYPE html>
 
-<html lang="es">
-<head>
+<html class="light" lang="es"><head>
 <meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Circuito CHI-03 - App de Gestión</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,100..1000&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>Circuito CHI-03 Admin</title>
+<!-- PWA and Meta Tags for Professional Look -->
+<meta content="#1a73e8" name="theme-color"/>
+<meta content="yes" name="mobile-web-app-capable"/>
+<meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"/>
+<link href="data:application/json;base64,ewogICJuYW1lIjogIkNpcmN1aXRvIENISS0wMyIsCiAgInNob3J0X25hbWUiOiAiQ0hJLTAzIiwKICAic3RhcnRfdXJsIjogIi4iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJiYWNrZ3JvdW5kX2NvbG9yIjogIiMxYTczZTgiLAogICJ0aGVtZV9jb2xvciI6ICIjMWE3M2U4IiwKICAiaWNvbnMiOiBbCiAgICB7CiAgICAgICJzcmMiOiAie3tkYXRhOmltYWdlOklNQUdFXzE2fX0iLAogICAgICAic2l6ZXMiOiAiMTAyNHgxMDI0IiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIiwKICAgICAgInB1cnBvc2UiOiAiYW55IG1hc2thYmxlIgogICAgfQogIF0KfQ==" rel="manifest"/><link href="https://lh3.googleusercontent.com/aida/ADBb0uiAOw9xatGNH0sye1EOJfLgw3_wxHkom47MzcGYlEXAkUVfBNQVo4nwNhAp0oPJ3PTssNK34CVn6E3tVEGWvJ_h18tkvvF_2fuDxTcpU-6eaQO9hQDI_7zE47QwmJZ_-vyVtRiQIKa4sdM_zVU1_pU4QcgDEE-c-R8aq6binBVbHFmo9yXhCO6MpFbTsPSTOAtlOa2CY0jZ6OW4m7yI-lTXtjyiWYe5GFWOpoitu__u5XIPcw7C7xOSDAaL" rel="apple-touch-icon"/><link href="https://lh3.googleusercontent.com/aida/ADBb0uiAOw9xatGNH0sye1EOJfLgw3_wxHkom47MzcGYlEXAkUVfBNQVo4nwNhAp0oPJ3PTssNK34CVn6E3tVEGWvJ_h18tkvvF_2fuDxTcpU-6eaQO9hQDI_7zE47QwmJZ_-vyVtRiQIKa4sdM_zVU1_pU4QcgDEE-c-R8aq6binBVbHFmo9yXhCO6MpFbTsPSTOAtlOa2CY0jZ6OW4m7yI-lTXtjyiWYe5GFWOpoitu__u5XIPcw7C7xOSDAaL" rel="icon" type="image/png"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:wght@100..1000&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Use Tailwind Config from Design System -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-background": "#181c20",
+                    "background": "#f7f9ff",
+                    "surface-container-highest": "#dfe3e8",
+                    "tertiary": "#795900",
+                    "tertiary-container": "#987000",
+                    "outline": "#727785",
+                    "on-surface-variant": "#414754",
+                    "surface-tint": "#005bc0",
+                    "inverse-primary": "#adc7ff",
+                    "on-secondary": "#ffffff",
+                    "surface-bright": "#f7f9ff",
+                    "surface-dim": "#d7dae0",
+                    "on-primary-container": "#ffffff",
+                    "secondary-fixed": "#89fa9b",
+                    "surface": "#f7f9ff",
+                    "on-primary-fixed": "#001a41",
+                    "on-secondary-container": "#00722f",
+                    "primary-container": "#1a73e8",
+                    "error-container": "#ffdad6",
+                    "on-error": "#ffffff",
+                    "on-tertiary-fixed": "#261a00",
+                    "on-error-container": "#93000a",
+                    "surface-container-low": "#f1f4fa",
+                    "on-tertiary-fixed-variant": "#5c4300",
+                    "inverse-on-surface": "#eef1f7",
+                    "surface-container": "#ebeef4",
+                    "secondary-fixed-dim": "#6ddd81",
+                    "on-primary-fixed-variant": "#004493",
+                    "on-secondary-fixed-variant": "#005320",
+                    "tertiary-fixed-dim": "#fbbc05",
+                    "on-secondary-fixed": "#002108",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-variant": "#dfe3e8",
+                    "outline-variant": "#c1c6d6",
+                    "secondary": "#006e2c",
+                    "on-tertiary-container": "#ffffff",
+                    "surface-container-high": "#e5e8ee",
+                    "on-primary": "#ffffff",
+                    "primary": "#005bbf",
+                    "error": "#ba1a1a",
+                    "primary-fixed-dim": "#adc7ff",
+                    "primary-fixed": "#d8e2ff",
+                    "on-surface": "#181c20",
+                    "tertiary-fixed": "#ffdfa0",
+                    "secondary-container": "#86f898",
+                    "on-tertiary": "#ffffff",
+                    "inverse-surface": "#2d3135"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "gutter-mobile": "16px",
+                    "gutter-desktop": "24px",
+                    "margin-desktop": "32px",
+                    "base": "8px",
+                    "margin-mobile": "16px"
+            },
+            "fontFamily": {
+                    "headline-lg-mobile": ["Roboto Flex"],
+                    "body-lg": ["Roboto Flex"],
+                    "label-lg": ["Roboto Flex"],
+                    "headline-sm": ["Roboto Flex"],
+                    "body-md": ["Roboto Flex"],
+                    "headline-lg": ["Roboto Flex"],
+                    "headline-md": ["Roboto Flex"]
+            },
+            "fontSize": {
+                    "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "700"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "label-lg": ["12px", {"lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "500"}],
+                    "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "500"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "700"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}]
+            }
+          }
+        }
+      }
+    </script>
 <style>
-        :root {
-            --primary: #1a73e8;
-            --surface: #f7f9ff;
-            --on-surface: #1f1f1f;
-            --surface-container: #f1f4fa;
+        body { font-family: 'Roboto Flex', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
         }
-        body {
-            font-family: 'Roboto Flex', sans-serif;
-            background-color: var(--surface);
-            color: var(--on-surface);
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-        }
-        .safe-area-bottom {
-            padding-bottom: env(safe-area-inset-bottom);
-        }
-        /* Animaciones para el Bottom Sheet */
-        .bottom-sheet {
-            transition: transform 0.3s ease-out;
-            transform: translateY(100%);
-        }
-        .bottom-sheet.active {
-            transform: translateY(0);
-        }
-        .overlay {
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            pointer-events: none;
-        }
-        .overlay.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
+        .custom-scroll::-webkit-scrollbar { width: 4px; }
+        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #c1c6d6; border-radius: 10px; }
     </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
 </head>
-<body class="min-h-screen flex flex-col">
-<!-- Top Bar -->
-<header class="sticky top-0 z-50 bg-white border-b border-gray-200 px-4 h-14 flex items-center justify-between">
-<div class="flex items-center gap-3">
-<span class="material-icons-outlined text-primary">settings_input_component</span>
-<h1 class="font-bold text-lg">Circuito CHI-03</h1>
-</div>
-<button class="w-8 h-8 rounded-full overflow-hidden border border-gray-200" onclick="toggleView('perfil')">
-<img alt="Perfil" src="https://placeholder.pics/svg/300"/>
+<body class="bg-background text-on-background min-h-screen flex flex-col transition-colors duration-300">
+<!-- TopAppBar -->
+<header class="bg-surface dark:bg-surface-dim docked full-width top-0 sticky z-50 border-b border-outline-variant dark:border-outline flex items-center justify-between px-margin-mobile w-full h-16">
+<div class="flex items-center gap-4">
+<button class="hover:bg-surface-container-high transition-colors p-1 rounded-lg active:scale-95 duration-150" onclick="toggleSettings()">
+<img alt="Logo" class="w-10 h-10 object-contain rounded-md shadow-sm" src="https://lh3.googleusercontent.com/aida/ADBb0uiAOw9xatGNH0sye1EOJfLgw3_wxHkom47MzcGYlEXAkUVfBNQVo4nwNhAp0oPJ3PTssNK34CVn6E3tVEGWvJ_h18tkvvF_2fuDxTcpU-6eaQO9hQDI_7zE47QwmJZ_-vyVtRiQIKa4sdM_zVU1_pU4QcgDEE-c-R8aq6binBVbHFmo9yXhCO6MpFbTsPSTOAtlOa2CY0jZ6OW4m7yI-lTXtjyiWYe5GFWOpoitu__u5XIPcw7C7xOSDAaL"/>
 </button>
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed-dim">Circuito CHI-03</h1>
+</div>
+<div class="flex items-center gap-2">
+<button class="hover:bg-surface-container-high transition-colors p-1 rounded-lg active:scale-95 duration-150" onclick="toggleSettings()">
+<img alt="Logo" class="w-10 h-10 object-contain rounded-md shadow-sm" src="https://lh3.googleusercontent.com/aida/ADBb0uiAOw9xatGNH0sye1EOJfLgw3_wxHkom47MzcGYlEXAkUVfBNQVo4nwNhAp0oPJ3PTssNK34CVn6E3tVEGWvJ_h18tkvvF_2fuDxTcpU-6eaQO9hQDI_7zE47QwmJZ_-vyVtRiQIKa4sdM_zVU1_pU4QcgDEE-c-R8aq6binBVbHFmo9yXhCO6MpFbTsPSTOAtlOa2CY0jZ6OW4m7yI-lTXtjyiWYe5GFWOpoitu__u5XIPcw7C7xOSDAaL"/>
+</button>
+<div class="w-10 h-10 rounded-full bg-primary-fixed-dim flex items-center justify-center overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a middle-aged man in a corporate setting, looking confidently at the camera. He is wearing a crisp white shirt and the lighting is soft and high-key, matching a modern light-mode interface. The background is a clean, out-of-focus office space with neutral tones and blue accents." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJko5qyWazlFmaHVHjULpAvH9LRwgnVAQe-I5t0pDGQxGzUws6pItCuu4LRwjYaoU6VxuPCEp4hgOydVBS6Tbqd628cVkVqRxLh9xzVdNV9cCU-YylxRz5PJtDn6_6SyfV6Oz0HelJEXpgzvLNFpMo5DKqqnmTHL8S7lX-my_Tu6VWDSVUX9cXorr1KdXZ6SPfI1gfa7dfB7dz85-j7eSavEqX3GDt-V0E9pjjoSPf9BIDJZt_NGQk9IhG7gFp4KuEwAkwP-4iiIZB"/>
+</div>
+</div>
 </header>
-<!-- Main Content Area -->
-<main class="flex-grow pb-20 px-4 pt-4 overflow-y-auto" id="app-content">
-<!-- Dashboard (Default View) -->
-<section class="space-y-4" id="view-dashboard">
-<h2 class="text-xl font-bold">Resumen General</h2>
-<div class="grid grid-cols-2 gap-3">
-<div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
-<p class="text-sm text-gray-500">Congregaciones</p>
-<p class="text-2xl font-bold">12</p>
+<!-- Main Content Canvas -->
+<main class="flex-1 pb-24 pt-4 px-margin-mobile max-w-[1280px] mx-auto w-full" id="app-canvas">
+<!-- Dashboard Section (Active by Default) -->
+<section class="space-y-6" id="section-Dashboard">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Bento Card: Circuit Stats -->
+<div class="md:col-span-2 bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm">
+<h2 class="font-headline-sm text-headline-sm mb-4">Resumen del Circuito</h2>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+<div class="p-4 bg-surface-container-low rounded-lg text-center">
+<span class="block text-primary font-headline-md">12</span>
+<span class="text-label-lg font-label-lg text-on-surface-variant">Congregaciones</span>
 </div>
-<div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
-<p class="text-sm text-gray-500">Actividad S-21</p>
-<p class="text-2xl font-bold">85%</p>
+<div class="p-4 bg-surface-container-low rounded-lg text-center">
+<span class="block text-secondary font-headline-md">842</span>
+<span class="text-label-lg font-label-lg text-on-surface-variant">Publicadores</span>
+</div>
+<div class="p-4 bg-surface-container-low rounded-lg text-center">
+<span class="block text-tertiary font-headline-md">15</span>
+<span class="text-label-lg font-label-lg text-on-surface-variant">Precursores</span>
+</div>
+<div class="p-4 bg-surface-container-low rounded-lg text-center">
+<span class="block text-error font-headline-md">3</span>
+<span class="text-label-lg font-label-lg text-on-surface-variant">Pendientes</span>
 </div>
 </div>
-<div class="bg-blue-50 p-4 rounded-2xl border border-blue-100">
-<p class="text-blue-700 font-medium">Próxima Visita</p>
-<p class="text-sm text-blue-600">Congregación Central - Lunes 15</p>
+</div>
+<!-- Quick Actions Card -->
+<div class="bg-primary-container text-on-primary-container rounded-xl p-6 shadow-sm flex flex-col justify-between">
+<div>
+<h2 class="font-headline-sm text-headline-sm mb-2">Acciones Rápidas</h2>
+<p class="text-body-md font-body-md opacity-90">Gestione documentos y registros del circuito de manera eficiente.</p>
+</div>
+<button class="mt-4 bg-surface-container-lowest text-primary py-3 rounded-full font-label-lg text-label-lg flex items-center justify-center gap-2 hover:bg-surface-bright transition-all active:scale-95" onclick="document.getElementById('file-upload').click()">
+<span class="material-symbols-outlined">upload_file</span> Importar Datos
+                    </button>
+<input accept=".pdf,.xlsx,.docx" class="hidden" id="file-upload" type="file"/>
+</div>
+</div>
+<!-- Recent Activity / News -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden shadow-sm">
+<div class="p-6 border-b border-outline-variant flex justify-between items-center">
+<h2 class="font-headline-sm text-headline-sm">Actividad Reciente</h2>
+<button class="text-primary text-label-lg font-label-lg">Ver Todo</button>
+</div>
+<div class="divide-y divide-outline-variant">
+<div class="p-4 flex items-center gap-4 hover:bg-surface-container-low transition-colors">
+<div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container">
+<span class="material-symbols-outlined">assignment_turned_in</span>
+</div>
+<div>
+<p class="text-body-lg font-body-lg">S-21 actualizado: Congregación Norte</p>
+<p class="text-label-lg font-label-lg text-outline">Hace 2 horas</p>
+</div>
+</div>
+<div class="p-4 flex items-center gap-4 hover:bg-surface-container-low transition-colors">
+<div class="w-10 h-10 rounded-full bg-primary-fixed-dim flex items-center justify-center text-on-primary-fixed">
+<span class="material-symbols-outlined">edit_calendar</span>
+</div>
+<div>
+<p class="text-body-lg font-body-lg">Agenda modificada: Asamblea de Circuito</p>
+<p class="text-label-lg font-label-lg text-outline">Ayer, 14:30</p>
+</div>
+</div>
+</div>
 </div>
 </section>
-<!-- Perfil y Ajustes -->
-<section class="hidden space-y-6" id="view-perfil">
-<div class="flex flex-col items-center py-4">
-<div class="relative">
-<img class="w-24 h-24 rounded-full border-4 border-white shadow-lg" src="https://placeholder.pics/svg/300"/>
-<button class="absolute bottom-0 right-0 bg-primary text-white p-1.5 rounded-full shadow-md">
-<span class="material-icons-outlined text-sm">edit</span>
-</button>
+<!-- Congregaciones Section (Hidden) -->
+<section class="hidden space-y-6" id="section-Congregaciones">
+<div class="flex justify-between items-center">
+<h2 class="font-headline-md text-headline-md">Congregaciones</h2>
+<button class="bg-primary text-on-primary px-6 py-2 rounded-full flex items-center gap-2 font-label-lg text-label-lg" onclick="showModal('congregation-modal')">
+<span class="material-symbols-outlined">add</span> Nueva
+                </button>
 </div>
-<h3 class="mt-3 text-xl font-bold">Misael Arrieta</h3>
-<p class="text-gray-500 text-sm">Superintendente de Circuito</p>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="congregations-list">
+<!-- Dynamic Content -->
 </div>
-<!-- Sección de Respaldo -->
-<div class="space-y-2">
-<h4 class="text-xs font-bold text-primary px-1 uppercase tracking-wider">Respaldo</h4>
-<div class="bg-white rounded-2xl border border-gray-100 overflow-hidden">
-<button class="w-full flex items-center justify-between p-4 hover:bg-gray-50 active:bg-gray-100 transition-colors border-b border-gray-50" onclick="handleExport('excel')">
-<div class="flex items-center gap-3">
-<span class="material-icons-outlined text-gray-600">table_view</span>
-<span class="text-sm font-medium">Exportar Datos a Excel</span>
+</section>
+<!-- Profile / Settings Section (Hidden) -->
+<section class="hidden space-y-6" id="section-Settings">
+<h2 class="font-headline-md text-headline-md">Perfil del Circuito</h2>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 space-y-6">
+<div class="space-y-4">
+<div>
+<label class="block text-label-lg font-label-lg text-on-surface-variant mb-1">Nombre del Superintendente</label>
+<input class="w-full bg-background border border-outline-variant rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all" id="profile-name" type="text" value="Juan Pérez"/>
 </div>
-<span class="material-icons-outlined text-gray-400">chevron_right</span>
-</button>
-<button class="w-full flex items-center justify-between p-4 hover:bg-gray-50 active:bg-gray-100 transition-colors border-b border-gray-50" onclick="handleExport('pdf')">
-<div class="flex items-center gap-3">
-<span class="material-icons-outlined text-gray-600">picture_as_pdf</span>
-<span class="text-sm font-medium">Descargar Resumen en PDF</span>
+<div>
+<label class="block text-label-lg font-label-lg text-on-surface-variant mb-1">Identificador del Circuito</label>
+<input class="w-full bg-background border border-outline-variant rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all" id="profile-circuit" type="text" value="CHI-03"/>
 </div>
-<span class="material-icons-outlined text-gray-400">chevron_right</span>
-</button>
-<button class="w-full flex items-center justify-between p-4 hover:bg-gray-50 active:bg-gray-100 transition-colors" onclick="openImportSheet()">
-<div class="flex items-center gap-3">
-<span class="material-icons-outlined text-gray-600">file_upload</span>
-<span class="text-sm font-medium">Importar Datos desde Archivo</span>
+<button class="bg-primary text-on-primary w-full py-3 rounded-full font-label-lg text-label-lg" onclick="saveProfile()">Guardar Cambios</button>
 </div>
-<span class="material-icons-outlined text-gray-400">chevron_right</span>
-</button>
+<hr class="border-outline-variant"/>
+<div class="space-y-4">
+<h3 class="font-headline-sm text-headline-sm text-error">Zona de Peligro</h3>
+<p class="text-body-md font-body-md text-on-surface-variant">Estas acciones son irreversibles y eliminarán permanentemente los datos locales.</p>
+<div class="flex flex-col gap-3">
+<button class="bg-surface-container-high text-on-surface flex items-center justify-center gap-2 py-2 rounded-lg font-label-lg" onclick="exportBackup()">
+<span class="material-symbols-outlined">backup</span> Crear Respaldo
+                        </button>
+<button class="bg-error-container text-on-error-container flex items-center justify-center gap-2 py-2 rounded-lg font-label-lg" onclick="confirmClearCache()">
+<span class="material-symbols-outlined">delete_forever</span> Limpiar Caché y Datos
+                        </button>
 </div>
 </div>
-<button class="w-full bg-red-50 text-red-600 py-4 rounded-2xl font-bold flex items-center justify-center gap-2 mt-4">
-<span class="material-icons-outlined">logout</span>
-                Cerrar Sesión
-            </button>
+</div>
+</section>
+<!-- Placeholder for Agenda, Historial, S-21 -->
+<section class="hidden text-center py-20" id="section-Agenda">
+<span class="material-symbols-outlined text-[64px] text-outline-variant">event_note</span>
+<h2 class="mt-4 font-headline-md text-headline-md">Agenda de Visitas</h2>
+<p class="text-on-surface-variant">Funcionalidad en desarrollo.</p>
+</section>
+<section class="hidden text-center py-20" id="section-Historial">
+<span class="material-symbols-outlined text-[64px] text-outline-variant">history_edu</span>
+<h2 class="mt-4 font-headline-md text-headline-md">Historial de Reportes</h2>
+<p class="text-on-surface-variant">Funcionalidad en desarrollo.</p>
+</section>
+<section class="hidden text-center py-20" id="section-S-21">
+<span class="material-symbols-outlined text-[64px] text-outline-variant">assignment_ind</span>
+<h2 class="mt-4 font-headline-md text-headline-md">Tarjetas S-21</h2>
+<p class="text-on-surface-variant">Gestión avanzada de tarjetas de publicador.</p>
 </section>
 </main>
-<!-- Bottom Nav -->
-<nav class="fixed bottom-0 w-full bg-white border-t border-gray-200 h-16 safe-area-bottom flex items-center justify-around px-2 z-40">
-<button class="nav-item flex flex-col items-center text-primary" onclick="toggleView('dashboard')">
-<span class="material-icons-outlined">dashboard</span>
-<span class="text-[10px] font-bold">Dashboard</span>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 bg-surface-container dark:bg-surface-container-lowest shadow-[0_-1px_0_0_rgba(0,0,0,0.08)] flex justify-around items-center h-16 px-2 pb-safe">
+<button class="nav-item flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-highest dark:hover:bg-surface-variant rounded-full px-4 py-1 transition-all" onclick="navTo('Congregaciones')">
+<span class="material-symbols-outlined">groups</span>
+<span class="font-label-lg text-label-lg">Congregaciones</span>
 </button>
-<button class="nav-item flex flex-col items-center text-gray-400">
-<span class="material-icons-outlined">groups</span>
-<span class="text-[10px]">Congregs.</span>
+<button class="nav-item flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-highest dark:hover:bg-surface-variant rounded-full px-4 py-1 transition-all" onclick="navTo('Agenda')">
+<span class="material-symbols-outlined">event_note</span>
+<span class="font-label-lg text-label-lg">Agenda</span>
 </button>
-<button class="nav-item flex flex-col items-center text-gray-400">
-<span class="material-icons-outlined">event_note</span>
-<span class="text-[10px]">Agenda</span>
+<button class="nav-item flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-highest dark:hover:bg-surface-variant rounded-full px-4 py-1 transition-all" onclick="navTo('Historial')">
+<span class="material-symbols-outlined">history_edu</span>
+<span class="font-label-lg text-label-lg">Historial</span>
 </button>
-<button class="nav-item flex flex-col items-center text-gray-400">
-<span class="material-icons-outlined">history_edu</span>
-<span class="text-[10px]">Historial</span>
+<button class="nav-item flex flex-col items-center justify-center bg-secondary-container dark:bg-secondary text-on-secondary-container dark:text-on-secondary rounded-full px-4 py-1 scale-110 transition-all duration-200 ease-in-out" id="nav-Dashboard" onclick="navTo('Dashboard')">
+<span class="material-symbols-outlined">dashboard_customize</span>
+<span class="font-label-lg text-label-lg">Dashboard</span>
 </button>
-<button class="bg-green-100 text-green-700 p-2 rounded-xl flex flex-col items-center">
-<span class="material-icons-outlined">assignment_ind</span>
-<span class="text-[10px] font-bold">S-21</span>
+<button class="nav-item flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-highest dark:hover:bg-surface-variant rounded-full px-4 py-1 transition-all" onclick="navTo('S-21')">
+<span class="material-symbols-outlined">assignment_ind</span>
+<span class="font-label-lg text-label-lg">S-21</span>
 </button>
 </nav>
-<!-- Overlay & Bottom Sheet -->
-<div class="overlay fixed inset-0 bg-black/40 z-[60]" id="overlay" onclick="closeImportSheet()"></div>
-<div class="bottom-sheet fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl z-[70] p-6 pb-10 shadow-2xl" id="import-sheet">
-<div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-6"></div>
-<h2 class="text-xl font-bold mb-6">Importar datos</h2>
+<!-- Modals -->
+<div class="fixed inset-0 z-[60] hidden flex items-center justify-center px-4" id="congregation-modal">
+<div class="absolute inset-0 bg-on-background/40 backdrop-blur-sm" onclick="closeModal('congregation-modal')"></div>
+<div class="bg-surface relative w-full max-w-md rounded-xl p-6 shadow-xl animate-in fade-in zoom-in duration-200">
+<h3 class="font-headline-md text-headline-md mb-4">Añadir Congregación</h3>
 <div class="space-y-4">
-<label class="flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 active:bg-gray-100 cursor-pointer transition-colors">
-<span class="material-icons-outlined text-primary">description</span>
-<div class="flex-grow">
-<p class="font-bold">Seleccionar Archivo (.json)</p>
-<input accept=".json" class="hidden" onchange="handleFileSelect(event)" type="file"/>
-</div>
-</label>
-<div class="flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 active:bg-gray-100 transition-colors">
-<span class="material-icons-outlined text-primary">photo_camera</span>
-<p class="font-bold">Cámara</p>
-</div>
-<div class="flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 active:bg-gray-100 transition-colors">
-<span class="material-icons-outlined text-primary">folder_open</span>
-<p class="font-bold">Explorar archivos</p>
+<input class="w-full bg-surface-container-low border border-outline-variant rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-primary" id="new-cong-name" placeholder="Nombre de la Congregación" type="text"/>
+<div class="flex gap-4">
+<button class="flex-1 py-3 font-label-lg border border-outline text-outline rounded-full" onclick="closeModal('congregation-modal')">Cancelar</button>
+<button class="flex-1 py-3 font-label-lg bg-primary text-on-primary rounded-full" onclick="addCongregation()">Agregar</button>
 </div>
 </div>
-<button class="w-full mt-8 text-primary font-bold py-2" onclick="closeImportSheet()">CANCELAR</button>
 </div>
-<!-- Toast de Notificación -->
-<div class="fixed top-20 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-6 py-3 rounded-full text-sm font-medium opacity-0 transition-opacity pointer-events-none z-[100]" id="toast">
-        Acción realizada con éxito
-    </div>
+</div>
 <script>
-        // Lógica de Navegación Simple
-        function toggleView(view) {
-            document.getElementById('view-dashboard').classList.add('hidden');
-            document.getElementById('view-perfil').classList.add('hidden');
-            document.getElementById('view-' + view).classList.remove('hidden');
+        // --- Persistence State ---
+        let appState = {
+            profile: { name: 'Superintendente', circuit: 'CHI-03' },
+            congregations: [
+                { id: 1, name: 'Centro' },
+                { id: 2, name: 'Norte' },
+                { id: 3, name: 'San Javier' }
+            ],
+            currentSection: 'Dashboard',
+            isDarkMode: false
+        };
+
+        // --- Core Functions ---
+        function initApp() {
+            const savedState = localStorage.getItem('CHI03_STATE');
+            if (savedState) {
+                appState = JSON.parse(savedState);
+            }
             
-            // Actualizar estado activo en Nav (Simplificado)
-            const navItems = document.querySelectorAll('.nav-item');
-            navItems.forEach(item => {
-                if(view === 'dashboard' && item.innerText.includes('Dashboard')) {
-                    item.classList.add('text-primary');
-                    item.classList.remove('text-gray-400');
-                } else if (view === 'perfil') {
-                    item.classList.add('text-gray-400');
-                    item.classList.remove('text-primary');
+            // Apply Dark Mode
+            if (appState.isDarkMode) {
+                document.documentElement.classList.add('dark');
+            }
+            
+            // Sync Profile UI
+            document.getElementById('profile-name').value = appState.profile.name;
+            document.getElementById('profile-circuit').value = appState.profile.circuit;
+            
+            renderCongregations();
+            navTo(appState.currentSection);
+        }
+
+        function saveState() {
+            localStorage.setItem('CHI03_STATE', JSON.stringify(appState));
+        }
+
+        // --- Navigation ---
+        function navTo(sectionId) {
+            const sections = ['Dashboard', 'Congregaciones', 'Agenda', 'Historial', 'S-21', 'Settings'];
+            sections.forEach(s => {
+                const el = document.getElementById(`section-${s}`);
+                if (el) el.classList.add('hidden');
+            });
+            
+            const activeSection = document.getElementById(`section-${sectionId}`);
+            if (activeSection) activeSection.classList.remove('hidden');
+            
+            // Update Nav Styles
+            document.querySelectorAll('.nav-item').forEach(btn => {
+                btn.className = "nav-item flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-highest dark:hover:bg-surface-variant rounded-full px-4 py-1 transition-all";
+                if (btn.querySelector('.font-label-lg').innerText === sectionId) {
+                    btn.className = "nav-item flex flex-col items-center justify-center bg-secondary-container dark:bg-secondary text-on-secondary-container dark:text-on-secondary rounded-full px-4 py-1 scale-110 transition-all duration-200 ease-in-out";
                 }
+            });
+            
+            appState.currentSection = sectionId;
+            saveState();
+        }
+
+        function toggleSettings() {
+            navTo('Settings');
+        }
+
+        // --- Dark Mode ---
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            const isDark = document.documentElement.classList.toggle('dark');
+            appState.isDarkMode = isDark;
+            document.getElementById('themeToggle').querySelector('span').innerText = isDark ? 'light_mode' : 'dark_mode';
+            saveState();
+        });
+
+        // --- Congregations Management ---
+        function renderCongregations() {
+            const list = document.getElementById('congregations-list');
+            list.innerHTML = '';
+            appState.congregations.forEach(cong => {
+                const card = document.createElement('div');
+                card.className = "bg-surface-container-lowest border border-outline-variant rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow flex justify-between items-center";
+                card.innerHTML = `
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center text-secondary">
+                            <span class="material-symbols-outlined">location_city</span>
+                        </div>
+                        <span class="font-body-lg font-body-lg text-on-surface">${cong.name}</span>
+                    </div>
+                    <button onclick="deleteCongregation(${cong.id})" class="text-error-container hover:bg-error-container/10 p-2 rounded-full transition-colors">
+                        <span class="material-symbols-outlined text-error">delete</span>
+                    </button>
+                `;
+                list.appendChild(card);
             });
         }
 
-        // Lógica de UI para Bottom Sheet
-        function openImportSheet() {
-            document.getElementById('overlay').classList.add('active');
-            document.getElementById('import-sheet').classList.add('active');
-        }
-
-        function closeImportSheet() {
-            document.getElementById('overlay').classList.remove('active');
-            document.getElementById('import-sheet').classList.remove('active');
-        }
-
-        // Simulación de Funciones
-        function showToast(message) {
-            const toast = document.getElementById('toast');
-            toast.innerText = message;
-            toast.classList.remove('opacity-0');
-            setTimeout(() => toast.classList.add('opacity-0'), 3000);
-        }
-
-        function handleExport(type) {
-            showToast(`Generando reporte ${type.toUpperCase()}...`);
-            setTimeout(() => {
-                showToast(`Reporte ${type.toUpperCase()} guardado en descargas.`);
-                
-                // Lógica real de exportación (ejemplo conceptual):
-                const datos = JSON.parse(localStorage.getItem('circuit_data') || '{}');
-                const blob = new Blob([JSON.stringify(datos)], {type: 'application/json'});
-                // Aquí se dispararía la descarga real si hubiera datos
-            }, 1500);
-        }
-
-        function handleFileSelect(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    try {
-                        const content = JSON.parse(e.target.result);
-                        localStorage.setItem('circuit_data', JSON.stringify(content));
-                        closeImportSheet();
-                        showToast('Base de datos (.json) importada correctamente.');
-                    } catch (error) {
-                        showToast('Error: El archivo no tiene un formato JSON válido.');
-                    }
+        function addCongregation() {
+            const nameInput = document.getElementById('new-cong-name');
+            if (nameInput.value.trim()) {
+                const newCong = {
+                    id: Date.now(),
+                    name: nameInput.value.trim()
                 };
-                reader.readAsText(file);
+                appState.congregations.push(newCong);
+                nameInput.value = '';
+                closeModal('congregation-modal');
+                renderCongregations();
+                saveState();
             }
         }
+
+        function deleteCongregation(id) {
+            if (confirm('¿Eliminar esta congregación?')) {
+                appState.congregations = appState.congregations.filter(c => c.id !== id);
+                renderCongregations();
+                saveState();
+            }
+        }
+
+        // --- Profile Management ---
+        function saveProfile() {
+            appState.profile.name = document.getElementById('profile-name').value;
+            appState.profile.circuit = document.getElementById('profile-circuit').value;
+            saveState();
+            alert('Perfil actualizado correctamente.');
+        }
+
+        // --- System Tools ---
+        function confirmClearCache() {
+            if (confirm('¿Estás seguro? Se borrarán todos los datos guardados, incluyendo congregaciones y perfil.')) {
+                localStorage.removeItem('CHI03_STATE');
+                window.location.reload();
+            }
+        }
+
+        function exportBackup() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState));
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", `CHI03_Backup_${new Date().toISOString().split('T')[0]}.json`);
+            document.body.appendChild(downloadAnchorNode);
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+        }
+
+        // --- Modal Helpers ---
+        function showModal(id) { document.getElementById(id).classList.remove('hidden'); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+        // Start
+        window.onload = initApp;
     </script>
-</body>
-</html>
+</body></html>
