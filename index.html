@@ -1,830 +1,244 @@
 <!DOCTYPE html>
+
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Circuito CHI‑03 · Control de Visitas</title>
-
-    <!-- Google Fonts y Material Icons -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@300;400;500;700&family=Material+Icons+Outlined" rel="stylesheet">
-
-    <!-- Librerías -->
-    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
-
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Circuito CHI-03 - App de Gestión</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,100..1000&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+<style>
         :root {
-            --google-blue: #1a73e8;
-            --google-red: #ea4335;
-            --google-yellow: #fbbc04;
-            --google-green: #34a853;
-            --gray-50: #f8f9fa;
-            --gray-100: #f1f3f4;
-            --gray-200: #e8eaed;
-            --gray-300: #dadce0;
-            --gray-500: #9aa0a6;
-            --gray-700: #5f6368;
-            --gray-900: #202124;
-            --white: #ffffff;
-            --shadow-sm: 0 1px 2px 0 rgba(60,64,67,.3), 0 1px 3px 1px rgba(60,64,67,.15);
-            --shadow-md: 0 1px 3px 0 rgba(60,64,67,.3), 0 4px 8px 3px rgba(60,64,67,.15);
-            --radius: 8px;
-            --radius-pill: 24px;
+            --primary: #1a73e8;
+            --surface: #f7f9ff;
+            --on-surface: #1f1f1f;
+            --surface-container: #f1f4fa;
         }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-
         body {
-            font-family: 'Roboto', sans-serif;
-            background: var(--gray-50);
-            color: var(--gray-900);
-            line-height: 1.5;
-            min-height: 100vh;
+            font-family: 'Roboto Flex', sans-serif;
+            background-color: var(--surface);
+            color: var(--on-surface);
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
-
-        .app-bar {
-            background: var(--white);
-            border-bottom: 1px solid var(--gray-200);
-            padding: 8px 24px;
-            display: flex;
-            align-items: center;
-            gap: 24px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: var(--shadow-sm);
-            flex-wrap: wrap;
+        .safe-area-bottom {
+            padding-bottom: env(safe-area-inset-bottom);
         }
-
-        .app-bar-logo {
-            font-family: 'Google Sans', sans-serif;
-            font-size: 22px;
-            font-weight: 500;
-            color: var(--gray-900);
-            display: flex;
-            align-items: center;
-            gap: 8px;
+        /* Animaciones para el Bottom Sheet */
+        .bottom-sheet {
+            transition: transform 0.3s ease-out;
+            transform: translateY(100%);
         }
-
-        .app-bar-logo .material-icons-outlined { color: var(--google-blue); font-size: 28px; }
-
-        .tab-bar { display: flex; gap: 0; margin-left: auto; flex-wrap: wrap; }
-
-        .tab-button {
-            background: transparent;
-            border: none;
-            padding: 12px 16px;
-            font-family: 'Google Sans', sans-serif;
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--gray-700);
-            cursor: pointer;
-            border-bottom: 3px solid transparent;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            white-space: nowrap;
+        .bottom-sheet.active {
+            transform: translateY(0);
         }
-
-        .tab-button .material-icons-outlined { font-size: 20px; }
-        .tab-button:hover { background: var(--gray-100); color: var(--google-blue); }
-        .tab-button.active { color: var(--google-blue); border-bottom-color: var(--google-blue); }
-
-        .main-content { max-width: 1200px; margin: 24px auto; padding: 0 24px; display: none; }
-        .main-content.active { display: block; }
-
-        .page-title {
-            font-family: 'Google Sans', sans-serif;
-            font-size: 24px;
-            font-weight: 500;
-            margin-bottom: 16px;
-            color: var(--gray-900);
+        .overlay {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
         }
-
-        .card {
-            background: var(--white);
-            border-radius: var(--radius);
-            padding: 24px;
-            margin-bottom: 24px;
-            box-shadow: var(--shadow-sm);
-            border: 1px solid var(--gray-200);
-            transition: box-shadow 0.2s;
-        }
-
-        .card:hover { box-shadow: var(--shadow-md); }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-
-        .card-title {
-            font-family: 'Google Sans', sans-serif;
-            font-size: 18px;
-            font-weight: 500;
-            color: var(--gray-900);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; margin-top: 16px; }
-
-        .cong-card {
-            background: var(--white);
-            border: 1px solid var(--gray-200);
-            border-radius: var(--radius);
-            padding: 16px;
-            cursor: default;
-            transition: all 0.2s;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .cong-card:hover { box-shadow: var(--shadow-md); border-color: var(--google-blue); }
-
-        .cong-card h3 {
-            font-family: 'Google Sans', sans-serif;
-            font-size: 16px;
-            font-weight: 500;
-            color: var(--gray-900);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .cong-card .info-row { display: flex; justify-content: space-between; font-size: 13px; color: var(--gray-700); }
-        .cong-card .info-label { color: var(--gray-500); }
-
-        .badge {
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 500;
-            background: var(--gray-100);
-            color: var(--gray-700);
-        }
-
-        .badge-primary { background: #e8f0fe; color: var(--google-blue); }
-        .badge-success { background: #e6f4ea; color: var(--google-green); }
-        .badge-warning { background: #fef7e0; color: #f9ab00; }
-
-        .button {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 24px;
-            border-radius: var(--radius-pill);
-            font-family: 'Google Sans', sans-serif;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-transform: none;
-            border: 1px solid transparent;
-        }
-
-        .button-primary { background: var(--google-blue); color: white; border: none; }
-        .button-primary:hover { background: #1669c1; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
-        .button-outline { background: transparent; color: var(--google-blue); border: 1px solid var(--gray-300); }
-        .button-outline:hover { background: #e8f0fe; border-color: var(--google-blue); }
-        .button-sm { padding: 4px 16px; font-size: 12px; }
-
-        .data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-        .data-table thead { background: var(--gray-100); border-bottom: 1px solid var(--gray-300); }
-        .data-table th {
-            padding: 12px 16px;
-            text-align: left;
-            font-weight: 500;
-            color: var(--gray-700);
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .data-table td { padding: 10px 16px; border-bottom: 1px solid var(--gray-200); }
-        .data-table tbody tr:hover { background: #f8f9fa; }
-
-        .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 16px; }
-        .stat-box {
-            background: var(--white);
-            border-radius: var(--radius);
-            padding: 16px;
-            border: 1px solid var(--gray-200);
-            text-align: center;
-        }
-        .stat-box .value { font-family: 'Google Sans', sans-serif; font-size: 32px; font-weight: 500; color: var(--google-blue); }
-        .stat-box .label { font-size: 12px; color: var(--gray-500); text-transform: uppercase; margin-top: 4px; }
-
-        canvas#chart { width: 100% !important; max-height: 300px; }
-
-        .empty-state { text-align: center; padding: 40px; color: var(--gray-500); }
-        .empty-state .material-icons-outlined { font-size: 48px; margin-bottom: 16px; color: var(--gray-300); }
-
-        input[type="file"] { display: none; }
-        select { padding: 8px 12px; border-radius: 6px; border: 1px solid var(--gray-300); font-size: 14px; background: white; }
-
-        @media (max-width: 768px) {
-            .app-bar { flex-direction: column; align-items: flex-start; padding: 12px; }
-            .tab-bar { margin-left: 0; width: 100%; overflow-x: auto; }
-            .dashboard-grid { grid-template-columns: 1fr; }
+        .overlay.active {
+            opacity: 1;
+            pointer-events: auto;
         }
     </style>
 </head>
-<body>
-
-<div class="app-bar">
-    <div class="app-bar-logo">
-        <span class="material-icons-outlined">sync_alt</span>
-        Circuito CHI‑03
-    </div>
-    <div class="tab-bar">
-        <button class="tab-button active" data-tab="congregaciones">
-            <span class="material-icons-outlined">groups</span> Congregaciones
-        </button>
-        <button class="tab-button" data-tab="agenda">
-            <span class="material-icons-outlined">calendar_month</span> Agenda
-        </button>
-        <button class="tab-button" data-tab="historial">
-            <span class="material-icons-outlined">history</span> Historial
-        </button>
-        <button class="tab-button" data-tab="dashboard">
-            <span class="material-icons-outlined">insights</span> Dashboard
-        </button>
-        <button class="tab-button" data-tab="registros">
-            <span class="material-icons-outlined">description</span> Registros S‑21
-        </button>
-    </div>
+<body class="min-h-screen flex flex-col">
+<!-- Top Bar -->
+<header class="sticky top-0 z-50 bg-white border-b border-gray-200 px-4 h-14 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="material-icons-outlined text-primary">settings_input_component</span>
+<h1 class="font-bold text-lg">Circuito CHI-03</h1>
 </div>
-
-<!-- Contenido: Congregaciones -->
-<div id="content-congregaciones" class="main-content active">
-    <div class="page-title">Congregaciones del Circuito</div>
-    <div class="card">
-        <div class="card-header">
-            <div class="card-title"><span class="material-icons-outlined">list_alt</span> 19 congregaciones</div>
-            <button class="button button-outline button-sm" onclick="agregarCongregacion()">
-                <span class="material-icons-outlined">add</span> Agregar
+<button class="w-8 h-8 rounded-full overflow-hidden border border-gray-200" onclick="toggleView('perfil')">
+<img alt="Perfil" src="https://placeholder.pics/svg/300"/>
+</button>
+</header>
+<!-- Main Content Area -->
+<main class="flex-grow pb-20 px-4 pt-4 overflow-y-auto" id="app-content">
+<!-- Dashboard (Default View) -->
+<section class="space-y-4" id="view-dashboard">
+<h2 class="text-xl font-bold">Resumen General</h2>
+<div class="grid grid-cols-2 gap-3">
+<div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+<p class="text-sm text-gray-500">Congregaciones</p>
+<p class="text-2xl font-bold">12</p>
+</div>
+<div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+<p class="text-sm text-gray-500">Actividad S-21</p>
+<p class="text-2xl font-bold">85%</p>
+</div>
+</div>
+<div class="bg-blue-50 p-4 rounded-2xl border border-blue-100">
+<p class="text-blue-700 font-medium">Próxima Visita</p>
+<p class="text-sm text-blue-600">Congregación Central - Lunes 15</p>
+</div>
+</section>
+<!-- Perfil y Ajustes -->
+<section class="hidden space-y-6" id="view-perfil">
+<div class="flex flex-col items-center py-4">
+<div class="relative">
+<img class="w-24 h-24 rounded-full border-4 border-white shadow-lg" src="https://placeholder.pics/svg/300"/>
+<button class="absolute bottom-0 right-0 bg-primary text-white p-1.5 rounded-full shadow-md">
+<span class="material-icons-outlined text-sm">edit</span>
+</button>
+</div>
+<h3 class="mt-3 text-xl font-bold">Misael Arrieta</h3>
+<p class="text-gray-500 text-sm">Superintendente de Circuito</p>
+</div>
+<!-- Sección de Respaldo -->
+<div class="space-y-2">
+<h4 class="text-xs font-bold text-primary px-1 uppercase tracking-wider">Respaldo</h4>
+<div class="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+<button class="w-full flex items-center justify-between p-4 hover:bg-gray-50 active:bg-gray-100 transition-colors border-b border-gray-50" onclick="handleExport('excel')">
+<div class="flex items-center gap-3">
+<span class="material-icons-outlined text-gray-600">table_view</span>
+<span class="text-sm font-medium">Exportar Datos a Excel</span>
+</div>
+<span class="material-icons-outlined text-gray-400">chevron_right</span>
+</button>
+<button class="w-full flex items-center justify-between p-4 hover:bg-gray-50 active:bg-gray-100 transition-colors border-b border-gray-50" onclick="handleExport('pdf')">
+<div class="flex items-center gap-3">
+<span class="material-icons-outlined text-gray-600">picture_as_pdf</span>
+<span class="text-sm font-medium">Descargar Resumen en PDF</span>
+</div>
+<span class="material-icons-outlined text-gray-400">chevron_right</span>
+</button>
+<button class="w-full flex items-center justify-between p-4 hover:bg-gray-50 active:bg-gray-100 transition-colors" onclick="openImportSheet()">
+<div class="flex items-center gap-3">
+<span class="material-icons-outlined text-gray-600">file_upload</span>
+<span class="text-sm font-medium">Importar Datos desde Archivo</span>
+</div>
+<span class="material-icons-outlined text-gray-400">chevron_right</span>
+</button>
+</div>
+</div>
+<button class="w-full bg-red-50 text-red-600 py-4 rounded-2xl font-bold flex items-center justify-center gap-2 mt-4">
+<span class="material-icons-outlined">logout</span>
+                Cerrar Sesión
             </button>
-        </div>
-        <div class="grid" id="congGrid"></div>
-    </div>
+</section>
+</main>
+<!-- Bottom Nav -->
+<nav class="fixed bottom-0 w-full bg-white border-t border-gray-200 h-16 safe-area-bottom flex items-center justify-around px-2 z-40">
+<button class="nav-item flex flex-col items-center text-primary" onclick="toggleView('dashboard')">
+<span class="material-icons-outlined">dashboard</span>
+<span class="text-[10px] font-bold">Dashboard</span>
+</button>
+<button class="nav-item flex flex-col items-center text-gray-400">
+<span class="material-icons-outlined">groups</span>
+<span class="text-[10px]">Congregs.</span>
+</button>
+<button class="nav-item flex flex-col items-center text-gray-400">
+<span class="material-icons-outlined">event_note</span>
+<span class="text-[10px]">Agenda</span>
+</button>
+<button class="nav-item flex flex-col items-center text-gray-400">
+<span class="material-icons-outlined">history_edu</span>
+<span class="text-[10px]">Historial</span>
+</button>
+<button class="bg-green-100 text-green-700 p-2 rounded-xl flex flex-col items-center">
+<span class="material-icons-outlined">assignment_ind</span>
+<span class="text-[10px] font-bold">S-21</span>
+</button>
+</nav>
+<!-- Overlay & Bottom Sheet -->
+<div class="overlay fixed inset-0 bg-black/40 z-[60]" id="overlay" onclick="closeImportSheet()"></div>
+<div class="bottom-sheet fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl z-[70] p-6 pb-10 shadow-2xl" id="import-sheet">
+<div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-6"></div>
+<h2 class="text-xl font-bold mb-6">Importar datos</h2>
+<div class="space-y-4">
+<label class="flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 active:bg-gray-100 cursor-pointer transition-colors">
+<span class="material-icons-outlined text-primary">description</span>
+<div class="flex-grow">
+<p class="font-bold">Seleccionar Archivo (.json)</p>
+<input accept=".json" class="hidden" onchange="handleFileSelect(event)" type="file"/>
 </div>
-
-<!-- Agenda -->
-<div id="content-agenda" class="main-content">
-    <div class="page-title">Agenda</div>
-    <div class="card">
-        <div class="card-title" style="margin-bottom:16px;"><span class="material-icons-outlined">event_note</span> Próximas visitas</div>
-        <table class="data-table" id="tablaAgenda">
-            <thead><tr><th>Semana</th><th>Inicio</th><th>Fin</th><th>Actividad</th></tr></thead>
-            <tbody></tbody>
-        </table>
-    </div>
+</label>
+<div class="flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 active:bg-gray-100 transition-colors">
+<span class="material-icons-outlined text-primary">photo_camera</span>
+<p class="font-bold">Cámara</p>
 </div>
-
-<!-- Historial -->
-<div id="content-historial" class="main-content">
-    <div class="page-title">Historial de visitas</div>
-    <div class="card">
-        <div class="card-title" style="margin-bottom:16px;"><span class="material-icons-outlined">folder_open</span> Archivos guardados</div>
-        <table class="data-table" id="tablaHist">
-            <thead><tr><th>Congregación</th><th>Fecha</th><th>Pub.Act.</th><th>PR</th><th>PA</th><th>Excel</th><th>PDF</th></tr></thead>
-            <tbody></tbody>
-        </table>
-    </div>
+<div class="flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 active:bg-gray-100 transition-colors">
+<span class="material-icons-outlined text-primary">folder_open</span>
+<p class="font-bold">Explorar archivos</p>
 </div>
-
-<!-- Dashboard -->
-<div id="content-dashboard" class="main-content">
-    <div class="page-title">Dashboard</div>
-    <div class="dashboard-grid">
-        <div class="stat-box">
-            <div class="value" id="totalVisitas">0</div>
-            <div class="label">Visitas registradas</div>
-        </div>
-        <div class="stat-box">
-            <div class="value" id="promPubActivos">—</div>
-            <div class="label">Promedio Pub. Activos</div>
-        </div>
-    </div>
-    <div class="card" style="margin-top:24px;">
-        <div class="card-title" style="margin-bottom:16px;">Gráfico comparativo</div>
-        <canvas id="chart"></canvas>
-    </div>
 </div>
-
-<!-- Registros S-21 -->
-<div id="content-registros" class="main-content">
-    <div class="page-title">Registros S‑21 de Publicadores</div>
-    <div class="card">
-        <div class="card-header">
-            <div class="card-title"><span class="material-icons-outlined">person_add</span> Cargar PDF de Registro</div>
-            <div style="display:flex; gap:12px; align-items:center;">
-                <select id="selectCongregacionPDF" style="padding:8px 12px;">
-                    <option value="">Selecciona congregación...</option>
-                </select>
-                <button class="button button-primary button-sm" onclick="document.getElementById('inputPDF').click()">
-                    <span class="material-icons-outlined">upload_file</span> Subir PDF
-                </button>
-            </div>
-        </div>
-        <p style="color:var(--gray-700); margin-bottom:16px;">Selecciona la congregación a la que pertenece el publicador y luego sube el formulario <strong>S‑21</strong> en PDF.</p>
-        <input type="file" id="inputPDF" accept=".pdf" style="display:none" onchange="procesarPDF(this)" />
-        <div id="resultadoPDF" style="margin-top:16px;"></div>
-    </div>
-    <div class="card">
-        <div class="card-header">
-            <div class="card-title"><span class="material-icons-outlined">summarize</span> Registros acumulados</div>
-            <select id="filtroCongregacion" onchange="renderRegistros()" style="padding:8px 12px;">
-                <option value="">Todas las congregaciones</option>
-            </select>
-        </div>
-        <table class="data-table" id="tablaRegistros">
-            <thead><tr><th>Nombre</th><th>Congregación</th><th>Tipo</th><th>Horas totales</th><th>Cursos bíblicos</th><th>Participación</th></tr></thead>
-            <tbody></tbody>
-        </table>
-        <div id="sinRegistros" class="empty-state">
-            <span class="material-icons-outlined">folder_off</span>
-            <p>No hay registros cargados todavía.</p>
-        </div>
-    </div>
+<button class="w-full mt-8 text-primary font-bold py-2" onclick="closeImportSheet()">CANCELAR</button>
 </div>
-
+<!-- Toast de Notificación -->
+<div class="fixed top-20 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-6 py-3 rounded-full text-sm font-medium opacity-0 transition-opacity pointer-events-none z-[100]" id="toast">
+        Acción realizada con éxito
+    </div>
 <script>
-// ==================== CONFIGURACIÓN DE PDF.JS ====================
-pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
-
-// ==================== BASE DE DATOS ====================
-const DB_NAME = 'CircuitoCHI03DB';
-let db;
-const request = indexedDB.open(DB_NAME, 1);
-request.onupgradeneeded = e => {
-    db = e.target.result;
-    if (!db.objectStoreNames.contains('informes')) db.createObjectStore('informes', { keyPath: 'id' });
-    if (!db.objectStoreNames.contains('registros')) db.createObjectStore('registros', { keyPath: 'id' });
-};
-request.onsuccess = e => { db = e.target.result; cargarDatos(); };
-request.onerror = () => console.error('Error IndexedDB');
-
-// ==================== DATOS EN MEMORIA ====================
-const STORAGE_KEY = 'circuito_chi03_data';
-let congregaciones = [];
-let historialMeta = [];
-let registrosS21 = [];  // { id, nombre, congregacion, tipo, horas, cursos, participacion }
-
-function guardar() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ congregaciones, historialMeta, registrosS21 }));
-}
-
-function cargarDatos() {
-    const json = localStorage.getItem(STORAGE_KEY);
-    if (json) {
-        const data = JSON.parse(json);
-        congregaciones = data.congregaciones || [];
-        historialMeta = data.historialMeta || [];
-        registrosS21 = data.registrosS21 || [];
-    } else {
-        congregaciones = [
-            { codigo: "7898", nombre: "Omega-Cd. Juárez", ultimaVisita: "", proxVisita: "" },
-            { codigo: "74799", nombre: "Anémona-Cd. Juárez", ultimaVisita: "", proxVisita: "" },
-            { codigo: "76570", nombre: "Bambú-Juárez", ultimaVisita: "", proxVisita: "" },
-            { codigo: "272260", nombre: "Cañaveral-Juárez", ultimaVisita: "", proxVisita: "" },
-            { codigo: "70581", nombre: "Cártamo-Juárez", ultimaVisita: "", proxVisita: "" },
-            { codigo: "7542", nombre: "Del Real-Cd. Juárez", ultimaVisita: "", proxVisita: "" },
-            { codigo: "7609", nombre: "El Granjero-Juárez", ultimaVisita: "", proxVisita: "" },
-            { codigo: "102350", nombre: "Grama-Juárez", ultimaVisita: "", proxVisita: "" },
-            { codigo: "126177", nombre: "Hacienda de las Torres-Juárez", ultimaVisita: "", proxVisita: "" },
-            { codigo: "265736", nombre: "Jardines del Valle-Juárez", ultimaVisita: "", proxVisita: "" },
-            { codigo: "88732", nombre: "Juárez Nuevo-Juárez", ultimaVisita: "", proxVisita: "" },
-            { codigo: "39362", nombre: "Montes Himalaya-Juárez", ultimaVisita: "", proxVisita: "" },
-            { codigo: "115964", nombre: "Nueva Zelanda-Juárez", ultimaVisita: "", proxVisita: "" },
-            { codigo: "45567", nombre: "Oasis-Juárez", ultimaVisita: "", proxVisita: "" },
-            { codigo: "222794", nombre: "Parajes del Sol-Juárez", ultimaVisita: "", proxVisita: "" },
-            { codigo: "108738", nombre: "Roma-Juárez", ultimaVisita: "", proxVisita: "" },
-            { codigo: "115287", nombre: "Satélite-Juárez", ultimaVisita: "", proxVisita: "" },
-            { codigo: "126300", nombre: "Solidaridad-Juárez", ultimaVisita: "", proxVisita: "" },
-            { codigo: "50989", nombre: "Waterfill-Juárez", ultimaVisita: "", proxVisita: "" }
-        ];
-        registrosS21 = [];
-        historialMeta = [];
-    }
-    calcularProximasVisitas();
-    renderCongregaciones();
-    renderAgenda();
-    renderHistorial();
-    renderRegistros();
-    actualizarDashboard();
-    actualizarSelectoresCongregacion();
-}
-
-function calcularProximasVisitas() {
-    congregaciones.forEach(c => {
-        if (c.ultimaVisita && !isNaN(new Date(c.ultimaVisita).getTime())) {
-            let f = new Date(c.ultimaVisita);
-            f.setDate(f.getDate() + 182);
-            c.proxVisita = f.toISOString().split('T')[0];
-        } else {
-            c.proxVisita = '';
-        }
-    });
-}
-
-function actualizarSelectoresCongregacion() {
-    const selectPDF = document.getElementById('selectCongregacionPDF');
-    const filtro = document.getElementById('filtroCongregacion');
-    const html = '<option value="">Selecciona congregación...</option>';
-    const htmlFiltro = '<option value="">Todas las congregaciones</option>';
-    congregaciones.forEach(c => {
-        html += `<option value="${c.nombre}">${c.nombre}</option>`;
-        htmlFiltro += `<option value="${c.nombre}">${c.nombre}</option>`;
-    });
-    selectPDF.innerHTML = html;
-    filtro.innerHTML = htmlFiltro;
-}
-
-// ==================== NAVEGACIÓN ====================
-document.querySelectorAll('.tab-button').forEach(btn => {
-    btn.addEventListener('click', () => {
-        document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
-        document.querySelectorAll('.main-content').forEach(c => c.classList.remove('active'));
-        btn.classList.add('active');
-        const tabId = btn.dataset.tab;
-        document.getElementById(`content-${tabId}`).classList.add('active');
-        if (tabId === 'dashboard') actualizarDashboard();
-        if (tabId === 'registros') renderRegistros();
-    });
-});
-
-// ==================== RENDERIZADO ====================
-function renderCongregaciones() {
-    const grid = document.getElementById('congGrid');
-    grid.innerHTML = '';
-    const hoy = new Date();
-    congregaciones.forEach((c, i) => {
-        const proxDate = c.proxVisita ? new Date(c.proxVisita) : null;
-        const diasRestantes = proxDate ? Math.ceil((proxDate - hoy) / (1000*60*60*24)) : null;
-        let badge = '';
-        if (diasRestantes !== null && diasRestantes <= 30 && diasRestantes > 0) {
-            badge = '<span class="badge badge-warning">Próxima</span>';
-        } else if (diasRestantes !== null && diasRestantes <= 0) {
-            badge = '<span class="badge badge-success">✅ Realizada</span>';
-        }
-        const div = document.createElement('div');
-        div.className = 'cong-card';
-        div.innerHTML = `
-            <h3>${c.nombre} ${badge}</h3>
-            <div style="font-size:12px; color:var(--gray-500);">Código: ${c.codigo}</div>
-            <div class="info-row">
-                <span><span class="info-label">Última:</span> ${c.ultimaVisita || '—'}</span>
-                <span><span class="info-label">Próxima:</span> ${c.proxVisita || '—'}</span>
-            </div>
-            <button class="button button-primary button-sm" onclick="subirExcel(${i})">
-                <span class="material-icons-outlined">upload_file</span> Subir Excel
-            </button>
-        `;
-        grid.appendChild(div);
-    });
-}
-
-function renderAgenda() {
-    const tbody = document.querySelector('#tablaAgenda tbody');
-    tbody.innerHTML = '';
-    let filas = [];
-    congregaciones.forEach(c => {
-        if (c.proxVisita && !isNaN(new Date(c.proxVisita).getTime())) {
-            let f = new Date(c.proxVisita);
-            let inicio = new Date(f);
-            inicio.setDate(f.getDate() - f.getDay() + 1);
-            let fin = new Date(inicio);
-            fin.setDate(inicio.getDate() + 6);
-            filas.push({
-                semana: ISOWeekNum(f),
-                inicio: inicio.toLocaleDateString(),
-                fin: fin.toLocaleDateString(),
-                actividad: `Visita a ${c.nombre}`
+        // Lógica de Navegación Simple
+        function toggleView(view) {
+            document.getElementById('view-dashboard').classList.add('hidden');
+            document.getElementById('view-perfil').classList.add('hidden');
+            document.getElementById('view-' + view).classList.remove('hidden');
+            
+            // Actualizar estado activo en Nav (Simplificado)
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                if(view === 'dashboard' && item.innerText.includes('Dashboard')) {
+                    item.classList.add('text-primary');
+                    item.classList.remove('text-gray-400');
+                } else if (view === 'perfil') {
+                    item.classList.add('text-gray-400');
+                    item.classList.remove('text-primary');
+                }
             });
         }
-    });
-    filas.sort((a,b) => a.semana - b.semana);
-    filas.forEach(f => {
-        tbody.innerHTML += `<tr><td>${f.semana}</td><td>${f.inicio}</td><td>${f.fin}</td><td>${f.actividad}</td></tr>`;
-    });
-}
 
-function renderHistorial() {
-    const tbody = document.querySelector('#tablaHist tbody');
-    tbody.innerHTML = '';
-    historialMeta.forEach(h => {
-        tbody.innerHTML += `<tr>
-            <td>${h.congregacion}</td><td>${h.fecha}</td><td>${h.pubActivos || '—'}</td><td>${h.precReg || '—'}</td><td>${h.precAux || '—'}</td>
-            <td><button class="button button-outline button-sm" onclick="descargarExcel('${h.id}')">Excel</button></td>
-            <td><button class="button button-outline button-sm" onclick="descargarPDF('${h.id}')">PDF</button></td>
-        </tr>`;
-    });
-}
-
-function actualizarDashboard() {
-    document.getElementById('totalVisitas').textContent = historialMeta.length;
-    const pubs = historialMeta.map(h => parseFloat(h.pubActivos)).filter(v => !isNaN(v));
-    const prom = pubs.length ? (pubs.reduce((a,b)=>a+b,0) / pubs.length).toFixed(1) : '—';
-    document.getElementById('promPubActivos').textContent = prom;
-
-    const ctx = document.getElementById('chart').getContext('2d');
-    if (window.miChart) window.miChart.destroy();
-    const labels = historialMeta.map(h => h.congregacion.substring(0,15));
-    window.miChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Publicadores Activos',
-                data: pubs,
-                backgroundColor: '#1a73e8',
-                borderRadius: 4
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: { legend: { display: false } }
+        // Lógica de UI para Bottom Sheet
+        function openImportSheet() {
+            document.getElementById('overlay').classList.add('active');
+            document.getElementById('import-sheet').classList.add('active');
         }
-    });
-}
 
-function renderRegistros() {
-    const tbody = document.querySelector('#tablaRegistros tbody');
-    tbody.innerHTML = '';
-    const sinReg = document.getElementById('sinRegistros');
-    const filtro = document.getElementById('filtroCongregacion').value;
-    const registrosFiltrados = filtro ? registrosS21.filter(r => r.congregacion === filtro) : registrosS21;
-    if (registrosFiltrados.length === 0) {
-        sinReg.style.display = 'block';
-        document.querySelector('#tablaRegistros thead').style.display = 'none';
-        return;
-    }
-    sinReg.style.display = 'none';
-    document.querySelector('#tablaRegistros thead').style.display = '';
-    registrosFiltrados.forEach(r => {
-        tbody.innerHTML += `<tr>
-            <td>${r.nombre}</td>
-            <td>${r.congregacion}</td>
-            <td>${r.tipo}</td>
-            <td>${r.horas}</td>
-            <td>${r.cursos}</td>
-            <td>${r.participacion}</td>
-        </tr>`;
-    });
-}
+        function closeImportSheet() {
+            document.getElementById('overlay').classList.remove('active');
+            document.getElementById('import-sheet').classList.remove('active');
+        }
 
-// ==================== SUBIR EXCEL ====================
-function subirExcel(index) {
-    const input = document.getElementById('fileInput');
-    input.index = index;
-    input.click();
-}
-document.getElementById('fileInput').addEventListener('change', function(e) {
-    const file = e.target.files[0];
-    if (!file) return;
-    const index = this.index;
-    const reader = new FileReader();
-    reader.onload = ev => {
-        const data = new Uint8Array(ev.target.result);
-        const wb = XLSX.read(data, { type: 'array' });
-        procesarExcel(wb, file, index);
-    };
-    reader.readAsArrayBuffer(file);
-    this.value = '';
-});
+        // Simulación de Funciones
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.innerText = message;
+            toast.classList.remove('opacity-0');
+            setTimeout(() => toast.classList.add('opacity-0'), 3000);
+        }
 
-function procesarExcel(wb, file, index) {
-    const pubSheet = wb.Sheets['PUB'];
-    if (!pubSheet) return alert('Falta hoja PUB');
-    const get = (sh, cell) => sh[cell] ? sh[cell].v : '';
-    const nombreCong = get(pubSheet, 'C2')?.toString() || '';
-    const fechaRaw = get(pubSheet, 'C16')?.toString() || '';
-    let fechaVisita = '';
-    const match = fechaRaw.match(/(\d{2})\/(\d{2})\/(\d{4})/);
-    if (match) fechaVisita = `${match[3]}-${match[2]}-${match[1]}`;
-    else { const d = new Date(fechaRaw); if (!isNaN(d)) fechaVisita = d.toISOString().split('T')[0]; }
-    if (!fechaVisita) return alert('Fecha no legible en C16.');
+        function handleExport(type) {
+            showToast(`Generando reporte ${type.toUpperCase()}...`);
+            setTimeout(() => {
+                showToast(`Reporte ${type.toUpperCase()} guardado en descargas.`);
+                
+                // Lógica real de exportación (ejemplo conceptual):
+                const datos = JSON.parse(localStorage.getItem('circuit_data') || '{}');
+                const blob = new Blob([JSON.stringify(datos)], {type: 'application/json'});
+                // Aquí se dispararía la descarga real si hubiera datos
+            }, 1500);
+        }
 
-    // Obtener registros S-21 de esta congregación para sumarlos
-    const registrosCong = registrosS21.filter(r => r.congregacion === nombreCong);
-    const totalHorasS21 = registrosCong.reduce((sum, r) => sum + parseFloat(r.horas || 0), 0);
-    const totalCursosS21 = registrosCong.reduce((sum, r) => sum + parseFloat(r.cursos || 0), 0);
-
-    const datos = {
-        nombreCong, fechaVisita,
-        pubActivos: get(pubSheet, 'K4'), precReg: get(pubSheet, 'K6'), precAux: get(pubSheet, 'K8'),
-        pubMeses: [], paMeses: [], prMeses: [], reuMeses: [], donMeses: [],
-        horasS21: totalHorasS21,
-        cursosS21: totalCursosS21
-    };
-    const meses = ['Jul','Ago','Sept','Oct','Nov','Dic','Ene'];
-    for (let i=0; i<7; i++) {
-        const f = 5+i;
-        datos.pubMeses.push({ mes: meses[i], pub: get(pubSheet, `B${f}`), horas: get(pubSheet, `D${f}`), cursos: get(pubSheet, `F${f}`) });
-    }
-    ['PA','PR'].forEach(hoja => {
-        const sh = wb.Sheets[hoja];
-        if (sh) {
-            const arr = hoja==='PA'? datos.paMeses : datos.prMeses;
-            for (let i=(hoja==='PA'?0:1); i<7; i++) {
-                const f = 5+i;
-                arr.push({ mes: meses[i], cant: get(sh, `B${f}`), horas: get(sh, `C${f}`), cursos: get(sh, `D${f}`) });
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const content = JSON.parse(e.target.result);
+                        localStorage.setItem('circuit_data', JSON.stringify(content));
+                        closeImportSheet();
+                        showToast('Base de datos (.json) importada correctamente.');
+                    } catch (error) {
+                        showToast('Error: El archivo no tiene un formato JSON válido.');
+                    }
+                };
+                reader.readAsText(file);
             }
         }
-    });
-    const reu = wb.Sheets['REU-DON'];
-    if (reu) {
-        for (let i=0; i<7; i++) {
-            const f = 5+i;
-            datos.reuMeses.push({ mes: meses[i], entreSem: get(reu, `B${f}`), finSem: get(reu, `C${f}`) });
-            datos.donMeses.push({ mes: meses[i], om: get(reu, `F${f}`), resOm: get(reu, `G${f}`), cong: get(reu, `H${f}`), gastos: get(reu, `I${f}`), fnmto: get(reu, `J${f}`) });
-        }
-    }
-    const cong = congregaciones[index];
-    cong.ultimaVisita = fechaVisita;
-    let prox = new Date(fechaVisita); prox.setDate(prox.getDate()+182);
-    cong.proxVisita = prox.toISOString().split('T')[0];
-    guardar(); renderCongregaciones(); renderAgenda();
-
-    const id = Date.now().toString()+'_'+index;
-    const blob = new Blob([new Uint8Array(file.slice(0,file.size))], {type:file.type});
-    const trans = db.transaction(['informes'],'readwrite');
-    trans.objectStore('informes').put({ id, index, nombre:cong.nombre, fecha:fechaVisita, blob });
-    historialMeta.push({ id, congregacion:cong.nombre, fecha:fechaVisita, pubActivos:datos.pubActivos, precReg:datos.precReg, precAux:datos.precAux });
-    guardar(); renderHistorial(); actualizarDashboard();
-    generarPDFProfesional(datos, id, cong.nombre);
-    alert(`✅ Datos guardados.\nPróxima visita: ${cong.proxVisita}\nHoras S21 acumuladas: ${totalHorasS21}\nCursos S21 acumulados: ${totalCursosS21}`);
-}
-
-// ==================== PDF DEL INFORME ====================
-function generarPDFProfesional(datos, id, nombreCong) {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF('p', 'mm', 'a4');
-    const pageWidth = doc.internal.pageSize.getWidth();
-    const margin = 12;
-    let y = margin + 4;
-    doc.setFillColor(26,38,57);
-    doc.rect(0,0,pageWidth,18,'F');
-    doc.setTextColor(255,255,255);
-    doc.setFont('helvetica','bold');
-    doc.setFontSize(11);
-    doc.text('CIRCUITO CHI-03 · INFORME DE VISITA', pageWidth/2, 11, {align:'center'});
-    doc.setFontSize(8);
-    doc.text(`Generado: ${new Date().toLocaleDateString()}`, pageWidth-14, 11, {align:'right'});
-    doc.setTextColor(44,62,80);
-    doc.setFontSize(13);
-    doc.text(`Congregación: ${datos.nombreCong}`, margin, y); y += 6;
-    doc.setFontSize(10);
-    doc.text(`Visita: ${datos.fechaVisita}    Pub.Act.: ${datos.pubActivos||'—'}    PR: ${datos.precReg||'—'}    PA: ${datos.precAux||'—'}`, margin, y);
-    if (datos.horasS21 || datos.cursosS21) {
-        y += 6;
-        doc.text(`Horas S21: ${datos.horasS21}    Cursos S21: ${datos.cursosS21}`, margin, y);
-    }
-    y += 8;
-    function tablaCompacta(titulo, headers, data) {
-        if (y > 250) { doc.addPage(); y = 20; }
-        doc.setFontSize(11); doc.setTextColor(26,38,57); doc.text(titulo, margin, y); y += 5;
-        doc.autoTable({ startY: y, head: [headers], body: data, theme: 'plain',
-            styles: { fontSize: 8.5, cellPadding: 2 },
-            headStyles: { fillColor: [26,38,57], textColor: [255,255,255], fontSize: 9 },
-            margin: { left: margin, right: margin } });
-        y = doc.lastAutoTable.finalY + 6;
-    }
-    tablaCompacta('Publicadores', ['Mes','Pub','Horas','Cursos'], datos.pubMeses.map(m=>[m.mes, m.pub, m.horas, m.cursos]));
-    if (datos.paMeses.some(m=>m.cant)) tablaCompacta('Prec. Auxiliares', ['Mes','PA','Horas','Cursos'], datos.paMeses.map(m=>[m.mes, m.cant, m.horas, m.cursos]));
-    if (datos.prMeses.some(m=>m.cant)) tablaCompacta('Prec. Regulares', ['Mes','PR','Horas','Cursos'], datos.prMeses.map(m=>[m.mes, m.cant, m.horas, m.cursos]));
-    if (datos.reuMeses.length) tablaCompacta('Asistencia', ['Mes','Entre Sem.','Fin Sem.'], datos.reuMeses.map(m=>[m.mes, m.entreSem, m.finSem]));
-    if (datos.donMeses.some(m=>m.om||m.cong)) tablaCompacta('Donaciones', ['Mes','OM','RES/OM','CONG','GASTOS','FNMTO'], datos.donMeses.map(m=>[m.mes, m.om, m.resOm, m.cong, m.gastos, m.fnmto]));
-    const pdfBlob = doc.output('blob');
-    const trans = db.transaction(['informes'],'readwrite');
-    trans.objectStore('informes').get(id).onsuccess = e => {
-        const rec = e.target.result;
-        if (rec) { rec.pdfBlob = pdfBlob; trans.objectStore('informes').put(rec); }
-        doc.save(`Informe_${nombreCong.replace(/ /g,'_')}_${datos.fechaVisita}.pdf`);
-    };
-}
-
-// ==================== DESCARGAS ====================
-function descargarExcel(id) {
-    db.transaction(['informes'],'readonly').objectStore('informes').get(id).onsuccess = e => {
-        const r = e.target.result;
-        if (r?.blob) {
-            const url = URL.createObjectURL(r.blob);
-            const a = document.createElement('a'); a.href=url; a.download=`${r.nombre.replace(/ /g,'_')}_${r.fecha}.xlsx`; a.click();
-            URL.revokeObjectURL(url);
-        } else alert('Archivo no encontrado.');
-    };
-}
-function descargarPDF(id) {
-    db.transaction(['informes'],'readonly').objectStore('informes').get(id).onsuccess = e => {
-        const r = e.target.result;
-        if (r?.pdfBlob) {
-            const url = URL.createObjectURL(r.pdfBlob);
-            const a = document.createElement('a'); a.href=url; a.download=`Informe_${r.nombre.replace(/ /g,'_')}_${r.fecha}.pdf`; a.click();
-            URL.revokeObjectURL(url);
-        } else alert('PDF no disponible.');
-    };
-}
-
-// ==================== AGREGAR CONGREGACIÓN ====================
-function agregarCongregacion() {
-    const cod = prompt('Código:');
-    const nom = prompt('Nombre:');
-    if (cod && nom) {
-        congregaciones.push({ codigo: cod, nombre: nom, ultimaVisita: '', proxVisita: '' });
-        guardar();
-        renderCongregaciones();
-        renderAgenda();
-        actualizarSelectoresCongregacion();
-    }
-}
-
-// ==================== PROCESAR PDF S-21 ====================
-async function procesarPDF(input) {
-    const file = input.files[0];
-    if (!file) return;
-    const congregacion = document.getElementById('selectCongregacionPDF').value;
-    if (!congregacion) return alert('Selecciona la congregación antes de subir el PDF.');
-
-    const arrayBuffer = await file.arrayBuffer();
-    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-    let textoCompleto = '';
-    for (let i = 1; i <= pdf.numPages; i++) {
-        const page = await pdf.getPage(i);
-        const content = await page.getTextContent();
-        const strings = content.items.map(item => item.str).join(' ');
-        textoCompleto += strings + '\n';
-    }
-    const datos = extraerDatosS21(textoCompleto, congregacion);
-    registrosS21.push(datos);
-    guardar();
-    renderRegistros();
-    document.getElementById('resultadoPDF').innerHTML = `
-        <div class="card" style="background:#e8f0fe; border:1px solid var(--google-blue);">
-            <strong>Datos extraídos:</strong><br>
-            Nombre: ${datos.nombre}<br>
-            Congregación: ${datos.congregacion}<br>
-            Tipo: ${datos.tipo}<br>
-            Horas totales: ${datos.horas}<br>
-            Cursos bíblicos: ${datos.cursos}<br>
-            Participación: ${datos.participacion}
-        </div>`;
-    input.value = '';
-}
-
-function extraerDatosS21(texto, congregacion) {
-    const limpio = texto.replace(/\s+/g, ' ').trim();
-    const nombreMatch = limpio.match(/Nombre:\s*([^\n]+)/);
-    const nombre = nombreMatch ? nombreMatch[1].trim() : 'Desconocido';
-    let tipo = 'Publicador';
-    if (/☒\s*Precursor\s*regular/.test(limpio) || /☑\s*Precursor\s*regular/.test(limpio)) tipo = 'Precursor regular';
-    else if (/☒\s*Precursor\s*auxiliar/.test(limpio) || /☑\s*Precursor\s*auxiliar/.test(limpio)) tipo = 'Precursor auxiliar';
-    else if (/☒\s*Anciano/.test(limpio)) tipo = 'Anciano';
-    else if (/☒\s*Siervo\s*ministerial/.test(limpio)) tipo = 'Siervo ministerial';
-    if (tipo === 'Publicador') {
-        if (/Precursor\s*regular/.test(limpio) && !/☐\s*Precursor\s*regular/.test(limpio)) tipo = 'Precursor regular';
-        else if (/Precursor\s*auxiliar/.test(limpio) && !/☐\s*Precursor\s*auxiliar/.test(limpio)) tipo = 'Precursor auxiliar';
-    }
-    const lineas = limpio.split('\n');
-    let horas = 0, cursos = 0, participacion = 0;
-    const mesesRegex = /(Septiembre|Octubre|Noviembre|Diciembre|Enero|Febrero|Marzo|Abril|Mayo|Junio|Julio|Agosto)/i;
-    for (let linea of lineas) {
-        if (mesesRegex.test(linea)) {
-            const numeros = linea.match(/\d+(\.\d+)?/g);
-            if (numeros && numeros.length >= 3) {
-                participacion += parseFloat(numeros[0]) || 0;
-                cursos += parseFloat(numeros[1]) || 0;
-                if (numeros.length >= 4) horas += parseFloat(numeros[3]) || 0;
-                else if (numeros.length === 3) horas += parseFloat(numeros[2]) || 0;
-            }
-        }
-    }
-    return { id: Date.now().toString(), nombre, congregacion, tipo, horas: horas.toFixed(1), cursos, participacion };
-}
-
-// ==================== UTILIDADES ====================
-function ISOWeekNum(d) {
-    d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
-    d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
-    const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-    return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
-}
-
-// Inicializar
-cargarDatos();
-</script>
+    </script>
 </body>
 </html>
