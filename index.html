@@ -11,9 +11,7 @@
     
     <!-- Libs -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- SheetJS for Excel -->
     <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
-    <!-- PDF.js for PDFs -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:wght@100..1000&display=swap" rel="stylesheet"/>
@@ -53,6 +51,10 @@
         .tab-active { border-bottom: 3px solid #005bbf; color: #005bbf; font-weight: 700; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
+        
+        /* Animation for list items */
+        .list-item { transition: all 0.3s ease; }
+        .list-item:hover { background-color: rgba(0, 91, 191, 0.05); }
     </style>
 </head>
 
@@ -90,12 +92,11 @@
                         <span class="material-symbols-outlined text-on-primary text-3xl">upload_file</span>
                     </div>
                     <div>
-                        <h2 class="font-headline-sm text-headline-sm">Importar Automático</h2>
-                        <p class="text-on-surface-variant text-body-md mt-1">Sube tu archivo <strong>Excel</strong> o <strong>PDF</strong>.</p>
+                        <h2 class="font-headline-sm text-headline-sm">Importar Reportes</h2>
+                        <p class="text-on-surface-variant text-body-md mt-1">Sube el Excel o PDF de una congregación para actualizar sus datos.</p>
                     </div>
                     <label class="cursor-pointer bg-primary text-on-primary py-2 px-6 rounded-full font-label-lg hover:bg-primary-fixed-dim transition-colors shadow-lg active:scale-95">
                         <span>Seleccionar Archivo</span>
-                        <!-- INPUT ACEPTA AMBOS FORMATOS -->
                         <input id="file-upload" type="file" class="hidden" accept=".xlsx, .xls, .pdf" onchange="handleFileUpload(event)"/>
                     </label>
                 </div>
@@ -103,32 +104,13 @@
 
             <!-- Stats Grid -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="dashboard-stats">
-                <div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant flex flex-col justify-center items-center min-h-[100px]">
-                    <span class="material-symbols-outlined text-on-surface-variant mb-1">groups</span>
-                    <span class="text-2xl font-bold text-primary">0</span>
-                    <span class="text-label-lg text-on-surface-variant">Congregaciones</span>
-                </div>
-                <div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant flex flex-col justify-center items-center min-h-[100px]">
-                    <span class="material-symbols-outlined text-on-surface-variant mb-1">person</span>
-                    <span class="text-2xl font-bold text-secondary">0</span>
-                    <span class="text-label-lg text-on-surface-variant">Publicadores</span>
-                </div>
-                <div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant flex flex-col justify-center items-center min-h-[100px]">
-                    <span class="material-symbols-outlined text-on-surface-variant mb-1">elderly</span>
-                    <span class="text-2xl font-bold text-tertiary">0</span>
-                    <span class="text-label-lg text-on-surface-variant">Ancianos</span>
-                </div>
-                <div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant flex flex-col justify-center items-center min-h-[100px]">
-                    <span class="material-symbols-outlined text-on-surface-variant mb-1">warning</span>
-                    <span class="text-2xl font-bold text-error">0</span>
-                    <span class="text-label-lg text-on-surface-variant">Faltantes</span>
-                </div>
+                <!-- Populated by JS -->
             </div>
 
             <!-- Missing Reports Section -->
             <div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm overflow-hidden">
                 <div class="p-4 border-b border-outline-variant bg-surface-container-low flex justify-between items-center">
-                    <h3 class="font-bold text-on-surface">Informes Faltantes</h3>
+                    <h3 class="font-bold text-on-surface">Informes Faltantes Global</h3>
                     <span class="text-xs bg-error-container text-on-error-container px-2 py-1 rounded-full" id="missing-count">0 pendientes</span>
                 </div>
                 <div id="missing-list" class="p-4 space-y-2 max-h-64 overflow-y-auto">
@@ -138,7 +120,7 @@
 
         </section>
 
-        <!-- SECTION: CONGREGATIONS -->
+        <!-- SECTION: CONGREGATIONS (SORTABLE LIST) -->
         <section id="section-Congregaciones" class="hidden space-y-6">
             <div class="flex justify-between items-center">
                 <h2 class="font-headline-md text-headline-md">Congregaciones</h2>
@@ -146,8 +128,14 @@
                     <span class="material-symbols-outlined text-xl">add</span> Importar
                 </button>
             </div>
-            <div id="congregations-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                <!-- Dynamic -->
+            
+            <div class="text-sm text-on-surface-variant mb-2 flex items-center gap-1">
+                <span class="material-symbols-outlined text-sm">info</span>
+                Mantén pulsado o arrastra para reordenar (próximamente). Usa las flechas.
+            </div>
+
+            <div id="congregations-list" class="space-y-3">
+                <!-- Dynamic List -->
             </div>
         </section>
 
@@ -157,7 +145,10 @@
                 <button onclick="navTo('Congregaciones')" class="p-2 rounded-full hover:bg-surface-container transition-colors">
                     <span class="material-symbols-outlined">arrow_back</span>
                 </button>
-                <h2 id="detail-name" class="font-headline-md text-headline-md truncate">Congregación</h2>
+                <div>
+                    <h2 id="detail-name" class="font-headline-md text-headline-md truncate leading-tight">Congregación</h2>
+                    <span id="detail-circuit" class="text-xs font-bold text-secondary bg-secondary-container/30 px-2 py-0.5 rounded">CHI-03-A</span>
+                </div>
             </div>
 
             <!-- Tabs -->
@@ -215,7 +206,7 @@
     <nav class="fixed bottom-0 w-full z-50 bg-surface/80 backdrop-blur-lg border-t border-outline-variant/50 flex justify-around items-center h-20 px-2 pb-safe">
         <button onclick="navTo('Congregaciones')" class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary p-2 transition-colors">
             <span class="material-symbols-outlined text-2xl">groups</span>
-            <span class="text-xs font-medium mt-1">Congregaciones</span>
+            <span class="text-xs font-medium mt-1">Lista</span>
         </button>
         <button onclick="navTo('Dashboard')" class="flex flex-col items-center justify-center text-primary p-2 transition-colors">
             <div class="bg-secondary-container p-2 rounded-full mb-1">
@@ -237,20 +228,57 @@
         // Init PDF.js worker
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
+        // --- DEFAULT DATA (HARDCODED LIST) ---
+        const DEFAULT_CONGREGATIONS = [
+            { name: "Anémona-Cd. Juárez, Chih.", code: "74799", circuit: "CHI-03-B" },
+            { name: "Bambú-Juárez, Chih.", code: "76570", circuit: "CHI-03-B" },
+            { name: "Cañaveral-Juárez, Chih.", code: "272260", circuit: "CHI-03-A" },
+            { name: "Cártamo-Juárez, Chih.", code: "70581", circuit: "CHI-03-A" },
+            { name: "Del Real-Cd. Juárez, Chih.", code: "7542", circuit: "CHI-03-B" },
+            { name: "El Granjero-Juárez, Chih.", code: "7609", circuit: "CHI-03-A" },
+            { name: "Grama-Juárez, Chih.", code: "102350", circuit: "CHI-03-A" },
+            { name: "Hacienda de las Torres-Juárez, Chih.", code: "126177", circuit: "CHI-03-B" },
+            { name: "Jardines del Valle-Juárez, Chih.", code: "265736", circuit: "CHI-03-A" },
+            { name: "Juárez Nuevo-Juárez, Chih.", code: "88732", circuit: "CHI-03-A" },
+            { name: "Montes Himalaya-Juárez, Chih.", code: "39362", circuit: "CHI-03-B" },
+            { name: "Nueva Zelanda-Juárez, Chih.", code: "115964", circuit: "CHI-03-B" },
+            { name: "Oasis-Juárez, Chih.", code: "45567", circuit: "CHI-03-A" },
+            { name: "Omega-Cd. Juárez, Chih.", code: "7898", circuit: "CHI-03-B" },
+            { name: "Parajes del Sol-Juárez, Chih.", code: "222794", circuit: "CHI-03-B" },
+            { name: "Roma-Juárez, Chih.", code: "108738", circuit: "CHI-03-B" },
+            { name: "Satélite-Juárez, Chih.", code: "115287", circuit: "CHI-03-B" },
+            { name: "Solidaridad-Juárez, Chih.", code: "126300", circuit: "CHI-03-A" },
+            { name: "Waterfill-Juárez, Chih.", code: "50989", circuit: "CHI-03-A" },
+            { name: "Grupo Tagalo-Juárez, Chihuahua", code: "N/A", circuit: "CHI-03-B" }
+        ];
+
         // --- STATE MANAGEMENT ---
         let state = {
             profile: { name: 'Superintendente', photo: null },
-            congregations: [],
+            congregations: [], // Will be populated from default or localStorage
             summary: { ancianos: 0, sm: 0, faltantes: [] },
             isDark: false,
-            currentView: 'Dashboard'
+            currentView: 'Dashboard',
+            selectedCongregation: null
         };
 
         // --- INIT ---
         function init() {
-            const saved = localStorage.getItem('CHI03_APP_DATA_FINAL');
+            const saved = localStorage.getItem('CHI03_APP_FINAL_V2');
             if (saved) {
                 try { state = JSON.parse(saved); } catch(e) { console.error("Error loading state", e); }
+            } else {
+                // First Time Init: Load default list
+                DEFAULT_CONGREGATIONS.forEach(def => {
+                    state.congregations.push({
+                        id: generateId(),
+                        name: def.name,
+                        code: def.code,
+                        circuit: def.circuit,
+                        stats: { pub: [], pr: [], pa: [], reu: [], don: [] }
+                    });
+                });
+                saveState();
             }
             
             if (state.isDark) document.documentElement.classList.add('dark');
@@ -260,15 +288,35 @@
             renderCongregations();
         }
 
+        function generateId() {
+            return Date.now().toString(36) + Math.random().toString(36).substr(2);
+        }
+
         function saveState() {
-            localStorage.setItem('CHI03_APP_DATA_FINAL', JSON.stringify(state));
+            localStorage.setItem('CHI03_APP_FINAL_V2', JSON.stringify(state));
+        }
+
+        // --- SORTING LOGIC ---
+        function moveCongregation(id, direction) {
+            const index = state.congregations.findIndex(c => c.id === id);
+            if (index === -1) return;
+
+            const newIndex = direction === 'up' ? index - 1 : index + 1;
+            if (newIndex < 0 || newIndex >= state.congregations.length) return;
+
+            // Swap items
+            const item = state.congregations[index];
+            state.congregations.splice(index, 1);
+            state.congregations.splice(newIndex, 0, item);
+
+            saveState();
+            renderCongregations(); // Re-render to show change
         }
 
         // --- UNIVERSAL FILE HANDLER ---
         function handleFileUpload(e) {
             const file = e.target.files[0];
             if (!file) return;
-
             const extension = file.name.split('.').pop().toLowerCase();
 
             if (extension === 'pdf') {
@@ -280,6 +328,7 @@
             } else {
                 showSnackbar("Formato no soportado");
             }
+            e.target.value = ''; // Reset input
         }
 
         // --- PDF PROCESSOR ---
@@ -288,18 +337,13 @@
                 const arrayBuffer = await file.arrayBuffer();
                 const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
                 let fullText = "";
-
-                // Extract text from all pages
                 for (let i = 1; i <= pdf.numPages; i++) {
                     const page = await pdf.getPage(i);
                     const textContent = await page.getTextContent();
                     const pageText = textContent.items.map(item => item.str).join(' ');
                     fullText += pageText + "\n";
                 }
-
                 processPdfText(fullText, file.name);
-                showSnackbar("¡PDF Importado!");
-
             } catch (err) {
                 console.error(err);
                 showSnackbar("Error al leer PDF");
@@ -307,62 +351,48 @@
         }
 
         function processPdfText(text, filename) {
-            // Helper to extract number after keyword
             const extractNum = (keyword) => {
-                // Create regex to find "Keyword ... number" (handles some label variations)
-                // Example: "Publicadores 84" or "Publicadores: 84"
                 const regex = new RegExp(keyword + "[\\s\\S]{0,10}?\\b(\\d+)\\b", "i");
                 const match = text.match(regex);
                 return match ? parseInt(match[1]) : 0;
             };
 
-            // Create a new congregation entry based on PDF data
-            // Try to find a name in the text, fallback to filename
-            let name = filename.replace('.pdf', '');
-            const nameMatch = text.match(/Congregación:\s*([^\n]+)/i);
-            if (nameMatch) name = nameMatch[1].trim();
-
-            let cong = state.congregations.find(c => c.name === name);
+            // Try to find matching congregation
+            // Clean filename: "Omega (7898).pdf" -> "Omega"
+            let cleanName = filename.replace('.pdf', '').replace(/\([0-9]*\)/, '').trim();
+            
+            // Find match in state
+            let cong = state.congregations.find(c => c.name.toUpperCase().includes(cleanName.toUpperCase().substring(0,4)));
             if (!cong) {
-                cong = { id: Date.now(), name: name, stats: {} };
+                // If not found, create new (should ideally update existing)
+                cong = { id: generateId(), name: cleanName, code: "N/A", circuit: "CHI-03", stats: {} };
                 state.congregations.push(cong);
             }
 
-            // 1. Extract Summary Data for Dashboard
             state.summary.ancianos = extractNum("Ancianos");
             state.summary.sm = extractNum("Siervos Ministeriales") || extractNum("Ministeriales");
             
-            // Reset faltantes for PDF import
-            state.summary.faltantes = [];
-
-            // 2. Try to extract monthly data (Heuristic)
-            // Since PDF text is flat, we create a single summary entry for the current month
             const today = new Date();
             const currentMonth = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"][today.getMonth()];
             
-            // Create a dummy monthly object
             const monthlyData = [{
                 mes: currentMonth,
-                val: extractNum("Publicadores"), // PUB
-                hrs: extractNum("Horas"),
-                cb: extractNum("Cursos") || extractNum("Cursos Bíblicos"),
-                entre: extractNum("Entre Semana"),
-                fin: extractNum("Fin de Semana"),
-                om: extractNum("Obra Mund") || extractNum("Obra Mundial"),
-                cong: extractNum("Congregación") // For donations, tricky distinction
+                val: extractNum("Publicadores"), hrs: extractNum("Horas"), cb: extractNum("Cursos"),
+                entre: extractNum("Entre Semana"), fin: extractNum("Fin de Semana"),
+                om: extractNum("Obra Mund"), cong: extractNum("Congregación")
             }];
 
-            // Assign to stats
             cong.stats.pub = monthlyData;
-            cong.stats.pr = [{ mes: currentMonth, val: extractNum("P. Regulares") || extractNum("Precursores Regulares"), hrs: 0, cb: 0 }];
-            cong.stats.pa = [{ mes: currentMonth, val: extractNum("P. Auxiliares") || extractNum("Precursores Auxiliares"), hrs: 0, cb: 0 }];
+            cong.stats.pr = [{ mes: currentMonth, val: extractNum("P. Regulares"), hrs: 0, cb: 0 }];
+            cong.stats.pa = [{ mes: currentMonth, val: extractNum("P. Auxiliares"), hrs: 0, cb: 0 }];
             cong.stats.reu = [{ mes: currentMonth, entre: monthlyData[0].entre, fin: monthlyData[0].fin }];
             cong.stats.don = [{ mes: currentMonth, om: monthlyData[0].om, cong: monthlyData[0].cong }];
 
             saveState();
             renderDashboard();
             renderCongregations();
-            navTo('Congregaciones'); // Go to list to see result
+            showSnackbar(`Datos actualizados: ${cong.name}`);
+            navTo('Congregaciones');
         }
 
         // --- EXCEL PROCESSOR ---
@@ -373,8 +403,6 @@
                     const data = new Uint8Array(e.target.result);
                     const workbook = XLSX.read(data, { type: 'array' });
                     processWorkbookAutomatically(workbook);
-                    showSnackbar("¡Excel Importado!");
-                    navTo('Congregaciones');
                 } catch (error) {
                     console.error(error);
                     showSnackbar("Error al procesar Excel");
@@ -384,24 +412,28 @@
         }
 
         function processWorkbookAutomatically(wb) {
-            // (Same Excel logic as before)
-            let name = "Congregación Excel";
+            // Extract name from Excel
+            let name = "Desconocida";
             if (wb.Sheets['PUB']) {
                 const sheet = wb.Sheets['PUB'];
                 for (let i = 0; i < 15; i++) {
-                    const cellAddress = XLSX.utils.encode_cell({r: i, c: 1}); 
-                    if (sheet[cellAddress] && String(sheet[cellAddress].v).includes("CONGREGACIÓN")) {
-                        const rowData = XLSX.utils.sheet_to_json(sheet, {header: 1, range: i, defval: ""})[0];
-                        rowData.forEach(cell => {
-                            const txt = String(cell);
-                            if (txt.match(/^\d+\.\s/)) name = txt.split('(')[0].trim();
-                        });
-                    }
+                    const rowData = XLSX.utils.sheet_to_json(sheet, {header: 1, range: i, defval: ""})[0];
+                    rowData.forEach(cell => {
+                        const txt = String(cell);
+                        if (txt.match(/^\d+\.\s/)) name = txt.split('(')[0].trim();
+                    });
                 }
             }
 
-            let cong = state.congregations.find(c => c.name === name);
-            if (!cong) { cong = { id: Date.now(), name: name, stats: {} }; state.congregations.push(cong); }
+            // Match with existing list
+            // Heuristic: Find if any existing congregation contains the first 4 letters of the found name
+            let cong = state.congregations.find(c => c.name.toUpperCase().includes(name.toUpperCase().substring(0, 4)));
+            
+            if (!cong) {
+                // Not found, create new
+                cong = { id: generateId(), name: name, code: "N/A", circuit: "CHI-03", stats: {} };
+                state.congregations.push(cong);
+            }
 
             const parseMonthlyData = (sheetName) => {
                 if (!wb.Sheets[sheetName]) return [];
@@ -419,7 +451,6 @@
                     else if (h.includes("FIN DE SEMANA")) colMap.fin = i;
                     else if (h.includes("OBRA MUND")) colMap.om = i;
                     else if (h.includes("CONG")) colMap.cong = i;
-                    else if (h.includes("GASTOS")) colMap.gastos = i;
                 });
                 const months = ["ENE", "FEB", "MAR", "ABR", "MAY", "JUN", "JUL", "AGO", "SEP", "OCT", "NOV", "DIC"];
                 const data = [];
@@ -434,7 +465,6 @@
                         if(colMap.fin !== undefined) item.fin = row[colMap.fin] || 0;
                         if(colMap.om !== undefined) item.om = row[colMap.om] || 0;
                         if(colMap.cong !== undefined) item.cong = row[colMap.cong] || 0;
-                        if(colMap.gastos !== undefined) item.gastos = row[colMap.gastos] || 0;
                         data.push(item);
                     }
                 });
@@ -471,6 +501,8 @@
             saveState();
             renderDashboard();
             renderCongregations();
+            showSnackbar(`Datos actualizados: ${cong.name}`);
+            navTo('Congregaciones');
         }
 
         // --- UI RENDERERS ---
@@ -482,22 +514,22 @@
 
             const statsEl = document.getElementById('dashboard-stats');
             statsEl.innerHTML = `
-                <div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant flex flex-col justify-center items-center min-h-[100px] transition-all hover:shadow-md">
+                <div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant flex flex-col justify-center items-center min-h-[100px]">
                     <span class="material-symbols-outlined text-on-surface-variant mb-1">groups</span>
                     <span class="text-2xl font-bold text-primary">${state.congregations.length}</span>
                     <span class="text-label-lg text-on-surface-variant">Congregaciones</span>
                 </div>
-                <div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant flex flex-col justify-center items-center min-h-[100px] transition-all hover:shadow-md">
+                <div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant flex flex-col justify-center items-center min-h-[100px]">
                     <span class="material-symbols-outlined text-on-surface-variant mb-1">person</span>
                     <span class="text-2xl font-bold text-secondary">${totalPub}</span>
                     <span class="text-label-lg text-on-surface-variant">Publicadores</span>
                 </div>
-                <div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant flex flex-col justify-center items-center min-h-[100px] transition-all hover:shadow-md">
+                <div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant flex flex-col justify-center items-center min-h-[100px]">
                     <span class="material-symbols-outlined text-on-surface-variant mb-1">elderly</span>
                     <span class="text-2xl font-bold text-tertiary">${state.summary.ancianos}</span>
                     <span class="text-label-lg text-on-surface-variant">Ancianos</span>
                 </div>
-                <div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant flex flex-col justify-center items-center min-h-[100px] transition-all hover:shadow-md">
+                <div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant flex flex-col justify-center items-center min-h-[100px]">
                     <span class="material-symbols-outlined text-on-surface-variant mb-1">warning</span>
                     <span class="text-2xl font-bold text-error">${state.summary.faltantes.length}</span>
                     <span class="text-label-lg text-on-surface-variant">Faltantes</span>
@@ -507,15 +539,14 @@
             const listEl = document.getElementById('missing-list');
             const countEl = document.getElementById('missing-count');
             const items = state.summary.faltantes;
-            
             countEl.innerText = `${items.length} pendientes`;
 
             if (items.length === 0) {
-                listEl.innerHTML = `<p class="text-center text-on-surface-variant text-sm py-4">No hay informes faltantes registrados.</p>`;
+                listEl.innerHTML = `<p class="text-center text-on-surface-variant text-sm py-4">No hay pendientes registrados.</p>`;
             } else {
                 listEl.innerHTML = items.map(f => `
                     <div class="flex justify-between items-center p-3 bg-surface-container-low rounded-lg border border-outline-variant/50">
-                        <span class="font-medium text-on-surface">${f.name}</span>
+                        <span class="font-medium text-on-surface text-sm">${f.name}</span>
                         <span class="text-xs bg-error-container/20 text-error px-2 py-1 rounded-full font-semibold">${f.status}</span>
                     </div>
                 `).join('');
@@ -526,24 +557,42 @@
             const list = document.getElementById('congregations-list');
             if (state.congregations.length === 0) {
                 list.innerHTML = `<div class="col-span-3 text-center py-20 text-on-surface-variant space-y-4">
-                    <span class="material-symbols-outlined text-5xl">cloud_upload</span>
-                    <p>No hay datos. Importe un archivo Excel o PDF.</p>
+                    <p>No hay congregaciones.</p>
                 </div>`;
                 return;
             }
 
-            list.innerHTML = state.congregations.map(c => `
-                <div onclick="openDetail(${c.id})" class="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 shadow-sm cursor-pointer hover:shadow-lg hover:border-primary active:scale-[0.98] transition-all flex justify-between items-center">
-                    <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center text-secondary font-bold text-xl">
-                            ${c.name.charAt(0)}
+            list.innerHTML = state.congregations.map((c, index) => `
+                <div class="list-item bg-surface-container-lowest border border-outline-variant rounded-xl p-4 shadow-sm flex justify-between items-center gap-2">
+                    
+                    <!-- Controls -->
+                    <div class="flex flex-col justify-center">
+                        <button onclick="moveCongregation('${c.id}', 'up')" class="p-1 rounded hover:bg-surface-container transition-color ${index === 0 ? 'opacity-20 cursor-default' : ''}">
+                            <span class="material-symbols-outlined text-lg">keyboard_arrow_up</span>
+                        </button>
+                        <button onclick="moveCongregation('${c.id}', 'down')" class="p-1 rounded hover:bg-surface-container transition-color ${index === state.congregations.length - 1 ? 'opacity-20 cursor-default' : ''}">
+                            <span class="material-symbols-outlined text-lg">keyboard_arrow_down</span>
+                        </button>
+                    </div>
+
+                    <!-- Info -->
+                    <div onclick="openDetail('${c.id}')" class="flex-1 cursor-pointer">
+                        <div class="flex items-center gap-2">
+                            <span class="font-bold text-on-background block">${c.name}</span>
+                            ${c.circuit ? `<span class="text-xs font-bold ${c.circuit.includes('A') ? 'text-secondary bg-secondary-container/30' : 'text-tertiary bg-tertiary-container/30'} px-1.5 rounded">${c.circuit}</span>` : ''}
                         </div>
-                        <div>
-                            <span class="font-bold block text-on-background">${c.name}</span>
-                            <span class="text-xs text-on-surface-variant">${c.stats.pub ? c.stats.pub.length + ' registros' : 'Cargado desde PDF'}</span>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span class="text-xs text-on-surface-variant">Cod: ${c.code || 'N/A'}</span>
+                            ${c.stats.pub && c.stats.pub.length > 0 ? 
+                                `<span class="text-xs text-primary font-semibold">• ${c.stats.pub.length} meses datos</span>` : 
+                                `<span class="text-xs text-error font-semibold">• Sin datos</span>`}
                         </div>
                     </div>
-                    <span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+
+                    <!-- Actions -->
+                    <button onclick="document.getElementById('file-upload').click()" class="p-2 rounded-full hover:bg-surface-container transition-colors text-on-surface-variant">
+                        <span class="material-symbols-outlined">upload_file</span>
+                    </button>
                 </div>
             `).join('');
         }
@@ -553,6 +602,8 @@
             if (!state.selectedCongregation) return;
             
             document.getElementById('detail-name').innerText = state.selectedCongregation.name;
+            document.getElementById('detail-circuit').innerText = state.selectedCongregation.circuit || "CHI-03";
+            
             navTo('Detail');
             switchTab('pub');
         }
@@ -576,7 +627,11 @@
             if (tabKey === 'don') { headers = ['Mes', 'Obra Mund.', 'Congregación']; cols = ['mes', 'om', 'cong']; }
 
             if (data.length === 0) {
-                container.innerHTML = `<div class="p-10 text-center text-on-surface-variant">No hay datos detallados (posiblemente importado de PDF con datos resumidos).</div>`;
+                container.innerHTML = `<div class="p-10 text-center text-on-surface-variant">
+                    <span class="material-symbols-outlined text-5xl text-outline-variant mb-2">folder_off</span>
+                    <p>No hay datos detallados.</p>
+                    <p class="text-sm mt-2">Importe un archivo para esta congregación.</p>
+                </div>`;
                 return;
             }
 
@@ -642,7 +697,7 @@
                 state.profile.photo = ev.target.result;
                 updateProfileUI();
                 saveState();
-                showSnackbar("Foto de perfil actualizada");
+                showSnackbar("Foto actualizada");
             };
             reader.readAsDataURL(file);
         }
@@ -657,22 +712,25 @@
         function updateProfileUI() {
             const name = state.profile.name || "S";
             const initial = name.charAt(0).toUpperCase();
-
             document.getElementById('profile-name').value = name;
             document.getElementById('header-initial').innerText = initial;
-            const hImg = document.getElementById('header-avatar');
-            if (state.profile.photo) { hImg.src = state.profile.photo; hImg.classList.remove('hidden'); } 
-            else { hImg.classList.add('hidden'); }
-
             document.getElementById('settings-initial').innerText = initial;
+
+            const hImg = document.getElementById('header-avatar');
             const sImg = document.getElementById('settings-avatar');
-            if (state.profile.photo) { sImg.src = state.profile.photo; sImg.classList.remove('hidden'); }
-            else { sImg.classList.add('hidden'); }
+            
+            if (state.profile.photo) {
+                hImg.src = state.profile.photo; hImg.classList.remove('hidden');
+                sImg.src = state.profile.photo; sImg.classList.remove('hidden');
+            } else {
+                hImg.classList.add('hidden');
+                sImg.classList.add('hidden');
+            }
         }
 
         function clearData() {
-            if (confirm("¿Borrar absolutamente todos los datos de la aplicación?")) {
-                localStorage.removeItem('CHI03_APP_DATA_FINAL');
+            if (confirm("¿Borrar datos y restaurar lista por defecto?")) {
+                localStorage.removeItem('CHI03_APP_FINAL_V2');
                 location.reload();
             }
         }
@@ -689,8 +747,10 @@
             icon.innerText = state.isDark ? 'light_mode' : 'dark_mode';
         }
 
+        // Start App
         init();
 
+        // Register Service Worker
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('./sw.js').catch(err => console.log("SW not registered", err));
         }
