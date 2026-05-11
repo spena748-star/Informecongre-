@@ -8,14 +8,14 @@
     <!-- PWA Meta Tags -->
     <meta content="#005bbf" name="theme-color"/>
     <meta content="yes" name="mobile-web-app-capable"/>
-    <meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"/>
     
-    <!-- Manifest Inline para PWA -->
-    <link href="data:application/json;base64,eyJuYW1lIjogIkNpcmN1aXRvIENISS0wMyIsICJzaG9ydF9uYW1lIjogIkNISS0wMyIsICJzdGFydF91cmwiOiAiLiIsICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLCAiYmFja2dyb3VuZF9jb2xvciI6ICIjZjdmOWZmIiwgInRoZW1lX2NvbG9yIjogIiMwMDViYmYifQ==" rel="manifest"/>
-
     <!-- Libs -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- SheetJS for Excel -->
     <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+    <!-- PDF.js for PDFs -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:wght@100..1000&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 
@@ -43,22 +43,14 @@
     <style>
         body { font-family: 'Roboto Flex', sans-serif; }
         .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-        
-        /* Scrollbar */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #c1c6d6; border-radius: 10px; }
-        
-        /* Snackbar Animation */
         #snackbar { visibility: hidden; min-width: 250px; background-color: #333; color: #fff; text-align: center; border-radius: 12px; padding: 16px; position: fixed; z-index: 9999; left: 50%; bottom: 90px; transform: translateX(-50%); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
         #snackbar.show { visibility: visible; animation: fadein 0.3s, fadeout 0.3s 2.5s forwards; }
         @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 90px; opacity: 1;} }
         @keyframes fadeout { from {bottom: 90px; opacity: 1;} to {bottom: 0; opacity: 0;} }
-        
-        /* Tabs */
         .tab-active { border-bottom: 3px solid #005bbf; color: #005bbf; font-weight: 700; }
-        
-        /* Hide scrollbar for tabs */
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
     </style>
@@ -75,11 +67,9 @@
             <h1 class="font-bold text-xl text-primary tracking-tight">Circuito CHI-03</h1>
         </div>
         <div class="flex items-center gap-2">
-            <!-- Theme Toggle -->
             <button id="themeToggle" class="p-2 rounded-full hover:bg-surface-container transition-colors">
                 <span class="material-symbols-outlined text-on-surface-variant">dark_mode</span>
             </button>
-            <!-- Profile -->
             <button onclick="navTo('Settings')" class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center overflow-hidden border-2 border-transparent hover:border-primary transition-all">
                 <img id="header-avatar" class="w-full h-full object-cover hidden" src="" alt="Avatar"/>
                 <span id="header-initial" class="font-bold text-on-primary text-lg">S</span>
@@ -100,19 +90,19 @@
                         <span class="material-symbols-outlined text-on-primary text-3xl">upload_file</span>
                     </div>
                     <div>
-                        <h2 class="font-headline-sm text-headline-sm">Importar Datos</h2>
-                        <p class="text-on-surface-variant text-body-md mt-1">Carga tu archivo Excel para procesar automáticamente.</p>
+                        <h2 class="font-headline-sm text-headline-sm">Importar Automático</h2>
+                        <p class="text-on-surface-variant text-body-md mt-1">Sube tu archivo <strong>Excel</strong> o <strong>PDF</strong>.</p>
                     </div>
                     <label class="cursor-pointer bg-primary text-on-primary py-2 px-6 rounded-full font-label-lg hover:bg-primary-fixed-dim transition-colors shadow-lg active:scale-95">
-                        <span>Seleccionar Excel</span>
-                        <input id="excel-upload" type="file" class="hidden" accept=".xlsx, .xls" onchange="handleExcelUpload(event)"/>
+                        <span>Seleccionar Archivo</span>
+                        <!-- INPUT ACEPTA AMBOS FORMATOS -->
+                        <input id="file-upload" type="file" class="hidden" accept=".xlsx, .xls, .pdf" onchange="handleFileUpload(event)"/>
                     </label>
                 </div>
             </div>
 
             <!-- Stats Grid -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="dashboard-stats">
-                <!-- Populated by JS -->
                 <div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant flex flex-col justify-center items-center min-h-[100px]">
                     <span class="material-symbols-outlined text-on-surface-variant mb-1">groups</span>
                     <span class="text-2xl font-bold text-primary">0</span>
@@ -152,7 +142,7 @@
         <section id="section-Congregaciones" class="hidden space-y-6">
             <div class="flex justify-between items-center">
                 <h2 class="font-headline-md text-headline-md">Congregaciones</h2>
-                <button onclick="document.getElementById('excel-upload').click()" class="flex items-center gap-2 text-primary font-label-lg hover:bg-primary-container/20 px-3 py-2 rounded-full transition-colors">
+                <button onclick="document.getElementById('file-upload').click()" class="flex items-center gap-2 text-primary font-label-lg hover:bg-primary-container/20 px-3 py-2 rounded-full transition-colors">
                     <span class="material-symbols-outlined text-xl">add</span> Importar
                 </button>
             </div>
@@ -244,6 +234,9 @@
 
     <!-- Script -->
     <script>
+        // Init PDF.js worker
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
         // --- STATE MANAGEMENT ---
         let state = {
             profile: { name: 'Superintendente', photo: null },
@@ -271,72 +264,151 @@
             localStorage.setItem('CHI03_APP_DATA_FINAL', JSON.stringify(state));
         }
 
-        // --- EXCEL PROCESSOR (AUTOMATION) ---
-        function handleExcelUpload(e) {
+        // --- UNIVERSAL FILE HANDLER ---
+        function handleFileUpload(e) {
             const file = e.target.files[0];
             if (!file) return;
-            showSnackbar("Procesando archivo...");
 
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const data = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(data, { type: 'array' });
-                    
-                    processWorkbookAutomatically(workbook);
-                    showSnackbar("¡Excel importado con éxito!");
-                    navTo('Dashboard');
-                } catch (error) {
-                    console.error(error);
-                    showSnackbar("Error al procesar el archivo");
-                }
-            };
-            reader.readAsArrayBuffer(file);
+            const extension = file.name.split('.').pop().toLowerCase();
+
+            if (extension === 'pdf') {
+                showSnackbar("Procesando PDF...");
+                handlePdfFile(file);
+            } else if (extension === 'xlsx' || extension === 'xls') {
+                showSnackbar("Procesando Excel...");
+                handleExcelFile(file);
+            } else {
+                showSnackbar("Formato no soportado");
+            }
         }
 
-        function processWorkbookAutomatically(wb) {
-            // 1. Extract Congregation Name
-            let name = "Congregación Desconocida";
-            // Heuristic: Scan first 10 rows of 'PUB' sheet for specific label
-            if (wb.Sheets['PUB']) {
-                const sheet = wb.Sheets['PUB'];
-                for (let i = 0; i < 15; i++) {
-                    const cellAddress = XLSX.utils.encode_cell({r: i, c: 1}); // Column B usually
-                    if (sheet[cellAddress] && String(sheet[cellAddress].v).includes("CONGREGACIÓN")) {
-                        // Try reading next cell or same row diff column
-                        // Based on sample: "0 | HEAD...", "1 | CONGREGACIÓN: | * | 18. Omega..."
-                        // Try scanning row for number pattern
-                        const rowData = XLSX.utils.sheet_to_json(sheet, {header: 1, range: i, defval: ""})[0];
-                        rowData.forEach(cell => {
-                            const txt = String(cell);
-                            // Match pattern like "18. Omega..."
-                            if (txt.match(/^\d+\.\s/)) {
-                                name = txt.split('(')[0].trim();
-                            }
-                        });
-                    }
-                }
-            }
+        // --- PDF PROCESSOR ---
+        async function handlePdfFile(file) {
+            try {
+                const arrayBuffer = await file.arrayBuffer();
+                const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                let fullText = "";
 
-            // 2. Create/Update Congregation
+                // Extract text from all pages
+                for (let i = 1; i <= pdf.numPages; i++) {
+                    const page = await pdf.getPage(i);
+                    const textContent = await page.getTextContent();
+                    const pageText = textContent.items.map(item => item.str).join(' ');
+                    fullText += pageText + "\n";
+                }
+
+                processPdfText(fullText, file.name);
+                showSnackbar("¡PDF Importado!");
+
+            } catch (err) {
+                console.error(err);
+                showSnackbar("Error al leer PDF");
+            }
+        }
+
+        function processPdfText(text, filename) {
+            // Helper to extract number after keyword
+            const extractNum = (keyword) => {
+                // Create regex to find "Keyword ... number" (handles some label variations)
+                // Example: "Publicadores 84" or "Publicadores: 84"
+                const regex = new RegExp(keyword + "[\\s\\S]{0,10}?\\b(\\d+)\\b", "i");
+                const match = text.match(regex);
+                return match ? parseInt(match[1]) : 0;
+            };
+
+            // Create a new congregation entry based on PDF data
+            // Try to find a name in the text, fallback to filename
+            let name = filename.replace('.pdf', '');
+            const nameMatch = text.match(/Congregación:\s*([^\n]+)/i);
+            if (nameMatch) name = nameMatch[1].trim();
+
             let cong = state.congregations.find(c => c.name === name);
             if (!cong) {
                 cong = { id: Date.now(), name: name, stats: {} };
                 state.congregations.push(cong);
             }
 
-            // 3. Parse Sheets (Generic Monthly Parser)
-            const parseMonthlyData = (sheetName, config) => {
+            // 1. Extract Summary Data for Dashboard
+            state.summary.ancianos = extractNum("Ancianos");
+            state.summary.sm = extractNum("Siervos Ministeriales") || extractNum("Ministeriales");
+            
+            // Reset faltantes for PDF import
+            state.summary.faltantes = [];
+
+            // 2. Try to extract monthly data (Heuristic)
+            // Since PDF text is flat, we create a single summary entry for the current month
+            const today = new Date();
+            const currentMonth = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"][today.getMonth()];
+            
+            // Create a dummy monthly object
+            const monthlyData = [{
+                mes: currentMonth,
+                val: extractNum("Publicadores"), // PUB
+                hrs: extractNum("Horas"),
+                cb: extractNum("Cursos") || extractNum("Cursos Bíblicos"),
+                entre: extractNum("Entre Semana"),
+                fin: extractNum("Fin de Semana"),
+                om: extractNum("Obra Mund") || extractNum("Obra Mundial"),
+                cong: extractNum("Congregación") // For donations, tricky distinction
+            }];
+
+            // Assign to stats
+            cong.stats.pub = monthlyData;
+            cong.stats.pr = [{ mes: currentMonth, val: extractNum("P. Regulares") || extractNum("Precursores Regulares"), hrs: 0, cb: 0 }];
+            cong.stats.pa = [{ mes: currentMonth, val: extractNum("P. Auxiliares") || extractNum("Precursores Auxiliares"), hrs: 0, cb: 0 }];
+            cong.stats.reu = [{ mes: currentMonth, entre: monthlyData[0].entre, fin: monthlyData[0].fin }];
+            cong.stats.don = [{ mes: currentMonth, om: monthlyData[0].om, cong: monthlyData[0].cong }];
+
+            saveState();
+            renderDashboard();
+            renderCongregations();
+            navTo('Congregaciones'); // Go to list to see result
+        }
+
+        // --- EXCEL PROCESSOR ---
+        function handleExcelFile(file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    processWorkbookAutomatically(workbook);
+                    showSnackbar("¡Excel Importado!");
+                    navTo('Congregaciones');
+                } catch (error) {
+                    console.error(error);
+                    showSnackbar("Error al procesar Excel");
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function processWorkbookAutomatically(wb) {
+            // (Same Excel logic as before)
+            let name = "Congregación Excel";
+            if (wb.Sheets['PUB']) {
+                const sheet = wb.Sheets['PUB'];
+                for (let i = 0; i < 15; i++) {
+                    const cellAddress = XLSX.utils.encode_cell({r: i, c: 1}); 
+                    if (sheet[cellAddress] && String(sheet[cellAddress].v).includes("CONGREGACIÓN")) {
+                        const rowData = XLSX.utils.sheet_to_json(sheet, {header: 1, range: i, defval: ""})[0];
+                        rowData.forEach(cell => {
+                            const txt = String(cell);
+                            if (txt.match(/^\d+\.\s/)) name = txt.split('(')[0].trim();
+                        });
+                    }
+                }
+            }
+
+            let cong = state.congregations.find(c => c.name === name);
+            if (!cong) { cong = { id: Date.now(), name: name, stats: {} }; state.congregations.push(cong); }
+
+            const parseMonthlyData = (sheetName) => {
                 if (!wb.Sheets[sheetName]) return [];
                 const json = XLSX.utils.sheet_to_json(wb.Sheets[sheetName], { header: 1, defval: 0 });
-                
-                // Find header row with "MES"
                 let headerIdx = json.findIndex(r => r.some(c => String(c).toUpperCase().includes("MES")));
                 if (headerIdx === -1) return [];
-
                 const headers = json[headerIdx].map(h => String(h).toUpperCase());
-                
-                // Map Columns
                 const colMap = {};
                 headers.forEach((h, i) => {
                     if (h.includes("MES")) colMap.mes = i;
@@ -349,11 +421,8 @@
                     else if (h.includes("CONG")) colMap.cong = i;
                     else if (h.includes("GASTOS")) colMap.gastos = i;
                 });
-
                 const months = ["ENE", "FEB", "MAR", "ABR", "MAY", "JUN", "JUL", "AGO", "SEP", "OCT", "NOV", "DIC"];
                 const data = [];
-
-                // Parse rows below header
                 json.slice(headerIdx + 1).forEach(row => {
                     const cell0 = String(row[0] || "").toUpperCase().substring(0,3);
                     if (months.includes(cell0)) {
@@ -372,19 +441,14 @@
                 return data;
             };
 
-            // Parse specific sheets
             cong.stats.pub = parseMonthlyData('PUB');
             cong.stats.pr = parseMonthlyData('PR');
             cong.stats.pa = parseMonthlyData('PA');
             cong.stats.reu = parseMonthlyData('REU-DON');
-            cong.stats.don = parseMonthlyData('REU-DON'); // Will pick relevant columns
+            cong.stats.don = parseMonthlyData('REU-DON');
 
-            // 4. Parse Statistics (Summary)
-            state.summary = { ancianos: 0, sm: 0, faltantes: [] };
             if (wb.Sheets['ESTADISTICAS']) {
                 const json = XLSX.utils.sheet_to_json(wb.Sheets['ESTADISTICAS'], { header: 1, defval: "" });
-                
-                // Scan for Ancianos/SM/Irregulares
                 json.forEach(row => {
                     row.forEach((cell, idx) => {
                         const txt = String(cell).toUpperCase();
@@ -392,16 +456,13 @@
                         if (txt.includes("MINISTERIALES")) state.summary.sm = Number(row[idx+1] || 0);
                     });
                 });
-
-                // Scan for Informes Faltantes
-                // Heuristic: Look for names in column 0 starting around row 32
+                state.summary.faltantes = [];
                 json.forEach(row => {
                     const name = String(row[0] || "");
                     const status = String(row[2] || "").toUpperCase();
-                    // Filter valid names and statuses
-                    if (name.length > 4 && !name.includes("HEAD") && !name.includes("PROMEDIO") && !name.includes("MES")) {
-                        if (status.includes("INACTIV") || status.includes("FALTA") || status.includes("OCTUBRE") || status.includes("DICIEMBRE")) {
-                            state.summary.faltantes.push({ name: name, status: row[2] || "Pendiente" });
+                    if (name.length > 4 && !name.includes("HEAD") && !name.includes("PROMEDIO")) {
+                        if (status.includes("INACTIV") || status.includes("FALTA")) {
+                            state.summary.faltantes.push({ name: name, status: row[2] });
                         }
                     }
                 });
@@ -414,7 +475,6 @@
 
         // --- UI RENDERERS ---
         function renderDashboard() {
-            // Calculate totals
             let totalPub = 0;
             state.congregations.forEach(c => {
                 if(c.stats.pub) c.stats.pub.forEach(m => totalPub += Number(m.val) || 0);
@@ -467,7 +527,7 @@
             if (state.congregations.length === 0) {
                 list.innerHTML = `<div class="col-span-3 text-center py-20 text-on-surface-variant space-y-4">
                     <span class="material-symbols-outlined text-5xl">cloud_upload</span>
-                    <p>No hay datos. Importe un archivo Excel desde el Dashboard.</p>
+                    <p>No hay datos. Importe un archivo Excel o PDF.</p>
                 </div>`;
                 return;
             }
@@ -480,7 +540,7 @@
                         </div>
                         <div>
                             <span class="font-bold block text-on-background">${c.name}</span>
-                            <span class="text-xs text-on-surface-variant">${c.stats.pub ? c.stats.pub.length + ' registros mensuales' : 'Sin datos'}</span>
+                            <span class="text-xs text-on-surface-variant">${c.stats.pub ? c.stats.pub.length + ' registros' : 'Cargado desde PDF'}</span>
                         </div>
                     </div>
                     <span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
@@ -498,7 +558,6 @@
         }
 
         function switchTab(tabKey) {
-            // Reset tabs
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.classList.remove('tab-active');
                 if(btn.innerText.toLowerCase().includes(tabKey)) btn.classList.add('tab-active');
@@ -508,7 +567,6 @@
             const cong = state.selectedCongregation;
             const data = cong.stats[tabKey] || [];
 
-            // Define columns based on key
             let headers = [];
             let cols = [];
             if (tabKey === 'pub') { headers = ['Mes', 'Pub', 'Horas', 'C.B.']; cols = ['mes', 'val', 'hrs', 'cb']; }
@@ -518,19 +576,17 @@
             if (tabKey === 'don') { headers = ['Mes', 'Obra Mund.', 'Congregación']; cols = ['mes', 'om', 'cong']; }
 
             if (data.length === 0) {
-                container.innerHTML = `<div class="p-10 text-center text-on-surface-variant">No hay datos para esta categoría.</div>`;
+                container.innerHTML = `<div class="p-10 text-center text-on-surface-variant">No hay datos detallados (posiblemente importado de PDF con datos resumidos).</div>`;
                 return;
             }
 
-            // Calculate Stats
             let totals = new Array(cols.length - 1).fill(0);
             let count = 0;
             
             let rowsHtml = data.map(row => {
                 let tds = cols.map((key, idx) => {
                     let val = row[key];
-                    if (idx === 0) return `<td class="p-2 font-bold border-b border-outline-variant/50">${val}</td>`; // Month
-                    
+                    if (idx === 0) return `<td class="p-2 font-bold border-b border-outline-variant/50">${val}</td>`;
                     let num = Number(val) || 0;
                     totals[idx-1] += num;
                     return `<td class="p-2 text-center border-b border-outline-variant/50">${num}</td>`;
@@ -539,7 +595,6 @@
                 return `<tr class="hover:bg-surface-container-low">${tds}</tr>`;
             }).join('');
 
-            // Build Table
             let avgHtml = totals.map(t => `<td class="p-2 text-center font-bold text-primary border-t-2 border-primary">${(t/count).toFixed(1)}</td>`).join('');
             let totalHtml = totals.map(t => `<td class="p-2 text-center font-bold border-t border-outline-variant">${t}</td>`).join('');
 
@@ -548,9 +603,7 @@
                     <thead class="bg-surface-container-low border-b border-outline-variant">
                         <tr>${headers.map(h => `<th class="p-2 text-left font-semibold">${h}</th>`).join('')}</tr>
                     </thead>
-                    <tbody>
-                        ${rowsHtml}
-                    </tbody>
+                    <tbody>${rowsHtml}</tbody>
                     <tfoot class="bg-surface-container-lowest">
                         <tr class="border-t border-outline-variant">
                             <td class="p-2 font-bold">TOTALES</td>
@@ -606,14 +659,11 @@
             const initial = name.charAt(0).toUpperCase();
 
             document.getElementById('profile-name').value = name;
-            
-            // Header
             document.getElementById('header-initial').innerText = initial;
             const hImg = document.getElementById('header-avatar');
             if (state.profile.photo) { hImg.src = state.profile.photo; hImg.classList.remove('hidden'); } 
             else { hImg.classList.add('hidden'); }
 
-            // Settings
             document.getElementById('settings-initial').innerText = initial;
             const sImg = document.getElementById('settings-avatar');
             if (state.profile.photo) { sImg.src = state.profile.photo; sImg.classList.remove('hidden'); }
@@ -627,7 +677,6 @@
             }
         }
 
-        // Theme Logic
         document.getElementById('themeToggle').addEventListener('click', () => {
             state.isDark = !state.isDark;
             document.documentElement.classList.toggle('dark');
@@ -640,10 +689,8 @@
             icon.innerText = state.isDark ? 'light_mode' : 'dark_mode';
         }
 
-        // Start App
         init();
 
-        // Register Service Worker
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('./sw.js').catch(err => console.log("SW not registered", err));
         }
