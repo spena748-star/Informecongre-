@@ -1,452 +1,652 @@
 <!DOCTYPE html>
+<html class="light" lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+    <title>Circuito CHI-03 Admin</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta content="#005bbf" name="theme-color"/>
+    <meta content="yes" name="mobile-web-app-capable"/>
+    <meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"/>
+    
+    <!-- Manifest Inline para PWA -->
+    <link href="data:application/json;base64,eyJuYW1lIjogIkNpcmN1aXRvIENISS0wMyIsICJzaG9ydF9uYW1lIjogIkNISS0wMyIsICJzdGFydF91cmwiOiAiLiIsICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLCAiYmFja2dyb3VuZF9jb2xvciI6ICIjZjdmOWZmIiwgInRoZW1lX2NvbG9yIjogIiMwMDViYmYifQ==" rel="manifest"/>
 
-<html class="light" lang="es"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
-<title>Circuito CHI-03 Admin</title>
-<!-- PWA and Meta Tags for Professional Look -->
-<meta content="#1a73e8" name="theme-color"/>
-<meta content="yes" name="mobile-web-app-capable"/>
-<meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"/>
-<link href="data:application/json;base64,ewogICJuYW1lIjogIkNpcmN1aXRvIENISS0wMyIsCiAgInNob3J0X25hbWUiOiAiQ0hJLTAzIiwKICAic3RhcnRfdXJsIjogIi4iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJiYWNrZ3JvdW5kX2NvbG9yIjogIiMxYTczZTgiLAogICJ0aGVtZV9jb2xvciI6ICIjMWE3M2U4IiwKICAiaWNvbnMiOiBbCiAgICB7CiAgICAgICJzcmMiOiAie3tkYXRhOmltYWdlOklNQUdFXzE2fX0iLAogICAgICAic2l6ZXMiOiAiMTAyNHgxMDI0IiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIiwKICAgICAgInB1cnBvc2UiOiAiYW55IG1hc2thYmxlIgogICAgfQogIF0KfQ==" rel="manifest"/><link href="https://lh3.googleusercontent.com/aida/ADBb0uiAOw9xatGNH0sye1EOJfLgw3_wxHkom47MzcGYlEXAkUVfBNQVo4nwNhAp0oPJ3PTssNK34CVn6E3tVEGWvJ_h18tkvvF_2fuDxTcpU-6eaQO9hQDI_7zE47QwmJZ_-vyVtRiQIKa4sdM_zVU1_pU4QcgDEE-c-R8aq6binBVbHFmo9yXhCO6MpFbTsPSTOAtlOa2CY0jZ6OW4m7yI-lTXtjyiWYe5GFWOpoitu__u5XIPcw7C7xOSDAaL" rel="apple-touch-icon"/><link href="https://lh3.googleusercontent.com/aida/ADBb0uiAOw9xatGNH0sye1EOJfLgw3_wxHkom47MzcGYlEXAkUVfBNQVo4nwNhAp0oPJ3PTssNK34CVn6E3tVEGWvJ_h18tkvvF_2fuDxTcpU-6eaQO9hQDI_7zE47QwmJZ_-vyVtRiQIKa4sdM_zVU1_pU4QcgDEE-c-R8aq6binBVbHFmo9yXhCO6MpFbTsPSTOAtlOa2CY0jZ6OW4m7yI-lTXtjyiWYe5GFWOpoitu__u5XIPcw7C7xOSDAaL" rel="icon" type="image/png"/>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:wght@100..1000&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<!-- Use Tailwind Config from Design System -->
-<script id="tailwind-config">
-      tailwind.config = {
-        darkMode: "class",
-        theme: {
-          extend: {
-            "colors": {
-                    "on-background": "#181c20",
-                    "background": "#f7f9ff",
-                    "surface-container-highest": "#dfe3e8",
-                    "tertiary": "#795900",
-                    "tertiary-container": "#987000",
-                    "outline": "#727785",
-                    "on-surface-variant": "#414754",
-                    "surface-tint": "#005bc0",
-                    "inverse-primary": "#adc7ff",
-                    "on-secondary": "#ffffff",
-                    "surface-bright": "#f7f9ff",
-                    "surface-dim": "#d7dae0",
-                    "on-primary-container": "#ffffff",
-                    "secondary-fixed": "#89fa9b",
-                    "surface": "#f7f9ff",
-                    "on-primary-fixed": "#001a41",
-                    "on-secondary-container": "#00722f",
-                    "primary-container": "#1a73e8",
-                    "error-container": "#ffdad6",
-                    "on-error": "#ffffff",
-                    "on-tertiary-fixed": "#261a00",
-                    "on-error-container": "#93000a",
-                    "surface-container-low": "#f1f4fa",
-                    "on-tertiary-fixed-variant": "#5c4300",
-                    "inverse-on-surface": "#eef1f7",
-                    "surface-container": "#ebeef4",
-                    "secondary-fixed-dim": "#6ddd81",
-                    "on-primary-fixed-variant": "#004493",
-                    "on-secondary-fixed-variant": "#005320",
-                    "tertiary-fixed-dim": "#fbbc05",
-                    "on-secondary-fixed": "#002108",
-                    "surface-container-lowest": "#ffffff",
-                    "surface-variant": "#dfe3e8",
-                    "outline-variant": "#c1c6d6",
-                    "secondary": "#006e2c",
-                    "on-tertiary-container": "#ffffff",
-                    "surface-container-high": "#e5e8ee",
-                    "on-primary": "#ffffff",
-                    "primary": "#005bbf",
-                    "error": "#ba1a1a",
-                    "primary-fixed-dim": "#adc7ff",
-                    "primary-fixed": "#d8e2ff",
-                    "on-surface": "#181c20",
-                    "tertiary-fixed": "#ffdfa0",
-                    "secondary-container": "#86f898",
-                    "on-tertiary": "#ffffff",
-                    "inverse-surface": "#2d3135"
-            },
-            "borderRadius": {
-                    "DEFAULT": "0.25rem",
-                    "lg": "0.5rem",
-                    "xl": "0.75rem",
-                    "full": "9999px"
-            },
-            "spacing": {
-                    "gutter-mobile": "16px",
-                    "gutter-desktop": "24px",
-                    "margin-desktop": "32px",
-                    "base": "8px",
-                    "margin-mobile": "16px"
-            },
-            "fontFamily": {
-                    "headline-lg-mobile": ["Roboto Flex"],
-                    "body-lg": ["Roboto Flex"],
-                    "label-lg": ["Roboto Flex"],
-                    "headline-sm": ["Roboto Flex"],
-                    "body-md": ["Roboto Flex"],
-                    "headline-lg": ["Roboto Flex"],
-                    "headline-md": ["Roboto Flex"]
-            },
-            "fontSize": {
-                    "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "700"}],
-                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
-                    "label-lg": ["12px", {"lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "500"}],
-                    "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "500"}],
-                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
-                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "700"}],
-                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}]
+    <!-- Libs -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:wght@100..1000&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-background": "#181c20", "background": "#f7f9ff", "surface": "#f7f9ff",
+                        "surface-container": "#ebeef4", "surface-container-low": "#f1f4fa",
+                        "surface-container-lowest": "#ffffff", "primary": "#005bbf",
+                        "primary-container": "#1a73e8", "on-primary": "#ffffff",
+                        "secondary": "#006e2c", "secondary-container": "#86f898",
+                        "on-secondary-container": "#00722f", "outline": "#727785",
+                        "outline-variant": "#c1c6d6", "error": "#ba1a1a", "tertiary": "#795900"
+                    }
+                }
             }
-          }
         }
-      }
     </script>
-<style>
+
+    <!-- Styles -->
+    <style>
         body { font-family: 'Roboto Flex', sans-serif; }
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
-        .custom-scroll::-webkit-scrollbar { width: 4px; }
-        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
-        .custom-scroll::-webkit-scrollbar-thumb { background: #c1c6d6; border-radius: 10px; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #c1c6d6; border-radius: 10px; }
+        
+        /* Snackbar Animation */
+        #snackbar { visibility: hidden; min-width: 250px; background-color: #333; color: #fff; text-align: center; border-radius: 12px; padding: 16px; position: fixed; z-index: 9999; left: 50%; bottom: 90px; transform: translateX(-50%); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+        #snackbar.show { visibility: visible; animation: fadein 0.3s, fadeout 0.3s 2.5s forwards; }
+        @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 90px; opacity: 1;} }
+        @keyframes fadeout { from {bottom: 90px; opacity: 1;} to {bottom: 0; opacity: 0;} }
+        
+        /* Tabs */
+        .tab-active { border-bottom: 3px solid #005bbf; color: #005bbf; font-weight: 700; }
+        
+        /* Hide scrollbar for tabs */
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
     </style>
-<style>
-    body {
-      min-height: max(884px, 100dvh);
-    }
-  </style>
 </head>
+
 <body class="bg-background text-on-background min-h-screen flex flex-col transition-colors duration-300">
-<!-- TopAppBar -->
-<header class="bg-surface dark:bg-surface-dim docked full-width top-0 sticky z-50 border-b border-outline-variant dark:border-outline flex items-center justify-between px-margin-mobile w-full h-16">
-<div class="flex items-center gap-4">
-<button class="hover:bg-surface-container-high transition-colors p-1 rounded-lg active:scale-95 duration-150" onclick="toggleSettings()">
-<img alt="Logo" class="w-10 h-10 object-contain rounded-md shadow-sm" src="https://lh3.googleusercontent.com/aida/ADBb0uiAOw9xatGNH0sye1EOJfLgw3_wxHkom47MzcGYlEXAkUVfBNQVo4nwNhAp0oPJ3PTssNK34CVn6E3tVEGWvJ_h18tkvvF_2fuDxTcpU-6eaQO9hQDI_7zE47QwmJZ_-vyVtRiQIKa4sdM_zVU1_pU4QcgDEE-c-R8aq6binBVbHFmo9yXhCO6MpFbTsPSTOAtlOa2CY0jZ6OW4m7yI-lTXtjyiWYe5GFWOpoitu__u5XIPcw7C7xOSDAaL"/>
-</button>
-<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed-dim">Circuito CHI-03</h1>
-</div>
-<div class="flex items-center gap-2">
-<button class="hover:bg-surface-container-high transition-colors p-1 rounded-lg active:scale-95 duration-150" onclick="toggleSettings()">
-<img alt="Logo" class="w-10 h-10 object-contain rounded-md shadow-sm" src="https://lh3.googleusercontent.com/aida/ADBb0uiAOw9xatGNH0sye1EOJfLgw3_wxHkom47MzcGYlEXAkUVfBNQVo4nwNhAp0oPJ3PTssNK34CVn6E3tVEGWvJ_h18tkvvF_2fuDxTcpU-6eaQO9hQDI_7zE47QwmJZ_-vyVtRiQIKa4sdM_zVU1_pU4QcgDEE-c-R8aq6binBVbHFmo9yXhCO6MpFbTsPSTOAtlOa2CY0jZ6OW4m7yI-lTXtjyiWYe5GFWOpoitu__u5XIPcw7C7xOSDAaL"/>
-</button>
-<div class="w-10 h-10 rounded-full bg-primary-fixed-dim flex items-center justify-center overflow-hidden border border-outline-variant">
-<img class="w-full h-full object-cover" data-alt="A professional headshot of a middle-aged man in a corporate setting, looking confidently at the camera. He is wearing a crisp white shirt and the lighting is soft and high-key, matching a modern light-mode interface. The background is a clean, out-of-focus office space with neutral tones and blue accents." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJko5qyWazlFmaHVHjULpAvH9LRwgnVAQe-I5t0pDGQxGzUws6pItCuu4LRwjYaoU6VxuPCEp4hgOydVBS6Tbqd628cVkVqRxLh9xzVdNV9cCU-YylxRz5PJtDn6_6SyfV6Oz0HelJEXpgzvLNFpMo5DKqqnmTHL8S7lX-my_Tu6VWDSVUX9cXorr1KdXZ6SPfI1gfa7dfB7dz85-j7eSavEqX3GDt-V0E9pjjoSPf9BIDJZt_NGQk9IhG7gFp4KuEwAkwP-4iiIZB"/>
-</div>
-</div>
-</header>
-<!-- Main Content Canvas -->
-<main class="flex-1 pb-24 pt-4 px-margin-mobile max-w-[1280px] mx-auto w-full" id="app-canvas">
-<!-- Dashboard Section (Active by Default) -->
-<section class="space-y-6" id="section-Dashboard">
-<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-<!-- Bento Card: Circuit Stats -->
-<div class="md:col-span-2 bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm">
-<h2 class="font-headline-sm text-headline-sm mb-4">Resumen del Circuito</h2>
-<div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-<div class="p-4 bg-surface-container-low rounded-lg text-center">
-<span class="block text-primary font-headline-md">12</span>
-<span class="text-label-lg font-label-lg text-on-surface-variant">Congregaciones</span>
-</div>
-<div class="p-4 bg-surface-container-low rounded-lg text-center">
-<span class="block text-secondary font-headline-md">842</span>
-<span class="text-label-lg font-label-lg text-on-surface-variant">Publicadores</span>
-</div>
-<div class="p-4 bg-surface-container-low rounded-lg text-center">
-<span class="block text-tertiary font-headline-md">15</span>
-<span class="text-label-lg font-label-lg text-on-surface-variant">Precursores</span>
-</div>
-<div class="p-4 bg-surface-container-low rounded-lg text-center">
-<span class="block text-error font-headline-md">3</span>
-<span class="text-label-lg font-label-lg text-on-surface-variant">Pendientes</span>
-</div>
-</div>
-</div>
-<!-- Quick Actions Card -->
-<div class="bg-primary-container text-on-primary-container rounded-xl p-6 shadow-sm flex flex-col justify-between">
-<div>
-<h2 class="font-headline-sm text-headline-sm mb-2">Acciones Rápidas</h2>
-<p class="text-body-md font-body-md opacity-90">Gestione documentos y registros del circuito de manera eficiente.</p>
-</div>
-<button class="mt-4 bg-surface-container-lowest text-primary py-3 rounded-full font-label-lg text-label-lg flex items-center justify-center gap-2 hover:bg-surface-bright transition-all active:scale-95" onclick="document.getElementById('file-upload').click()">
-<span class="material-symbols-outlined">upload_file</span> Importar Datos
-                    </button>
-<input accept=".pdf,.xlsx,.docx" class="hidden" id="file-upload" type="file"/>
-</div>
-</div>
-<!-- Recent Activity / News -->
-<div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden shadow-sm">
-<div class="p-6 border-b border-outline-variant flex justify-between items-center">
-<h2 class="font-headline-sm text-headline-sm">Actividad Reciente</h2>
-<button class="text-primary text-label-lg font-label-lg">Ver Todo</button>
-</div>
-<div class="divide-y divide-outline-variant">
-<div class="p-4 flex items-center gap-4 hover:bg-surface-container-low transition-colors">
-<div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container">
-<span class="material-symbols-outlined">assignment_turned_in</span>
-</div>
-<div>
-<p class="text-body-lg font-body-lg">S-21 actualizado: Congregación Norte</p>
-<p class="text-label-lg font-label-lg text-outline">Hace 2 horas</p>
-</div>
-</div>
-<div class="p-4 flex items-center gap-4 hover:bg-surface-container-low transition-colors">
-<div class="w-10 h-10 rounded-full bg-primary-fixed-dim flex items-center justify-center text-on-primary-fixed">
-<span class="material-symbols-outlined">edit_calendar</span>
-</div>
-<div>
-<p class="text-body-lg font-body-lg">Agenda modificada: Asamblea de Circuito</p>
-<p class="text-label-lg font-label-lg text-outline">Ayer, 14:30</p>
-</div>
-</div>
-</div>
-</div>
-</section>
-<!-- Congregaciones Section (Hidden) -->
-<section class="hidden space-y-6" id="section-Congregaciones">
-<div class="flex justify-between items-center">
-<h2 class="font-headline-md text-headline-md">Congregaciones</h2>
-<button class="bg-primary text-on-primary px-6 py-2 rounded-full flex items-center gap-2 font-label-lg text-label-lg" onclick="showModal('congregation-modal')">
-<span class="material-symbols-outlined">add</span> Nueva
+
+    <!-- TopAppBar -->
+    <header class="bg-surface sticky top-0 z-50 border-b border-outline-variant/50 flex items-center justify-between px-4 w-full h-16 backdrop-blur-lg bg-opacity-80">
+        <div class="flex items-center gap-3">
+            <button onclick="navTo('Dashboard')" class="p-2 rounded-full hover:bg-surface-container transition-colors">
+                <span class="material-symbols-outlined text-primary">menu</span>
+            </button>
+            <h1 class="font-bold text-xl text-primary tracking-tight">Circuito CHI-03</h1>
+        </div>
+        <div class="flex items-center gap-2">
+            <!-- Theme Toggle -->
+            <button id="themeToggle" class="p-2 rounded-full hover:bg-surface-container transition-colors">
+                <span class="material-symbols-outlined text-on-surface-variant">dark_mode</span>
+            </button>
+            <!-- Profile -->
+            <button onclick="navTo('Settings')" class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center overflow-hidden border-2 border-transparent hover:border-primary transition-all">
+                <img id="header-avatar" class="w-full h-full object-cover hidden" src="" alt="Avatar"/>
+                <span id="header-initial" class="font-bold text-on-primary text-lg">S</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 pb-24 pt-6 px-4 max-w-[1280px] mx-auto w-full" id="app-canvas">
+
+        <!-- SECTION: DASHBOARD -->
+        <section id="section-Dashboard" class="space-y-6">
+            
+            <!-- Upload Card -->
+            <div class="bg-surface-container-lowest border border-dashed border-outline rounded-2xl p-6 shadow-sm hover:shadow-md transition-all">
+                <div class="flex flex-col items-center justify-center text-center space-y-3">
+                    <div class="p-3 bg-primary-container rounded-full">
+                        <span class="material-symbols-outlined text-on-primary text-3xl">upload_file</span>
+                    </div>
+                    <div>
+                        <h2 class="font-headline-sm text-headline-sm">Importar Datos</h2>
+                        <p class="text-on-surface-variant text-body-md mt-1">Carga tu archivo Excel para procesar automáticamente.</p>
+                    </div>
+                    <label class="cursor-pointer bg-primary text-on-primary py-2 px-6 rounded-full font-label-lg hover:bg-primary-fixed-dim transition-colors shadow-lg active:scale-95">
+                        <span>Seleccionar Excel</span>
+                        <input id="excel-upload" type="file" class="hidden" accept=".xlsx, .xls" onchange="handleExcelUpload(event)"/>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="dashboard-stats">
+                <!-- Populated by JS -->
+                <div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant flex flex-col justify-center items-center min-h-[100px]">
+                    <span class="material-symbols-outlined text-on-surface-variant mb-1">groups</span>
+                    <span class="text-2xl font-bold text-primary">0</span>
+                    <span class="text-label-lg text-on-surface-variant">Congregaciones</span>
+                </div>
+                <div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant flex flex-col justify-center items-center min-h-[100px]">
+                    <span class="material-symbols-outlined text-on-surface-variant mb-1">person</span>
+                    <span class="text-2xl font-bold text-secondary">0</span>
+                    <span class="text-label-lg text-on-surface-variant">Publicadores</span>
+                </div>
+                <div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant flex flex-col justify-center items-center min-h-[100px]">
+                    <span class="material-symbols-outlined text-on-surface-variant mb-1">elderly</span>
+                    <span class="text-2xl font-bold text-tertiary">0</span>
+                    <span class="text-label-lg text-on-surface-variant">Ancianos</span>
+                </div>
+                <div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant flex flex-col justify-center items-center min-h-[100px]">
+                    <span class="material-symbols-outlined text-on-surface-variant mb-1">warning</span>
+                    <span class="text-2xl font-bold text-error">0</span>
+                    <span class="text-label-lg text-on-surface-variant">Faltantes</span>
+                </div>
+            </div>
+
+            <!-- Missing Reports Section -->
+            <div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm overflow-hidden">
+                <div class="p-4 border-b border-outline-variant bg-surface-container-low flex justify-between items-center">
+                    <h3 class="font-bold text-on-surface">Informes Faltantes</h3>
+                    <span class="text-xs bg-error-container text-on-error-container px-2 py-1 rounded-full" id="missing-count">0 pendientes</span>
+                </div>
+                <div id="missing-list" class="p-4 space-y-2 max-h-64 overflow-y-auto">
+                    <p class="text-center text-on-surface-variant text-sm py-4">Importe un Excel para ver la lista.</p>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- SECTION: CONGREGATIONS -->
+        <section id="section-Congregaciones" class="hidden space-y-6">
+            <div class="flex justify-between items-center">
+                <h2 class="font-headline-md text-headline-md">Congregaciones</h2>
+                <button onclick="document.getElementById('excel-upload').click()" class="flex items-center gap-2 text-primary font-label-lg hover:bg-primary-container/20 px-3 py-2 rounded-full transition-colors">
+                    <span class="material-symbols-outlined text-xl">add</span> Importar
                 </button>
-</div>
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="congregations-list">
-<!-- Dynamic Content -->
-</div>
-</section>
-<!-- Profile / Settings Section (Hidden) -->
-<section class="hidden space-y-6" id="section-Settings">
-<h2 class="font-headline-md text-headline-md">Perfil del Circuito</h2>
-<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 space-y-6">
-<div class="space-y-4">
-<div>
-<label class="block text-label-lg font-label-lg text-on-surface-variant mb-1">Nombre del Superintendente</label>
-<input class="w-full bg-background border border-outline-variant rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all" id="profile-name" type="text" value="Juan Pérez"/>
-</div>
-<div>
-<label class="block text-label-lg font-label-lg text-on-surface-variant mb-1">Identificador del Circuito</label>
-<input class="w-full bg-background border border-outline-variant rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all" id="profile-circuit" type="text" value="CHI-03"/>
-</div>
-<button class="bg-primary text-on-primary w-full py-3 rounded-full font-label-lg text-label-lg" onclick="saveProfile()">Guardar Cambios</button>
-</div>
-<hr class="border-outline-variant"/>
-<div class="space-y-4">
-<h3 class="font-headline-sm text-headline-sm text-error">Zona de Peligro</h3>
-<p class="text-body-md font-body-md text-on-surface-variant">Estas acciones son irreversibles y eliminarán permanentemente los datos locales.</p>
-<div class="flex flex-col gap-3">
-<button class="bg-surface-container-high text-on-surface flex items-center justify-center gap-2 py-2 rounded-lg font-label-lg" onclick="exportBackup()">
-<span class="material-symbols-outlined">backup</span> Crear Respaldo
-                        </button>
-<button class="bg-error-container text-on-error-container flex items-center justify-center gap-2 py-2 rounded-lg font-label-lg" onclick="confirmClearCache()">
-<span class="material-symbols-outlined">delete_forever</span> Limpiar Caché y Datos
-                        </button>
-</div>
-</div>
-</div>
-</section>
-<!-- Placeholder for Agenda, Historial, S-21 -->
-<section class="hidden text-center py-20" id="section-Agenda">
-<span class="material-symbols-outlined text-[64px] text-outline-variant">event_note</span>
-<h2 class="mt-4 font-headline-md text-headline-md">Agenda de Visitas</h2>
-<p class="text-on-surface-variant">Funcionalidad en desarrollo.</p>
-</section>
-<section class="hidden text-center py-20" id="section-Historial">
-<span class="material-symbols-outlined text-[64px] text-outline-variant">history_edu</span>
-<h2 class="mt-4 font-headline-md text-headline-md">Historial de Reportes</h2>
-<p class="text-on-surface-variant">Funcionalidad en desarrollo.</p>
-</section>
-<section class="hidden text-center py-20" id="section-S-21">
-<span class="material-symbols-outlined text-[64px] text-outline-variant">assignment_ind</span>
-<h2 class="mt-4 font-headline-md text-headline-md">Tarjetas S-21</h2>
-<p class="text-on-surface-variant">Gestión avanzada de tarjetas de publicador.</p>
-</section>
-</main>
-<!-- BottomNavBar -->
-<nav class="fixed bottom-0 w-full z-50 bg-surface-container dark:bg-surface-container-lowest shadow-[0_-1px_0_0_rgba(0,0,0,0.08)] flex justify-around items-center h-16 px-2 pb-safe">
-<button class="nav-item flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-highest dark:hover:bg-surface-variant rounded-full px-4 py-1 transition-all" onclick="navTo('Congregaciones')">
-<span class="material-symbols-outlined">groups</span>
-<span class="font-label-lg text-label-lg">Congregaciones</span>
-</button>
-<button class="nav-item flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-highest dark:hover:bg-surface-variant rounded-full px-4 py-1 transition-all" onclick="navTo('Agenda')">
-<span class="material-symbols-outlined">event_note</span>
-<span class="font-label-lg text-label-lg">Agenda</span>
-</button>
-<button class="nav-item flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-highest dark:hover:bg-surface-variant rounded-full px-4 py-1 transition-all" onclick="navTo('Historial')">
-<span class="material-symbols-outlined">history_edu</span>
-<span class="font-label-lg text-label-lg">Historial</span>
-</button>
-<button class="nav-item flex flex-col items-center justify-center bg-secondary-container dark:bg-secondary text-on-secondary-container dark:text-on-secondary rounded-full px-4 py-1 scale-110 transition-all duration-200 ease-in-out" id="nav-Dashboard" onclick="navTo('Dashboard')">
-<span class="material-symbols-outlined">dashboard_customize</span>
-<span class="font-label-lg text-label-lg">Dashboard</span>
-</button>
-<button class="nav-item flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-highest dark:hover:bg-surface-variant rounded-full px-4 py-1 transition-all" onclick="navTo('S-21')">
-<span class="material-symbols-outlined">assignment_ind</span>
-<span class="font-label-lg text-label-lg">S-21</span>
-</button>
-</nav>
-<!-- Modals -->
-<div class="fixed inset-0 z-[60] hidden flex items-center justify-center px-4" id="congregation-modal">
-<div class="absolute inset-0 bg-on-background/40 backdrop-blur-sm" onclick="closeModal('congregation-modal')"></div>
-<div class="bg-surface relative w-full max-w-md rounded-xl p-6 shadow-xl animate-in fade-in zoom-in duration-200">
-<h3 class="font-headline-md text-headline-md mb-4">Añadir Congregación</h3>
-<div class="space-y-4">
-<input class="w-full bg-surface-container-low border border-outline-variant rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-primary" id="new-cong-name" placeholder="Nombre de la Congregación" type="text"/>
-<div class="flex gap-4">
-<button class="flex-1 py-3 font-label-lg border border-outline text-outline rounded-full" onclick="closeModal('congregation-modal')">Cancelar</button>
-<button class="flex-1 py-3 font-label-lg bg-primary text-on-primary rounded-full" onclick="addCongregation()">Agregar</button>
-</div>
-</div>
-</div>
-</div>
-<script>
-        // --- Persistence State ---
-        let appState = {
-            profile: { name: 'Superintendente', circuit: 'CHI-03' },
-            congregations: [
-                { id: 1, name: 'Centro' },
-                { id: 2, name: 'Norte' },
-                { id: 3, name: 'San Javier' }
-            ],
-            currentSection: 'Dashboard',
-            isDarkMode: false
+            </div>
+            <div id="congregations-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Dynamic -->
+            </div>
+        </section>
+
+        <!-- SECTION: DETAIL -->
+        <section id="section-Detail" class="hidden space-y-4">
+            <div class="flex items-center gap-3">
+                <button onclick="navTo('Congregaciones')" class="p-2 rounded-full hover:bg-surface-container transition-colors">
+                    <span class="material-symbols-outlined">arrow_back</span>
+                </button>
+                <h2 id="detail-name" class="font-headline-md text-headline-md truncate">Congregación</h2>
+            </div>
+
+            <!-- Tabs -->
+            <div class="sticky top-16 z-40 bg-surface border-b border-outline-variant">
+                <nav class="flex overflow-x-auto hide-scrollbar -mx-4 px-4" id="detail-tabs">
+                    <button onclick="switchTab('pub')" class="tab-btn px-4 py-3 text-sm font-medium text-on-surface-variant whitespace-nowrap border-b-2 border-transparent hover:bg-surface-container-low transition-colors tab-active">Publicadores</button>
+                    <button onclick="switchTab('pr')" class="tab-btn px-4 py-3 text-sm font-medium text-on-surface-variant whitespace-nowrap border-b-2 border-transparent hover:bg-surface-container-low transition-colors">P. Regulares</button>
+                    <button onclick="switchTab('pa')" class="tab-btn px-4 py-3 text-sm font-medium text-on-surface-variant whitespace-nowrap border-b-2 border-transparent hover:bg-surface-container-low transition-colors">P. Auxiliares</button>
+                    <button onclick="switchTab('reu')" class="tab-btn px-4 py-3 text-sm font-medium text-on-surface-variant whitespace-nowrap border-b-2 border-transparent hover:bg-surface-container-low transition-colors">Asistencia</button>
+                    <button onclick="switchTab('don')" class="tab-btn px-4 py-3 text-sm font-medium text-on-surface-variant whitespace-nowrap border-b-2 border-transparent hover:bg-surface-container-low transition-colors">Donaciones</button>
+                </nav>
+            </div>
+
+            <!-- Content Table -->
+            <div id="detail-content" class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm overflow-x-auto">
+                <!-- Dynamic Table -->
+            </div>
+        </section>
+
+        <!-- SECTION: SETTINGS -->
+        <section id="section-Settings" class="hidden space-y-6">
+            <h2 class="font-headline-md text-headline-md">Perfil</h2>
+            
+            <!-- Profile Card -->
+            <div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-6 shadow-sm flex flex-col items-center">
+                <div class="relative mb-4">
+                    <div class="w-24 h-24 rounded-full bg-surface-container-high flex items-center justify-center overflow-hidden border-2 border-outline-variant shadow-inner">
+                        <img id="settings-avatar" class="w-full h-full object-cover hidden" src="" alt="Foto"/>
+                        <span id="settings-initial" class="text-4xl text-on-surface-variant font-bold">S</span>
+                    </div>
+                    <button onclick="document.getElementById('photo-upload').click()" class="absolute bottom-0 right-0 bg-primary text-on-primary rounded-full p-2 shadow-lg border-2 border-surface hover:scale-110 transition-transform">
+                        <span class="material-symbols-outlined text-sm">photo_camera</span>
+                    </button>
+                    <input type="file" id="photo-upload" class="hidden" accept="image/*" onchange="handlePhotoUpload(event)"/>
+                </div>
+                <div class="w-full max-w-sm space-y-2">
+                    <label class="text-label-lg text-on-surface-variant">Nombre del Superintendente</label>
+                    <input class="w-full bg-surface border border-outline-variant rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary outline-none" id="profile-name" type="text" value="Superintendente"/>
+                    <button onclick="saveProfile()" class="w-full mt-2 bg-primary text-on-primary py-2 rounded-full font-bold hover:bg-primary-fixed-dim transition-colors">Guardar Perfil</button>
+                </div>
+            </div>
+
+            <!-- Danger Zone -->
+            <div class="bg-error-container/10 rounded-xl p-4 border border-error/20">
+                <h3 class="font-bold text-error mb-2">Zona de Peligro</h3>
+                <button onclick="clearData()" class="flex items-center gap-2 text-error font-semibold hover:bg-error-container/20 p-2 rounded-lg transition-colors">
+                    <span class="material-symbols-outlined">delete_forever</span> Limpiar todos los datos locales
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- BottomNavBar -->
+    <nav class="fixed bottom-0 w-full z-50 bg-surface/80 backdrop-blur-lg border-t border-outline-variant/50 flex justify-around items-center h-20 px-2 pb-safe">
+        <button onclick="navTo('Congregaciones')" class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary p-2 transition-colors">
+            <span class="material-symbols-outlined text-2xl">groups</span>
+            <span class="text-xs font-medium mt-1">Congregaciones</span>
+        </button>
+        <button onclick="navTo('Dashboard')" class="flex flex-col items-center justify-center text-primary p-2 transition-colors">
+            <div class="bg-secondary-container p-2 rounded-full mb-1">
+                <span class="material-symbols-outlined text-3xl text-on-secondary-container">dashboard</span>
+            </div>
+            <span class="text-xs font-bold text-primary">Dashboard</span>
+        </button>
+        <button onclick="navTo('Settings')" class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary p-2 transition-colors">
+            <span class="material-symbols-outlined text-2xl">settings</span>
+            <span class="text-xs font-medium mt-1">Ajustes</span>
+        </button>
+    </nav>
+
+    <!-- Snackbar -->
+    <div id="snackbar">Mensaje</div>
+
+    <!-- Script -->
+    <script>
+        // --- STATE MANAGEMENT ---
+        let state = {
+            profile: { name: 'Superintendente', photo: null },
+            congregations: [],
+            summary: { ancianos: 0, sm: 0, faltantes: [] },
+            isDark: false,
+            currentView: 'Dashboard'
         };
 
-        // --- Core Functions ---
-        function initApp() {
-            const savedState = localStorage.getItem('CHI03_STATE');
-            if (savedState) {
-                appState = JSON.parse(savedState);
+        // --- INIT ---
+        function init() {
+            const saved = localStorage.getItem('CHI03_APP_DATA_FINAL');
+            if (saved) {
+                try { state = JSON.parse(saved); } catch(e) { console.error("Error loading state", e); }
             }
             
-            // Apply Dark Mode
-            if (appState.isDarkMode) {
-                document.documentElement.classList.add('dark');
-            }
-            
-            // Sync Profile UI
-            document.getElementById('profile-name').value = appState.profile.name;
-            document.getElementById('profile-circuit').value = appState.profile.circuit;
-            
+            if (state.isDark) document.documentElement.classList.add('dark');
+            updateThemeIcon();
+            updateProfileUI();
+            renderDashboard();
             renderCongregations();
-            navTo(appState.currentSection);
         }
 
         function saveState() {
-            localStorage.setItem('CHI03_STATE', JSON.stringify(appState));
+            localStorage.setItem('CHI03_APP_DATA_FINAL', JSON.stringify(state));
         }
 
-        // --- Navigation ---
-        function navTo(sectionId) {
-            const sections = ['Dashboard', 'Congregaciones', 'Agenda', 'Historial', 'S-21', 'Settings'];
-            sections.forEach(s => {
-                const el = document.getElementById(`section-${s}`);
-                if (el) el.classList.add('hidden');
-            });
-            
-            const activeSection = document.getElementById(`section-${sectionId}`);
-            if (activeSection) activeSection.classList.remove('hidden');
-            
-            // Update Nav Styles
-            document.querySelectorAll('.nav-item').forEach(btn => {
-                btn.className = "nav-item flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-highest dark:hover:bg-surface-variant rounded-full px-4 py-1 transition-all";
-                if (btn.querySelector('.font-label-lg').innerText === sectionId) {
-                    btn.className = "nav-item flex flex-col items-center justify-center bg-secondary-container dark:bg-secondary text-on-secondary-container dark:text-on-secondary rounded-full px-4 py-1 scale-110 transition-all duration-200 ease-in-out";
+        // --- EXCEL PROCESSOR (AUTOMATION) ---
+        function handleExcelUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            showSnackbar("Procesando archivo...");
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    
+                    processWorkbookAutomatically(workbook);
+                    showSnackbar("¡Excel importado con éxito!");
+                    navTo('Dashboard');
+                } catch (error) {
+                    console.error(error);
+                    showSnackbar("Error al procesar el archivo");
                 }
-            });
-            
-            appState.currentSection = sectionId;
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function processWorkbookAutomatically(wb) {
+            // 1. Extract Congregation Name
+            let name = "Congregación Desconocida";
+            // Heuristic: Scan first 10 rows of 'PUB' sheet for specific label
+            if (wb.Sheets['PUB']) {
+                const sheet = wb.Sheets['PUB'];
+                for (let i = 0; i < 15; i++) {
+                    const cellAddress = XLSX.utils.encode_cell({r: i, c: 1}); // Column B usually
+                    if (sheet[cellAddress] && String(sheet[cellAddress].v).includes("CONGREGACIÓN")) {
+                        // Try reading next cell or same row diff column
+                        // Based on sample: "0 | HEAD...", "1 | CONGREGACIÓN: | * | 18. Omega..."
+                        // Try scanning row for number pattern
+                        const rowData = XLSX.utils.sheet_to_json(sheet, {header: 1, range: i, defval: ""})[0];
+                        rowData.forEach(cell => {
+                            const txt = String(cell);
+                            // Match pattern like "18. Omega..."
+                            if (txt.match(/^\d+\.\s/)) {
+                                name = txt.split('(')[0].trim();
+                            }
+                        });
+                    }
+                }
+            }
+
+            // 2. Create/Update Congregation
+            let cong = state.congregations.find(c => c.name === name);
+            if (!cong) {
+                cong = { id: Date.now(), name: name, stats: {} };
+                state.congregations.push(cong);
+            }
+
+            // 3. Parse Sheets (Generic Monthly Parser)
+            const parseMonthlyData = (sheetName, config) => {
+                if (!wb.Sheets[sheetName]) return [];
+                const json = XLSX.utils.sheet_to_json(wb.Sheets[sheetName], { header: 1, defval: 0 });
+                
+                // Find header row with "MES"
+                let headerIdx = json.findIndex(r => r.some(c => String(c).toUpperCase().includes("MES")));
+                if (headerIdx === -1) return [];
+
+                const headers = json[headerIdx].map(h => String(h).toUpperCase());
+                
+                // Map Columns
+                const colMap = {};
+                headers.forEach((h, i) => {
+                    if (h.includes("MES")) colMap.mes = i;
+                    else if (h.includes("PUBLICADORES") || h === "PUB" || h === "PR" || h === "PA") colMap.val = i;
+                    else if (h.includes("HORAS")) colMap.hrs = i;
+                    else if (h.includes("CURSOS")) colMap.cb = i;
+                    else if (h.includes("ENTRE SEMANA")) colMap.entre = i;
+                    else if (h.includes("FIN DE SEMANA")) colMap.fin = i;
+                    else if (h.includes("OBRA MUND")) colMap.om = i;
+                    else if (h.includes("CONG")) colMap.cong = i;
+                    else if (h.includes("GASTOS")) colMap.gastos = i;
+                });
+
+                const months = ["ENE", "FEB", "MAR", "ABR", "MAY", "JUN", "JUL", "AGO", "SEP", "OCT", "NOV", "DIC"];
+                const data = [];
+
+                // Parse rows below header
+                json.slice(headerIdx + 1).forEach(row => {
+                    const cell0 = String(row[0] || "").toUpperCase().substring(0,3);
+                    if (months.includes(cell0)) {
+                        const item = { mes: cell0 };
+                        if(colMap.val !== undefined) item.val = row[colMap.val] || 0;
+                        if(colMap.hrs !== undefined) item.hrs = row[colMap.hrs] || 0;
+                        if(colMap.cb !== undefined) item.cb = row[colMap.cb] || 0;
+                        if(colMap.entre !== undefined) item.entre = row[colMap.entre] || 0;
+                        if(colMap.fin !== undefined) item.fin = row[colMap.fin] || 0;
+                        if(colMap.om !== undefined) item.om = row[colMap.om] || 0;
+                        if(colMap.cong !== undefined) item.cong = row[colMap.cong] || 0;
+                        if(colMap.gastos !== undefined) item.gastos = row[colMap.gastos] || 0;
+                        data.push(item);
+                    }
+                });
+                return data;
+            };
+
+            // Parse specific sheets
+            cong.stats.pub = parseMonthlyData('PUB');
+            cong.stats.pr = parseMonthlyData('PR');
+            cong.stats.pa = parseMonthlyData('PA');
+            cong.stats.reu = parseMonthlyData('REU-DON');
+            cong.stats.don = parseMonthlyData('REU-DON'); // Will pick relevant columns
+
+            // 4. Parse Statistics (Summary)
+            state.summary = { ancianos: 0, sm: 0, faltantes: [] };
+            if (wb.Sheets['ESTADISTICAS']) {
+                const json = XLSX.utils.sheet_to_json(wb.Sheets['ESTADISTICAS'], { header: 1, defval: "" });
+                
+                // Scan for Ancianos/SM/Irregulares
+                json.forEach(row => {
+                    row.forEach((cell, idx) => {
+                        const txt = String(cell).toUpperCase();
+                        if (txt === "ANCIANOS") state.summary.ancianos = Number(row[idx+1] || 0);
+                        if (txt.includes("MINISTERIALES")) state.summary.sm = Number(row[idx+1] || 0);
+                    });
+                });
+
+                // Scan for Informes Faltantes
+                // Heuristic: Look for names in column 0 starting around row 32
+                json.forEach(row => {
+                    const name = String(row[0] || "");
+                    const status = String(row[2] || "").toUpperCase();
+                    // Filter valid names and statuses
+                    if (name.length > 4 && !name.includes("HEAD") && !name.includes("PROMEDIO") && !name.includes("MES")) {
+                        if (status.includes("INACTIV") || status.includes("FALTA") || status.includes("OCTUBRE") || status.includes("DICIEMBRE")) {
+                            state.summary.faltantes.push({ name: name, status: row[2] || "Pendiente" });
+                        }
+                    }
+                });
+            }
+
             saveState();
+            renderDashboard();
+            renderCongregations();
         }
 
-        function toggleSettings() {
-            navTo('Settings');
+        // --- UI RENDERERS ---
+        function renderDashboard() {
+            // Calculate totals
+            let totalPub = 0;
+            state.congregations.forEach(c => {
+                if(c.stats.pub) c.stats.pub.forEach(m => totalPub += Number(m.val) || 0);
+            });
+
+            const statsEl = document.getElementById('dashboard-stats');
+            statsEl.innerHTML = `
+                <div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant flex flex-col justify-center items-center min-h-[100px] transition-all hover:shadow-md">
+                    <span class="material-symbols-outlined text-on-surface-variant mb-1">groups</span>
+                    <span class="text-2xl font-bold text-primary">${state.congregations.length}</span>
+                    <span class="text-label-lg text-on-surface-variant">Congregaciones</span>
+                </div>
+                <div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant flex flex-col justify-center items-center min-h-[100px] transition-all hover:shadow-md">
+                    <span class="material-symbols-outlined text-on-surface-variant mb-1">person</span>
+                    <span class="text-2xl font-bold text-secondary">${totalPub}</span>
+                    <span class="text-label-lg text-on-surface-variant">Publicadores</span>
+                </div>
+                <div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant flex flex-col justify-center items-center min-h-[100px] transition-all hover:shadow-md">
+                    <span class="material-symbols-outlined text-on-surface-variant mb-1">elderly</span>
+                    <span class="text-2xl font-bold text-tertiary">${state.summary.ancianos}</span>
+                    <span class="text-label-lg text-on-surface-variant">Ancianos</span>
+                </div>
+                <div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant flex flex-col justify-center items-center min-h-[100px] transition-all hover:shadow-md">
+                    <span class="material-symbols-outlined text-on-surface-variant mb-1">warning</span>
+                    <span class="text-2xl font-bold text-error">${state.summary.faltantes.length}</span>
+                    <span class="text-label-lg text-on-surface-variant">Faltantes</span>
+                </div>
+            `;
+
+            const listEl = document.getElementById('missing-list');
+            const countEl = document.getElementById('missing-count');
+            const items = state.summary.faltantes;
+            
+            countEl.innerText = `${items.length} pendientes`;
+
+            if (items.length === 0) {
+                listEl.innerHTML = `<p class="text-center text-on-surface-variant text-sm py-4">No hay informes faltantes registrados.</p>`;
+            } else {
+                listEl.innerHTML = items.map(f => `
+                    <div class="flex justify-between items-center p-3 bg-surface-container-low rounded-lg border border-outline-variant/50">
+                        <span class="font-medium text-on-surface">${f.name}</span>
+                        <span class="text-xs bg-error-container/20 text-error px-2 py-1 rounded-full font-semibold">${f.status}</span>
+                    </div>
+                `).join('');
+            }
         }
 
-        // --- Dark Mode ---
+        function renderCongregations() {
+            const list = document.getElementById('congregations-list');
+            if (state.congregations.length === 0) {
+                list.innerHTML = `<div class="col-span-3 text-center py-20 text-on-surface-variant space-y-4">
+                    <span class="material-symbols-outlined text-5xl">cloud_upload</span>
+                    <p>No hay datos. Importe un archivo Excel desde el Dashboard.</p>
+                </div>`;
+                return;
+            }
+
+            list.innerHTML = state.congregations.map(c => `
+                <div onclick="openDetail(${c.id})" class="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 shadow-sm cursor-pointer hover:shadow-lg hover:border-primary active:scale-[0.98] transition-all flex justify-between items-center">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center text-secondary font-bold text-xl">
+                            ${c.name.charAt(0)}
+                        </div>
+                        <div>
+                            <span class="font-bold block text-on-background">${c.name}</span>
+                            <span class="text-xs text-on-surface-variant">${c.stats.pub ? c.stats.pub.length + ' registros mensuales' : 'Sin datos'}</span>
+                        </div>
+                    </div>
+                    <span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+                </div>
+            `).join('');
+        }
+
+        function openDetail(id) {
+            state.selectedCongregation = state.congregations.find(c => c.id === id);
+            if (!state.selectedCongregation) return;
+            
+            document.getElementById('detail-name').innerText = state.selectedCongregation.name;
+            navTo('Detail');
+            switchTab('pub');
+        }
+
+        function switchTab(tabKey) {
+            // Reset tabs
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('tab-active');
+                if(btn.innerText.toLowerCase().includes(tabKey)) btn.classList.add('tab-active');
+            });
+
+            const container = document.getElementById('detail-content');
+            const cong = state.selectedCongregation;
+            const data = cong.stats[tabKey] || [];
+
+            // Define columns based on key
+            let headers = [];
+            let cols = [];
+            if (tabKey === 'pub') { headers = ['Mes', 'Pub', 'Horas', 'C.B.']; cols = ['mes', 'val', 'hrs', 'cb']; }
+            if (tabKey === 'pr') { headers = ['Mes', 'Cant.', 'Horas', 'C.B.']; cols = ['mes', 'val', 'hrs', 'cb']; }
+            if (tabKey === 'pa') { headers = ['Mes', 'Cant.', 'Horas', 'C.B.']; cols = ['mes', 'val', 'hrs', 'cb']; }
+            if (tabKey === 'reu') { headers = ['Mes', 'Entre Semana', 'Fin de Semana']; cols = ['mes', 'entre', 'fin']; }
+            if (tabKey === 'don') { headers = ['Mes', 'Obra Mund.', 'Congregación']; cols = ['mes', 'om', 'cong']; }
+
+            if (data.length === 0) {
+                container.innerHTML = `<div class="p-10 text-center text-on-surface-variant">No hay datos para esta categoría.</div>`;
+                return;
+            }
+
+            // Calculate Stats
+            let totals = new Array(cols.length - 1).fill(0);
+            let count = 0;
+            
+            let rowsHtml = data.map(row => {
+                let tds = cols.map((key, idx) => {
+                    let val = row[key];
+                    if (idx === 0) return `<td class="p-2 font-bold border-b border-outline-variant/50">${val}</td>`; // Month
+                    
+                    let num = Number(val) || 0;
+                    totals[idx-1] += num;
+                    return `<td class="p-2 text-center border-b border-outline-variant/50">${num}</td>`;
+                }).join('');
+                count++;
+                return `<tr class="hover:bg-surface-container-low">${tds}</tr>`;
+            }).join('');
+
+            // Build Table
+            let avgHtml = totals.map(t => `<td class="p-2 text-center font-bold text-primary border-t-2 border-primary">${(t/count).toFixed(1)}</td>`).join('');
+            let totalHtml = totals.map(t => `<td class="p-2 text-center font-bold border-t border-outline-variant">${t}</td>`).join('');
+
+            container.innerHTML = `
+                <table class="w-full text-sm text-on-background">
+                    <thead class="bg-surface-container-low border-b border-outline-variant">
+                        <tr>${headers.map(h => `<th class="p-2 text-left font-semibold">${h}</th>`).join('')}</tr>
+                    </thead>
+                    <tbody>
+                        ${rowsHtml}
+                    </tbody>
+                    <tfoot class="bg-surface-container-lowest">
+                        <tr class="border-t border-outline-variant">
+                            <td class="p-2 font-bold">TOTALES</td>
+                            ${totalHtml}
+                        </tr>
+                        <tr class="bg-primary-container/10">
+                            <td class="p-2 font-bold text-primary">PROMEDIOS</td>
+                            ${avgHtml}
+                        </tr>
+                    </tfoot>
+                </table>
+            `;
+        }
+
+        // --- NAVIGATION & UTILS ---
+        function navTo(viewId) {
+            document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden'));
+            const section = document.getElementById('section-' + viewId);
+            if (section) section.classList.remove('hidden');
+            state.currentView = viewId;
+        }
+
+        function showSnackbar(msg) {
+            const sb = document.getElementById('snackbar');
+            sb.innerText = msg;
+            sb.className = "show";
+            setTimeout(() => sb.className = "", 3000);
+        }
+
+        // --- PROFILE & THEME ---
+        function handlePhotoUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                state.profile.photo = ev.target.result;
+                updateProfileUI();
+                saveState();
+                showSnackbar("Foto de perfil actualizada");
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function saveProfile() {
+            state.profile.name = document.getElementById('profile-name').value;
+            updateProfileUI();
+            saveState();
+            showSnackbar("Perfil guardado");
+        }
+
+        function updateProfileUI() {
+            const name = state.profile.name || "S";
+            const initial = name.charAt(0).toUpperCase();
+
+            document.getElementById('profile-name').value = name;
+            
+            // Header
+            document.getElementById('header-initial').innerText = initial;
+            const hImg = document.getElementById('header-avatar');
+            if (state.profile.photo) { hImg.src = state.profile.photo; hImg.classList.remove('hidden'); } 
+            else { hImg.classList.add('hidden'); }
+
+            // Settings
+            document.getElementById('settings-initial').innerText = initial;
+            const sImg = document.getElementById('settings-avatar');
+            if (state.profile.photo) { sImg.src = state.profile.photo; sImg.classList.remove('hidden'); }
+            else { sImg.classList.add('hidden'); }
+        }
+
+        function clearData() {
+            if (confirm("¿Borrar absolutamente todos los datos de la aplicación?")) {
+                localStorage.removeItem('CHI03_APP_DATA_FINAL');
+                location.reload();
+            }
+        }
+
+        // Theme Logic
         document.getElementById('themeToggle').addEventListener('click', () => {
-            const isDark = document.documentElement.classList.toggle('dark');
-            appState.isDarkMode = isDark;
-            document.getElementById('themeToggle').querySelector('span').innerText = isDark ? 'light_mode' : 'dark_mode';
+            state.isDark = !state.isDark;
+            document.documentElement.classList.toggle('dark');
+            updateThemeIcon();
             saveState();
         });
 
-        // --- Congregations Management ---
-        function renderCongregations() {
-            const list = document.getElementById('congregations-list');
-            list.innerHTML = '';
-            appState.congregations.forEach(cong => {
-                const card = document.createElement('div');
-                card.className = "bg-surface-container-lowest border border-outline-variant rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow flex justify-between items-center";
-                card.innerHTML = `
-                    <div class="flex items-center gap-4">
-                        <div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center text-secondary">
-                            <span class="material-symbols-outlined">location_city</span>
-                        </div>
-                        <span class="font-body-lg font-body-lg text-on-surface">${cong.name}</span>
-                    </div>
-                    <button onclick="deleteCongregation(${cong.id})" class="text-error-container hover:bg-error-container/10 p-2 rounded-full transition-colors">
-                        <span class="material-symbols-outlined text-error">delete</span>
-                    </button>
-                `;
-                list.appendChild(card);
-            });
+        function updateThemeIcon() {
+            const icon = document.querySelector('#themeToggle .material-symbols-outlined');
+            icon.innerText = state.isDark ? 'light_mode' : 'dark_mode';
         }
 
-        function addCongregation() {
-            const nameInput = document.getElementById('new-cong-name');
-            if (nameInput.value.trim()) {
-                const newCong = {
-                    id: Date.now(),
-                    name: nameInput.value.trim()
-                };
-                appState.congregations.push(newCong);
-                nameInput.value = '';
-                closeModal('congregation-modal');
-                renderCongregations();
-                saveState();
-            }
+        // Start App
+        init();
+
+        // Register Service Worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./sw.js').catch(err => console.log("SW not registered", err));
         }
-
-        function deleteCongregation(id) {
-            if (confirm('¿Eliminar esta congregación?')) {
-                appState.congregations = appState.congregations.filter(c => c.id !== id);
-                renderCongregations();
-                saveState();
-            }
-        }
-
-        // --- Profile Management ---
-        function saveProfile() {
-            appState.profile.name = document.getElementById('profile-name').value;
-            appState.profile.circuit = document.getElementById('profile-circuit').value;
-            saveState();
-            alert('Perfil actualizado correctamente.');
-        }
-
-        // --- System Tools ---
-        function confirmClearCache() {
-            if (confirm('¿Estás seguro? Se borrarán todos los datos guardados, incluyendo congregaciones y perfil.')) {
-                localStorage.removeItem('CHI03_STATE');
-                window.location.reload();
-            }
-        }
-
-        function exportBackup() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState));
-            const downloadAnchorNode = document.createElement('a');
-            downloadAnchorNode.setAttribute("href", dataStr);
-            downloadAnchorNode.setAttribute("download", `CHI03_Backup_${new Date().toISOString().split('T')[0]}.json`);
-            document.body.appendChild(downloadAnchorNode);
-            downloadAnchorNode.click();
-            downloadAnchorNode.remove();
-        }
-
-        // --- Modal Helpers ---
-        function showModal(id) { document.getElementById(id).classList.remove('hidden'); }
-        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
-
-        // Start
-        window.onload = initApp;
     </script>
-</body></html>
+</body>
+</html>
