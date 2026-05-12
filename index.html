@@ -4,17 +4,13 @@
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title>Circuito CHI-03 Admin</title>
-    
-    <!-- Libs -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
-    
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:wght@100..1000&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-
     <script>
         tailwind.config = {
             darkMode: "class",
@@ -44,12 +40,19 @@
         @keyframes fadeout { from {bottom: 90px; opacity: 1;} to {bottom: 0; opacity: 0;} }
         .tab-active { border-bottom: 3px solid #005bbf; color: #005bbf; font-weight: 700; background-color: rgba(0, 91, 191, 0.05); }
         .card-hover:hover { transform: translateY(-2px); box-shadow: 0 8px 16px rgba(0,0,0,0.1); }
+        .bar-chart { display: flex; align-items: flex-end; gap: 4px; height: 120px; }
+        .bar { flex: 1; border-radius: 4px 4px 0 0; min-height: 4px; transition: height 0.5s ease; position: relative; }
+        .bar:hover::after { content: attr(data-value); position: absolute; top: -20px; left: 50%; transform: translateX(-50%); font-size: 10px; font-weight: bold; background: #333; color: white; padding: 2px 6px; border-radius: 4px; white-space: nowrap; }
+        .progress-ring { transform: rotate(-90deg); }
+        .progress-ring-circle { transition: stroke-dashoffset 0.5s ease; }
+        .stat-card { transition: all 0.2s; }
+        .stat-card:hover { transform: translateY(-2px); }
+        .collapsible-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+        .collapsible-content.open { max-height: 2000px; }
+        .shepherd-icon { width: 32px; height: 32px; object-fit: contain; }
     </style>
 </head>
-
 <body class="bg-background text-on-background min-h-screen flex flex-col transition-colors duration-300">
-
-    <!-- TopAppBar -->
     <header class="bg-surface sticky top-0 z-50 border-b border-outline/30 flex items-center justify-between px-4 w-full h-16 backdrop-blur-lg bg-opacity-90">
         <div class="flex items-center gap-2">
             <button onclick="navTo('Dashboard')" class="p-2 rounded-full hover:bg-surface-container transition-colors">
@@ -66,11 +69,7 @@
             </button>
         </div>
     </header>
-
-    <!-- Main Content -->
     <main class="flex-1 pb-24 pt-4 px-4 max-w-[1280px] mx-auto w-full" id="app-canvas">
-
-        <!-- SECTION: DASHBOARD -->
         <section id="section-Dashboard" class="space-y-6">
             <div class="flex justify-between items-center">
                 <h2 class="font-bold text-2xl">Dashboard Circuito</h2>
@@ -78,12 +77,8 @@
                     <span class="material-symbols-outlined text-sm">picture_as_pdf</span> Informe PDF
                 </button>
             </div>
-
-            <!-- Stats Cards -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="dashboard-stats"></div>
-
-            <!-- Quick Actions -->
-             <div class="bg-surface-container-lowest rounded-xl p-4 shadow-sm border border-outline/20">
+            <div class="bg-surface-container-lowest rounded-xl p-4 shadow-sm border border-outline/20">
                 <h3 class="font-bold mb-3 text-on-surface-variant">Acciones Rápidas</h3>
                 <div class="grid grid-cols-2 gap-3">
                     <button onclick="navTo('ManageCongregations')" class="flex flex-col items-center gap-2 p-4 bg-surface-container-low rounded-xl hover:bg-surface-container transition-colors">
@@ -97,15 +92,11 @@
                     </label>
                 </div>
             </div>
-
-            <!-- Congregations List in Dashboard -->
-             <div class="space-y-3 pt-2">
+            <div class="space-y-3 pt-2">
                 <h3 class="font-bold text-on-surface-variant pl-1">Congregaciones</h3>
                 <div id="dashboard-cong-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
-             </div>
+            </div>
         </section>
-
-        <!-- SECTION: MANAGE CONGREGATIONS -->
         <section id="section-ManageCongregations" class="hidden space-y-6">
             <div class="flex justify-between items-center">
                 <button onclick="navTo('Dashboard')" class="flex items-center gap-1 text-on-surface-variant">
@@ -114,8 +105,6 @@
                 <h2 class="font-bold text-xl">Gestión de Congregaciones</h2>
                 <div class="w-10"></div>
             </div>
-
-            <!-- Add Form -->
             <div class="bg-surface-container-lowest rounded-xl p-4 shadow-sm border border-dashed border-primary">
                 <h3 class="font-bold mb-3">Añadir Nueva Congregación</h3>
                 <div class="flex gap-2">
@@ -131,8 +120,6 @@
             </div>
             <div id="manage-list" class="space-y-3"></div>
         </section>
-
-        <!-- SECTION: CONGREGATION DETAIL -->
         <section id="section-Detail" class="hidden space-y-4">
             <div class="flex items-center gap-3">
                 <button onclick="navTo('Dashboard')" class="p-2 rounded-full hover:bg-surface-container">
@@ -143,33 +130,24 @@
                     <span id="detail-badge" class="text-xs font-bold px-2 py-0.5 rounded bg-secondary-container text-on-secondary-container"></span>
                 </div>
             </div>
-
-            <!-- Tabs -->
             <div class="sticky top-16 z-40 bg-surface border-b border-outline-variant">
                 <nav class="flex overflow-x-auto -mx-4 px-4" id="detail-tabs">
                     <button onclick="switchTab('publishers')" class="tab-btn px-4 py-3 text-sm font-medium border-b-2 border-transparent tab-active">Publicadores (S-21)</button>
                     <button onclick="switchTab('stats')" class="tab-btn px-4 py-3 text-sm font-medium border-b-2 border-transparent">Estadísticas Excel</button>
                 </nav>
             </div>
-
-            <!-- Content -->
             <div id="detail-content"></div>
         </section>
-
-        <!-- SECTION: SETTINGS -->
         <section id="section-Settings" class="hidden space-y-6">
             <h2 class="font-bold text-2xl">Ajustes</h2>
-             <div class="bg-surface-container-lowest rounded-xl p-4 border border-outline-variant">
+            <div class="bg-surface-container-lowest rounded-xl p-4 border border-outline-variant">
                 <h3 class="font-bold text-error mb-2">Mantenimiento</h3>
                 <button onclick="clearAllData()" class="flex items-center gap-2 text-error font-semibold hover:bg-error-container/20 p-2 rounded-lg w-full justify-center border border-error/30">
                     <span class="material-symbols-outlined">delete_forever</span> Borrar Todo y Restablecer
                 </button>
             </div>
         </section>
-
     </main>
-
-    <!-- Bottom Nav -->
     <nav class="fixed bottom-0 w-full z-50 bg-surface/90 backdrop-blur-lg border-t border-outline-variant/50 flex justify-around items-center h-20">
         <button onclick="navTo('Dashboard')" class="flex flex-col items-center justify-center text-primary p-2">
             <span class="material-symbols-outlined text-3xl">dashboard</span>
@@ -184,20 +162,11 @@
             <span class="text-xs font-medium mt-1">Ajustes</span>
         </button>
     </nav>
-
     <div id="snackbar">Mensaje</div>
-
     <script>
-        // Init PDF.js Worker
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-
-        // --- STATE ---
-        let state = {
-            congregations: [],
-            isDark: false
-        };
-
-        // --- DEFAULT DATA ---
+        let state = { congregations: [], isDark: false };
+        const SHEPHERD_ICON = "data:image/png;base64,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";
         const defaultList = [
             { name: "Anémona-Cd. Juárez, Chih.", circuit: "CHI-03-B" },
             { name: "Bambú-Juárez, Chih.", circuit: "CHI-03-B" },
@@ -220,8 +189,6 @@
             { name: "Waterfill-Juárez, Chih.", circuit: "CHI-03-A" },
             { name: "Grupo Tagalo-Juárez, Chihuahua", circuit: "CHI-03-B" }
         ];
-
-        // --- INIT ---
         function init() {
             const saved = localStorage.getItem('CHI03_PRO_APP_FINAL');
             if (saved) {
@@ -229,42 +196,30 @@
             } else {
                 defaultList.forEach(c => {
                     state.congregations.push({
-                        id: genId(),
-                        name: c.name,
-                        circuit: c.circuit,
-                        publishers: [], 
-                        stats: { pub: [], pr: [], pa: [], reu: [], don: [] } 
+                        id: genId(), name: c.name, circuit: c.circuit,
+                        publishers: [], stats: null
                     });
                 });
                 save();
             }
-
             if (state.isDark) document.documentElement.classList.add('dark');
             renderDashboard();
             renderManageList();
         }
-
         function save() { localStorage.setItem('CHI03_PRO_APP_FINAL', JSON.stringify(state)); }
         function genId() { return Date.now().toString(36) + Math.random().toString(36).substr(2); }
-
-        // --- NAVIGATION ---
         function navTo(id) {
             document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden'));
             document.getElementById('section-' + id)?.classList.remove('hidden');
+            window.scrollTo(0,0);
         }
-
-        // --- MANAGE CONGREGATIONS ---
         function addNewCongregation() {
             const nameInput = document.getElementById('new-cong-name');
             const circuitSelect = document.getElementById('new-cong-circuit');
             if (!nameInput.value.trim()) return showSnackbar("Escribe un nombre");
-
             state.congregations.push({
-                id: genId(),
-                name: nameInput.value.trim(),
-                circuit: circuitSelect.value,
-                publishers: [],
-                stats: { pub: [], pr: [], pa: [], reu: [], don: [] }
+                id: genId(), name: nameInput.value.trim(), circuit: circuitSelect.value,
+                publishers: [], stats: null
             });
             save();
             nameInput.value = '';
@@ -272,7 +227,6 @@
             renderDashboard();
             showSnackbar("Congregación añadida");
         }
-
         function deleteCongregation(id) {
             if(!confirm("¿Eliminar esta congregación y todos sus datos?")) return;
             state.congregations = state.congregations.filter(c => c.id !== id);
@@ -281,7 +235,6 @@
             renderDashboard();
             showSnackbar("Eliminada");
         }
-
         function renderManageList() {
             const container = document.getElementById('manage-list');
             container.innerHTML = state.congregations.map(c => `
@@ -289,6 +242,7 @@
                     <div>
                         <h3 class="font-bold">${c.name}</h3>
                         <span class="text-xs font-semibold px-2 py-0.5 rounded ${c.circuit.includes('A') ? 'bg-secondary-container text-on-secondary-container' : 'bg-tertiary-container text-on-tertiary-container'}">${c.circuit}</span>
+                        ${c.stats ? '<span class="text-xs text-primary font-semibold ml-2">📊 Stats cargadas</span>' : ''}
                     </div>
                     <button onclick="deleteCongregation('${c.id}')" class="p-2 text-error hover:bg-error-container/20 rounded-full">
                         <span class="material-symbols-outlined">delete_forever</span>
@@ -296,22 +250,16 @@
                 </div>
             `).join('');
         }
-
-        // --- DASHBOARD ---
         function renderDashboard() {
-            let totalPubs = 0;
-            let totalPr = 0;
-            let totalAncianos = 0;
-            
+            let totalPubs = 0, totalPr = 0, totalAncianos = 0, congsWithStats = 0;
             state.congregations.forEach(c => {
+                if (c.stats) congsWithStats++;
                 c.publishers.forEach(p => {
                     if (p.appointment === 'Anciano' || p.appointment === 'Siervo Ministerial') totalAncianos++;
                     if (p.appointment.includes('Precursor')) totalPr++;
-                    
                     if (p.history.length > 0) totalPubs++;
                 });
             });
-
             document.getElementById('dashboard-stats').innerHTML = `
                 <div class="bg-surface-container-lowest p-4 rounded-xl border flex flex-col justify-center items-center min-h-[100px]">
                     <span class="material-symbols-outlined text-primary">groups</span>
@@ -324,7 +272,7 @@
                     <span class="text-xs text-on-surface-variant">Publicadores Activos</span>
                 </div>
                 <div class="bg-surface-container-lowest p-4 rounded-xl border flex flex-col justify-center items-center min-h-[100px]">
-                    <span class="material-symbols-outlined text-tertiary">elderly</span>
+                    <img src="${SHEPHERD_ICON}" class="shepherd-icon" alt="Ancianos" style="filter: invert(32%) sepia(98%) saturate(1523%) hue-rotate(32deg) brightness(96%) contrast(101%);"/>
                     <span class="text-2xl font-bold">${totalAncianos}</span>
                     <span class="text-xs text-on-surface-variant">Ancianos y SM</span>
                 </div>
@@ -334,55 +282,43 @@
                     <span class="text-xs text-on-surface-variant">Precursores</span>
                 </div>
             `;
-
-            // Render Congregations List for Dashboard
             const dashList = document.getElementById('dashboard-cong-list');
             dashList.innerHTML = state.congregations.map(c => `
                 <div onclick="openCongregation('${c.id}')" class="card-hover bg-surface-container-lowest p-4 rounded-xl border border-outline-variant shadow-sm cursor-pointer flex justify-between items-center transition-all">
                     <div>
                         <h3 class="font-bold text-on-background">${c.name}</h3>
-                        <div class="flex gap-2 items-center mt-1">
+                        <div class="flex gap-2 items-center mt-1 flex-wrap">
                             <span class="text-xs font-bold px-2 py-0.5 rounded ${c.circuit.includes('A') ? 'bg-secondary-container/50 text-secondary' : 'bg-tertiary-container/50 text-tertiary'}">${c.circuit}</span>
-                            ${c.publishers.length > 0 ? `<span class="text-xs text-primary font-semibold">${c.publishers.length} Pub.</span>` : '<span class="text-xs text-on-surface-variant">Sin datos</span>'}
+                            ${c.publishers.length > 0 ? `<span class="text-xs text-primary font-semibold">${c.publishers.length} Pub.</span>` : ''}
+                            ${c.stats ? `<span class="text-xs bg-primary-container text-primary px-2 py-0.5 rounded-full font-bold">📊 Stats</span>` : '<span class="text-xs text-on-surface-variant">Sin datos Excel</span>'}
                         </div>
                     </div>
                     <span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
                 </div>
             `).join('');
         }
-
-        // --- DETAIL VIEW ---
         let selectedCong = null;
-
         function openCongregation(id) {
             selectedCong = state.congregations.find(c => c.id === id);
             if (!selectedCong) return;
-            
             document.getElementById('detail-name').innerText = selectedCong.name;
             document.getElementById('detail-badge').innerText = selectedCong.circuit;
-            
             navTo('Detail');
             switchTab('publishers');
         }
-
         function switchTab(tab) {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('tab-active'));
-            // Handle event or direct call
-            if(event && event.target) event.target.classList.add('tab-active');
-            else document.querySelector('.tab-btn').classList.add('tab-active');
-
+            const buttons = document.querySelectorAll('.tab-btn');
+            if (tab === 'publishers') buttons[0].classList.add('tab-active');
+            else buttons[1].classList.add('tab-active');
             const container = document.getElementById('detail-content');
             if (tab === 'publishers') renderPublishersTab(container);
             else renderStatsTab(container);
         }
-
-        // --- S-21 SMART PROCESSING ---
         async function handleS21Upload(event) {
             const files = event.target.files;
             if (!files || files.length === 0 || !selectedCong) return;
-            
             showSnackbar(`Procesando ${files.length} archivo(s)...`);
-            
             let addedCount = 0;
             for (const file of files) {
                 try {
@@ -390,18 +326,14 @@
                     const data = parseS21Data(text, file.name);
                     selectedCong.publishers.push(data);
                     addedCount++;
-                } catch (e) {
-                    console.error("Error en archivo:", file.name, e);
-                }
+                } catch (e) { console.error("Error en archivo:", file.name, e); }
             }
-            
             save();
             renderPublishersTab(document.getElementById('detail-content'));
             renderDashboard();
             showSnackbar(`${addedCount} publicadores importados.`);
             event.target.value = '';
         }
-
         function extractTextFromPdf(file) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
@@ -420,87 +352,43 @@
                 reader.readAsArrayBuffer(file);
             });
         }
-
         function parseS21Data(text, filename) {
-            // 1. Name
             const nameMatch = text.match(/(?:Nombre|Name)\s*[:\-]?\s*([A-ZÁÉÍÓÚÑa-záéíóúñ]+\s+[A-ZÁÉÍÓÚÑa-záéíóúñ]+(?:\s+[A-ZÁÉÍÓÚÑa-záéíóúñ]+)?)/);
             let name = nameMatch ? nameMatch[1] : filename.replace('.pdf', '').replace(/_/g, ' ');
-
-            // 2. Appointment
             const t = text.toUpperCase();
             let appointment = "Publicador";
             if (t.includes("ANCIANO")) appointment = "Anciano";
             else if (t.includes("MINISTERIAL")) appointment = "Siervo Ministerial";
             else if (t.includes("PRECURSOR REGULAR")) appointment = "Precursor Regular";
-            // PA is usually detected per month in history
-
-            // 3. History (Smart Table Extraction)
-            const months = ["ENE", "FEB", "MAR", "ABR", "MAY", "JUN", "JUL", "AGO", "SEP", "OCT", "NOV", "DIC"];
+            const months = ["ENE","FEB","MAR","ABR","MAY","JUN","JUL","AGO","SEP","SEPT","OCT","NOV","DIC"];
             const history = [];
             const tokens = text.split(/\s+/);
-            
-            // Find blocks of month followed by number
-            // Pattern: Month Name -> Number (Hours) -> Number (Placements/Bibles/etc) -> Number (Return Visits) -> Number (Videos)
-            // We only need Hours.
-            
-            // S-21 typically lists months horizontally.
-            // We scan for month abbreviations
             let foundMonths = [];
             tokens.forEach((token, index) => {
                 const clean = token.toUpperCase().replace(/[.,]/g, '');
-                if (months.includes(clean)) {
-                    foundMonths.push({ month: clean, index: index });
-                }
+                if (months.includes(clean)) foundMonths.push({ month: clean, index: index });
             });
-
             foundMonths.forEach(m => {
-                // Scan the next 5 tokens for the first valid number
                 for(let i = m.index + 1; i < m.index + 6; i++) {
                     if (tokens[i]) {
-                        const val = parseInt(tokens[i].replace(':', '')); // Remove colon if attached
+                        const val = parseInt(tokens[i].replace(':', ''));
                         if (!isNaN(val) && val > 0) {
-                            // Check if this month was PA
-                            // Usually 'P.Aux' or similar appears near the month or hours
-                            // Simple heuristic: if text around month contains 'AUX', mark it.
                             let type = "Publicador";
-                            // Check context window
                             const windowText = tokens.slice(m.index, i+3).join(" ").toUpperCase();
-                            if (windowText.includes("AUX") || windowText.includes("AUXILIAR")) {
-                                type = "Precursor Auxiliar";
-                            } else if (appointment.includes("Precursor Regular")) {
-                                type = "Precursor Regular";
-                            }
-
+                            if (windowText.includes("AUX") || windowText.includes("AUXILIAR")) type = "Precursor Auxiliar";
+                            else if (appointment.includes("Precursor Regular")) type = "Precursor Regular";
                             history.push({ month: m.month, hours: val, type: type });
-                            break; // Found hours, break inner loop
+                            break;
                         }
                     }
                 }
             });
-
-            // Deduplicate months (keep last entry if duplicates found due to table headers)
             const uniqueHistory = [];
             const seen = new Set();
-            history.forEach(h => {
-                if(!seen.has(h.month)) {
-                    seen.add(h.month);
-                    uniqueHistory.push(h);
-                }
-            });
-            
-            // Sort by month order (simple reverse sort assuming data is latest first or oldest first)
-            // Usually S-21 is chronological.
-            
-            return {
-                id: genId(),
-                name: name.trim(),
-                appointment: appointment,
-                history: uniqueHistory
-            };
+            history.forEach(h => { if(!seen.has(h.month)) { seen.add(h.month); uniqueHistory.push(h); }});
+            return { id: genId(), name: name.trim(), appointment: appointment, history: uniqueHistory };
         }
-
         function renderPublishersTab(container) {
-            // Calculate variations
             const getVariation = (history) => {
                 if (history.length < 2) return { diff: 0, percent: 0 };
                 const last = history[history.length - 1].hours;
@@ -509,7 +397,6 @@
                 const percent = prev > 0 ? Math.round((diff / prev) * 100) : 0;
                 return { diff, percent };
             };
-
             container.innerHTML = `
                 <div class="space-y-4">
                     <div class="bg-surface-container-low p-4 rounded-xl flex flex-col sm:flex-row justify-between items-center gap-4">
@@ -519,17 +406,10 @@
                             <input type="file" class="hidden" accept=".pdf" multiple onchange="handleS21Upload(event)"/>
                         </label>
                     </div>
-                    
                     <div class="overflow-x-auto bg-surface-container-lowest rounded-xl border">
                         <table class="w-full text-sm">
                             <thead class="bg-surface-container-low border-b">
-                                <tr>
-                                    <th class="p-3 text-left">Nombre</th>
-                                    <th class="p-3 text-left">Cargo</th>
-                                    <th class="p-3 text-center">Último Mes</th>
-                                    <th class="p-3 text-center">Variación</th>
-                                    <th class="p-3 text-center">Acciones</th>
-                                </tr>
+                                <tr><th class="p-3 text-left">Nombre</th><th class="p-3 text-left">Cargo</th><th class="p-3 text-center">Último Mes</th><th class="p-3 text-center">Variación</th><th class="p-3 text-center">Acciones</th></tr>
                             </thead>
                             <tbody>
                                 ${selectedCong.publishers.length === 0 ? `<tr><td colspan="5" class="p-8 text-center text-on-surface-variant">Sube fichas S-21 (PDF) para empezar.</td></tr>` : ''}
@@ -541,84 +421,535 @@
                                     return `
                                     <tr class="border-b hover:bg-surface-container-low">
                                         <td class="p-3 font-semibold">${p.name}</td>
-                                        <td class="p-3">
-                                            <span class="px-2 py-1 rounded-full text-xs font-bold ${p.appointment === 'Anciano' ? 'bg-tertiary-container text-on-tertiary-container' : p.appointment.includes('Precursor') ? 'bg-secondary-container text-on-secondary-container' : 'bg-surface-container-high text-on-surface-variant'}">
-                                                ${p.appointment}
-                                            </span>
-                                        </td>
-                                        <td class="p-3 text-center">
-                                            <span class="font-bold">${last ? last.hours : '0'}</span>
-                                            <span class="block text-xs text-on-surface-variant">${last ? last.type : ''}</span>
-                                        </td>
-                                        <td class="p-3 text-center">
-                                            <div class="flex items-center justify-center gap-1 ${varColor}">
-                                                <span class="material-symbols-outlined text-sm">${varIcon}</span>
-                                                <span class="font-bold">${vars.diff > 0 ? '+' : ''}${vars.diff}</span>
-                                            </div>
-                                            <span class="text-xs opacity-70">${vars.percent}%</span>
-                                        </td>
-                                        <td class="p-3 text-center">
-                                            <button onclick="deletePublisher('${p.id}')" class="text-error hover:bg-error-container/20 p-1 rounded-full">
-                                                <span class="material-symbols-outlined text-sm">delete</span>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                `}).join('')}
+                                        <td class="p-3"><span class="px-2 py-1 rounded-full text-xs font-bold ${p.appointment === 'Anciano' ? 'bg-tertiary-container text-on-tertiary-container' : p.appointment.includes('Precursor') ? 'bg-secondary-container text-on-secondary-container' : 'bg-surface-container-high text-on-surface-variant'}">${p.appointment}</span></td>
+                                        <td class="p-3 text-center"><span class="font-bold">${last ? last.hours : '0'}</span><span class="block text-xs text-on-surface-variant">${last ? last.type : ''}</span></td>
+                                        <td class="p-3 text-center"><div class="flex items-center justify-center gap-1 ${varColor}"><span class="material-symbols-outlined text-sm">${varIcon}</span><span class="font-bold">${vars.diff > 0 ? '+' : ''}${vars.diff}</span></div><span class="text-xs opacity-70">${vars.percent}%</span></td>
+                                        <td class="p-3 text-center"><button onclick="deletePublisher('${p.id}')" class="text-error hover:bg-error-container/20 p-1 rounded-full"><span class="material-symbols-outlined text-sm">delete</span></button></td>
+                                    </tr>`;
+                                }).join('')}
                             </tbody>
                         </table>
                     </div>
-                </div>
-            `;
+                </div>`;
         }
-
         function deletePublisher(id) {
             selectedCong.publishers = selectedCong.publishers.filter(p => p.id !== id);
             save();
             renderPublishersTab(document.getElementById('detail-content'));
             renderDashboard();
         }
-
-        function renderStatsTab(container) {
-            container.innerHTML = `
-                <div class="p-8 text-center text-on-surface-variant space-y-4">
-                    <span class="material-symbols-outlined text-5xl">analytics</span>
-                    <p>Aquí aparecerán las estadísticas agregadas si importas el Excel del circuito.</p>
-                    <p class="text-xs">(La pestaña Publicadores usa los PDFs individuales)</p>
-                </div>`;
-        }
-
-        // --- EXCEL CIRCUIT HANDLER ---
         function handleExcelCircuit(e) {
-             showSnackbar("Excel del circuito procesado (datos agregados).");
+            const file = e.target.files[0];
+            if (!file) return;
+            showSnackbar("Procesando Excel de Visita...");
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                try {
+                    const data = new Uint8Array(event.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const result = parseVisitaExcel(workbook);
+                    if (!result) { showSnackbar("No se pudieron extraer datos del Excel"); return; }
+                    const match = findCongregationByName(result.congregationName);
+                    if (!match) { showSnackbar(`No se encontró congregación: ${result.congregationName}. Añádela primero.`); return; }
+                    match.stats = result.stats;
+                    save();
+                    renderDashboard();
+                    renderManageList();
+                    showSnackbar(`✅ Datos de "${match.name}" guardados correctamente`);
+                } catch (err) { console.error(err); showSnackbar("Error al procesar el Excel"); }
+            };
+            reader.readAsArrayBuffer(file);
+            e.target.value = '';
         }
-
-        // --- PDF REPORT GENERATION ---
+        function findCongregationByName(nameFromExcel) {
+            let key = nameFromExcel.replace(/^\d+\.\s*/, '').split(',')[0].trim().toLowerCase();
+            key = key.replace(/\s+/g, ' ');
+            return state.congregations.find(c => {
+                const cName = c.name.toLowerCase();
+                return cName.includes(key) || key.includes(cName.split('-')[0].toLowerCase().trim());
+            });
+        }        function parseVisitaExcel(workbook) {
+            const sheets = workbook.SheetNames;
+            if (!sheets.includes('PUB')) return null;
+            const getSheet = (name) => {
+                const ws = workbook.Sheets[name];
+                return ws ? XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' }) : [];
+            };
+            const pubData = getSheet('PUB');
+            const paData = getSheet('PA');
+            const prData = getSheet('PR');
+            const reuData = getSheet('REU-DON');
+            const estData = getSheet('ESTADISTICAS');
+            let congregationName = '';
+            for (let i = 0; i < Math.min(5, pubData.length); i++) {
+                const row = pubData[i];
+                for (let j = 0; j < row.length; j++) {
+                    const val = String(row[j] || '');
+                    if (val.includes('Congregación:') || val.match(/^\d+\./)) {
+                        congregationName = val.replace('Congregación:', '').trim();
+                        break;
+                    }
+                }
+                if (congregationName) break;
+            }
+            let visitDate = '';
+            for (let i = 0; i < pubData.length; i++) {
+                const row = pubData[i];
+                for (let j = 0; j < row.length; j++) {
+                    const val = String(row[j] || '');
+                    if (val.includes('Visita:')) visitDate = String(row[j+1] || row[j+2] || '').trim();
+                }
+            }
+            const monthsMap = {'Jul':0,'Ago':1,'Sept':2,'Sep':2,'Oct':3,'Nov':4,'Dic':5,'Ene':6,'Feb':7,'Mar':8,'Abr':9,'May':10,'Jun':11};
+            const pubMonthly = [];
+            for (let i = 3; i < pubData.length; i++) {
+                const row = pubData[i];
+                const month = String(row[0] || '').trim();
+                if (monthsMap[month] !== undefined && month !== 'MES') {
+                    pubMonthly.push({ month: month, publishers: parseFloat(row[1]) || 0, hours: parseFloat(row[3]) || 0, courses: parseFloat(row[5]) || 0 });
+                }
+                if (month === 'Totales' || month === 'PROMEDIOS') break;
+            }
+            const summary = {};
+            const summaryLabels = ['P. Regulares','P. Auxiliares','Publicadores','Informan Cursos Bíblicos','No informan Cursos Bíblicos','Irregulares','Reactivados','Inactivos','Restringidos','Sacados de la congregación','Desasociados','Censurados','Readmitidos','Ancianos','Siervos ministeriales'];
+            for (let i = 0; i < pubData.length; i++) {
+                const row = pubData[i];
+                const label = String(row[0] || '').trim();
+                if (summaryLabels.includes(label)) summary[label] = parseFloat(row[2]) || parseFloat(row[1]) || 0;
+                if (label === 'R. Fin de semana') { summary.weekendCurrent = parseFloat(row[4]) || 0; summary.weekendPrevious = parseFloat(row[5]) || 0; summary.weekendPercent = parseFloat(row[7]) || 0; }
+                if (label === 'R. Entre semana') { summary.weekdayCurrent = parseFloat(row[4]) || 0; summary.weekdayPrevious = parseFloat(row[5]) || 0; summary.weekdayPercent = parseFloat(row[7]) || 0; }
+                if (label === 'Cantidad de Cursos B.') { summary.coursesCurrent = parseFloat(row[4]) || 0; summary.coursesPrevious = parseFloat(row[5]) || 0; summary.coursesPercent = parseFloat(row[7]) || 0; }
+                if (label === 'Nvos. Publicadores') { summary.newPubsCurrent = parseFloat(row[4]) || 0; summary.newPubsPrevious = parseFloat(row[5]) || 0; summary.newPubsPercent = parseFloat(row[7]) || 0; }
+                if (label === 'Nvos. Bautizados') { summary.newBaptCurrent = parseFloat(row[4]) || 0; summary.newBaptPrevious = parseFloat(row[5]) || 0; summary.newBaptPercent = parseFloat(row[7]) || 0; }
+            }
+            let pubTotals = { publishers: 0, hours: 0, courses: 0 };
+            let pubAverages = { publishers: 0, hours: 0, courses: 0 };
+            for (let i = 0; i < pubData.length; i++) {
+                const row = pubData[i];
+                if (String(row[0]) === 'Totales') pubTotals = { publishers: parseFloat(row[1])||0, hours: parseFloat(row[3])||0, courses: parseFloat(row[5])||0 };
+                if (String(row[0]) === 'PROMEDIOS') pubAverages = { publishers: parseFloat(row[1])||0, hours: parseFloat(row[3])||0, courses: parseFloat(row[5])||0 };
+            }
+            const paMonthly = [];
+            for (let i = 3; i < paData.length; i++) {
+                const row = paData[i];
+                const month = String(row[0] || '').trim();
+                if (monthsMap[month] !== undefined && month !== 'Mes') {
+                    paMonthly.push({ month: month, count: parseFloat(row[1]) || 0, hours: parseFloat(row[2]) || 0, courses: parseFloat(row[3]) || 0 });
+                }
+                if (month === 'Totales' || month === 'PROMEDIOS') break;
+            }
+            let paTotals = { count: 0, hours: 0, courses: 0 };
+            let paAverages = { count: 0, hours: 0, courses: 0 };
+            for (let i = 0; i < paData.length; i++) {
+                const row = paData[i];
+                if (String(row[0]) === 'Totales') paTotals = { count: parseFloat(row[1])||0, hours: parseFloat(row[2])||0, courses: parseFloat(row[3])||0 };
+                if (String(row[0]) === 'PROMEDIOS') paAverages = { count: parseFloat(row[1])||0, hours: parseFloat(row[2])||0, courses: parseFloat(row[3])||0 };
+            }
+            const prMonthly = [];
+            for (let i = 4; i < prData.length; i++) {
+                const row = prData[i];
+                const month = String(row[0] || '').trim();
+                if (monthsMap[month] !== undefined && month !== 'Mes') {
+                    prMonthly.push({ month: month, count: parseFloat(row[1]) || 0, hours: parseFloat(row[2]) || 0, courses: parseFloat(row[3]) || 0 });
+                }
+                if (month === 'Totales' || month === 'PROMEDIOS') break;
+            }
+            let prTotals = { count: 0, hours: 0, courses: 0 };
+            let prAverages = { count: 0, hours: 0, courses: 0 };
+            let prLowAverage = false;
+            for (let i = 0; i < prData.length; i++) {
+                const row = prData[i];
+                if (String(row[0]) === 'Totales') prTotals = { count: parseFloat(row[1])||0, hours: parseFloat(row[2])||0, courses: parseFloat(row[3])||0 };
+                if (String(row[0]) === 'PROMEDIOS') prAverages = { count: parseFloat(row[1])||0, hours: parseFloat(row[2])||0, courses: parseFloat(row[3])||0 };
+                if (String(row[0]).includes('No alcanza')) prLowAverage = true;
+            }
+            const meetingsMonthly = [];
+            for (let i = 3; i < reuData.length; i++) {
+                const row = reuData[i];
+                const month = String(row[0] || '').trim();
+                if (monthsMap[month] !== undefined && month !== 'Mes') {
+                    meetingsMonthly.push({ month: month, weekday: parseFloat(row[1]) || 0, weekend: parseFloat(row[2]) || 0 });
+                }
+                if (month === 'Totales' || month === 'PROMEDIOS') break;
+            }
+            let meetingsAvg = { weekday: 0, weekend: 0 };
+            let meetingsPct = { weekday: 0, weekend: 0 };
+            for (let i = 0; i < reuData.length; i++) {
+                const row = reuData[i];
+                if (String(row[0]) === 'PROMEDIOS') meetingsAvg = { weekday: parseFloat(row[1])||0, weekend: parseFloat(row[2])||0 };
+                if (String(row[0]) === 'PORCENTAJES %') meetingsPct = { weekday: parseFloat(row[1])||0, weekend: parseFloat(row[2])||0 };
+            }
+            let estadisticas = {};
+            for (let i = 0; i < estData.length; i++) {
+                const row = estData[i];
+                const label = String(row[0] || '').trim();
+                if (label === 'TOTAL PUBLICADORES.' && i+1 < estData.length) {
+                    const dataRow = estData[i+1];
+                    estadisticas.totalPub = parseFloat(dataRow[0]) || 0;
+                    estadisticas.regulares = parseFloat(dataRow[3]) || 0;
+                    estadisticas.irregulares = parseFloat(dataRow[5]) || 0;
+                    estadisticas.pctIrregularidad = parseFloat(dataRow[9]) || 0;
+                    estadisticas.bautizados = parseFloat(dataRow[11]) || 0;
+                    estadisticas.reactivados = parseFloat(dataRow[13]) || 0;
+                    estadisticas.readmitidos = parseFloat(dataRow[15]) || 0;
+                    estadisticas.censurados = parseFloat(dataRow[17]) || 0;
+                    estadisticas.sacados = parseFloat(dataRow[19]) || 0;
+                    estadisticas.desasociados = parseFloat(dataRow[21]) || 0;
+                    estadisticas.inactivos = parseFloat(dataRow[23]) || 0;
+                    estadisticas.pubSinCB = parseFloat(dataRow[25]) || 0;
+                    estadisticas.paSinCB = parseFloat(dataRow[27]) || 0;
+                    estadisticas.prSinCB = parseFloat(dataRow[29]) || 0;
+                    estadisticas.totalSinCB = parseFloat(dataRow[31]) || 0;
+                    estadisticas.numCB = parseFloat(dataRow[33]) || 0;
+                    estadisticas.horas = parseFloat(dataRow[35]) || 0;
+                    estadisticas.conducenEst = parseFloat(dataRow[37]) || 0;
+                    estadisticas.cursosBiblicos = parseFloat(dataRow[39]) || 0;
+                    estadisticas.precEsp = parseFloat(dataRow[41]) || 0;
+                    estadisticas.prEstudios = parseFloat(dataRow[43]) || 0;
+                    estadisticas.prCount = parseFloat(dataRow[45]) || 0;
+                    estadisticas.paEstudios = parseFloat(dataRow[47]) || 0;
+                    estadisticas.paCount = parseFloat(dataRow[49]) || 0;
+                    estadisticas.ancianos = parseFloat(dataRow[51]) || 0;
+                    estadisticas.sm = parseFloat(dataRow[53]) || 0;
+                }
+                if (label.includes('PROM. 6MESES')) {
+                    estadisticas.weekendAvg = parseFloat(row[3]) || 0;
+                    estadisticas.weekendPct = parseFloat(row[5]) || 0;
+                }
+                if (label.includes('ENTRE SEMANA') && !estadisticas.weekdayAvg) {
+                    estadisticas.weekdayAvg = parseFloat(row[3]) || 0;
+                    estadisticas.weekdayPct = parseFloat(row[5]) || 0;
+                }
+                if (label === 'CONMEMORACIÓN') {
+                    if (i+2 < estData.length) estadisticas.conmemoracion1 = parseFloat(estData[i+2][0]) || 0;
+                    if (i+2 < estData.length) estadisticas.conmemoracion2 = parseFloat(estData[i+2][2]) || 0;
+                    if (i+2 < estData.length) estadisticas.conmemoracion3 = parseFloat(estData[i+2][4]) || 0;
+                    if (i+2 < estData.length) estadisticas.conmemoracion4 = parseFloat(estData[i+2][6]) || 0;
+                }
+                if (label.includes('NUEVOS PR')) estadisticas.nuevosPR = parseFloat(row[2]) || 0;
+                if (label.includes('PR REMOVIDOS')) estadisticas.prRemovidos = parseFloat(row[2]) || 0;
+                if (label.includes('NUEVOS PUBL.')) estadisticas.nuevosPubl = parseFloat(row[3]) || 0;
+                if (label.includes('NUEVOS BAUT.')) estadisticas.nuevosBaut = parseFloat(row[3]) || 0;
+                if (label.includes('RESTRINGIDOS')) estadisticas.restringidos = parseFloat(row[2]) || 0;
+                if (label.includes('% AUMENTO')) {
+                    if (!estadisticas.pctAumento) estadisticas.pctAumento = parseFloat(row[3]) || 0;
+                    else estadisticas.pctAumento2 = parseFloat(row[3]) || 0;
+                }
+                if (label.includes('Estudios Tarahumara')) estadisticas.estTarahumara = parseFloat(row[2]) || 0;
+                if (label.includes('Bautizados Tarahumara')) estadisticas.bautTarahumara = parseFloat(row[2]) || 0;
+                if (label.includes('CON CÓNYUGE INCRÉDULO')) estadisticas.conyugeIncredulo = parseFloat(row[3]) || 0;
+            }
+            const totalPublishers = summary['Publicadores'] || 0;
+            const totalPR = summary['P. Regulares'] || 0;
+            const totalPA = summary['P. Auxiliares'] || 0;
+            const totalAll = totalPublishers + totalPR + totalPA;
+            const pctIrregular = totalAll > 0 ? ((summary['Irregulares'] || 0) / totalAll * 100).toFixed(1) : 0;
+            const pctInactive = totalAll > 0 ? ((summary['Inactivos'] || 0) / totalAll * 100).toFixed(1) : 0;
+            const pctCourse = totalAll > 0 ? ((summary['Informan Cursos Bíblicos'] || 0) / totalAll * 100).toFixed(1) : 0;
+            const pctElders = totalAll > 0 ? ((summary['Ancianos'] || 0) / totalAll * 100).toFixed(1) : 0;
+            const pctSM = totalAll > 0 ? ((summary['Siervos ministeriales'] || 0) / totalAll * 100).toFixed(1) : 0;
+            const pctPioneers = totalAll > 0 ? ((totalPR + totalPA) / totalAll * 100).toFixed(1) : 0;
+            return {
+                congregationName,
+                stats: {
+                    visitDate, extractedAt: new Date().toISOString(), congregationName,
+                    pub: {
+                        active: totalPublishers, total: totalAll, regular: summary['Publicadores'] || 0,
+                        irregular: summary['Irregulares'] || 0, irregularPercent: pctIrregular,
+                        baptized: summary['Reactivados'] || 0, reactivated: summary['Reactivados'] || 0,
+                        inactive: summary['Inactivos'] || 0, restricted: summary['Restringidos'] || 0,
+                        removed: summary['Sacados de la congregación'] || 0, disassociated: summary['Desasociados'] || 0,
+                        censured: summary['Censurados'] || 0, readmitted: summary['Readmitidos'] || 0,
+                        elders: summary['Ancianos'] || 0, ministerialServants: summary['Siervos ministeriales'] || 0,
+                        regularPioneers: totalPR, auxiliaryPioneers: totalPA,
+                        monthly: pubMonthly, totals: pubTotals, averages: pubAverages
+                    },
+                    pa: { monthly: paMonthly, totals: paTotals, averages: paAverages },
+                    pr: { monthly: prMonthly, totals: prTotals, averages: prAverages, lowAverage: prLowAverage },
+                    meetings: {
+                        weekday: { average: meetingsAvg.weekday, percent: meetingsPct.weekday },
+                        weekend: { average: meetingsAvg.weekend, percent: meetingsPct.weekend },
+                        monthly: meetingsMonthly
+                    },
+                    comparison: {
+                        weekendMeeting: { current: summary.weekendCurrent || 0, previous: summary.weekendPrevious || 0, percent: summary.weekendPercent || 0 },
+                        weekdayMeeting: { current: summary.weekdayCurrent || 0, previous: summary.weekdayPrevious || 0, percent: summary.weekdayPercent || 0 },
+                        bibleCourses: { current: summary.coursesCurrent || 0, previous: summary.coursesPrevious || 0, percent: summary.coursesPercent || 0 },
+                        newPublishers: { current: summary.newPubsCurrent || 0, previous: summary.newPubsPrevious || 0, percent: summary.newPubsPercent || 0 },
+                        newBaptized: { current: summary.newBaptCurrent || 0, previous: summary.newBaptPrevious || 0, percent: summary.newBaptPercent || 0 }
+                    },
+                    percentages: { irregular: pctIrregular, inactive: pctInactive, withCourse: pctCourse, elders: pctElders, sm: pctSM, pioneers: pctPioneers },
+                    estadisticas: estadisticas
+                }
+            };
+        }        function renderStatsTab(container) {
+            if (!selectedCong.stats) {
+                container.innerHTML = `
+                    <div class="p-8 text-center text-on-surface-variant space-y-4">
+                        <span class="material-symbols-outlined text-5xl">analytics</span>
+                        <p>No hay estadísticas de Excel cargadas para esta congregación.</p>
+                        <p class="text-sm">Ve al Dashboard y usa "Importar Excel Circuito" para subir el archivo ED VTA.</p>
+                    </div>`;
+                return;
+            }
+            const s = selectedCong.stats;
+            const p = s.pub;
+            const pa = s.pa;
+            const pr = s.pr;
+            const m = s.meetings;
+            const c = s.comparison;
+            const pct = s.percentages;
+            const est = s.estadisticas || {};
+            const circularProgress = (value, color, size=60) => {
+                const r = (size - 8) / 2;
+                const circ = 2 * Math.PI * r;
+                const offset = circ - (Math.min(value, 100) / 100) * circ;
+                return `<svg width="${size}" height="${size}" class="progress-ring">
+                    <circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="#e5e7eb" stroke-width="6"/>
+                    <circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="${color}" stroke-width="6" 
+                        stroke-dasharray="${circ}" stroke-dashoffset="${offset}" stroke-linecap="round" class="progress-ring-circle"/>
+                    <text x="50%" y="50%" text-anchor="middle" dy=".3em" font-size="12" font-weight="bold" fill="currentColor">${value}%</text>
+                </svg>`;
+            };
+            const miniBarChart = (data, valueKey, color, height=80) => {
+                const max = Math.max(...data.map(d => d[valueKey] || 0), 1);
+                return `<div class="bar-chart" style="height:${height}px;">
+                    ${data.map(d => {
+                        const h = ((d[valueKey] || 0) / max * 100);
+                        return `<div class="bar" style="height:${h}%; background:${color};" data-value="${d[valueKey]||0}"></div>`;
+                    }).join('')}
+                </div>
+                <div class="flex justify-between text-[10px] text-on-surface-variant mt-1">
+                    ${data.map(d => `<span>${d.month}</span>`).join('')}
+                </div>`;
+            };
+            const compareCard = (title, current, previous, percent, icon, color) => {
+                const diff = current - previous;
+                const diffSign = diff > 0 ? '+' : '';
+                const diffColor = diff > 0 ? 'text-secondary' : (diff < 0 ? 'text-error' : 'text-on-surface-variant');
+                return `
+                <div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="material-symbols-outlined text-${color}">${icon}</span>
+                        <span class="text-sm font-semibold text-on-surface-variant">${title}</span>
+                    </div>
+                    <div class="flex justify-between items-end">
+                        <div>
+                            <div class="text-2xl font-bold">${current}</div>
+                            <div class="text-xs text-on-surface-variant">Anterior: ${previous}</div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-lg font-bold ${diffColor}">${diffSign}${diff}</div>
+                            <div class="text-xs text-on-surface-variant">${percent}% del total</div>
+                        </div>
+                    </div>
+                </div>`;
+            };
+            const collapsibleSection = (id, title, icon, content) => `
+                <div class="bg-surface-container-lowest rounded-xl border border-outline-variant overflow-hidden mb-4">
+                    <button onclick="toggleCollapse('${id}')" class="w-full p-4 flex items-center justify-between bg-surface-container-low hover:bg-surface-container transition-colors">
+                        <div class="flex items-center gap-2">
+                            <span class="material-symbols-outlined text-primary">${icon}</span>
+                            <span class="font-bold">${title}</span>
+                        </div>
+                        <span class="material-symbols-outlined transition-transform" id="icon-${id}">expand_more</span>
+                    </button>
+                    <div id="content-${id}" class="collapsible-content open">
+                        <div class="p-4">${content}</div>
+                    </div>
+                </div>`;
+            container.innerHTML = `
+                <div class="space-y-6">
+                    <div class="bg-primary-container/50 rounded-xl p-4 border border-primary/20">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-bold text-primary text-lg">${selectedCong.name}</h3>
+                                <p class="text-sm text-on-surface-variant">Visita: ${s.visitDate || 'N/D'}</p>
+                            </div>
+                            <span class="text-xs bg-primary text-on-primary px-3 py-1 rounded-full font-bold">Excel Cargado</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-on-surface-variant mb-3 text-sm uppercase tracking-wide">Porcentajes Clave</h4>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
+                            <div class="bg-surface-container-lowest p-3 rounded-xl border flex flex-col items-center gap-2">
+                                ${circularProgress(pct.pioneers, '#006e2c')}
+                                <span class="text-xs font-semibold text-center">Precursores</span>
+                            </div>
+                            <div class="bg-surface-container-lowest p-3 rounded-xl border flex flex-col items-center gap-2">
+                                ${circularProgress(pct.elders, '#795900')}
+                                <span class="text-xs font-semibold text-center">Ancianos</span>
+                            </div>
+                            <div class="bg-surface-container-lowest p-3 rounded-xl border flex flex-col items-center gap-2">
+                                ${circularProgress(pct.sm, '#005bbf')}
+                                <span class="text-xs font-semibold text-center">S. Ministeriales</span>
+                            </div>
+                            <div class="bg-surface-container-lowest p-3 rounded-xl border flex flex-col items-center gap-2">
+                                ${circularProgress(pct.withCourse, '#7c3aed')}
+                                <span class="text-xs font-semibold text-center">Con Cursos B.</span>
+                            </div>
+                            <div class="bg-surface-container-lowest p-3 rounded-xl border flex flex-col items-center gap-2">
+                                ${circularProgress(pct.irregular, '#ba1a1a')}
+                                <span class="text-xs font-semibold text-center">Irregulares</span>
+                            </div>
+                            <div class="bg-surface-container-lowest p-3 rounded-xl border flex flex-col items-center gap-2">
+                                ${circularProgress(pct.inactive, '#727785')}
+                                <span class="text-xs font-semibold text-center">Inactivos</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-on-surface-variant mb-3 text-sm uppercase tracking-wide">Comparativa Visita Actual vs Pasada</h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                            ${compareCard('Reunión Fin de Semana', c.weekendMeeting.current, c.weekendMeeting.previous, c.weekendMeeting.percent.toFixed(1), 'event', 'secondary')}
+                            ${compareCard('Reunión Entre Semana', c.weekdayMeeting.current, c.weekdayMeeting.previous, c.weekdayMeeting.percent.toFixed(1), 'event_available', 'primary')}
+                            ${compareCard('Cursos Bíblicos', c.bibleCourses.current, c.bibleCourses.previous, c.bibleCourses.percent.toFixed(1), 'menu_book', 'tertiary')}
+                            ${compareCard('Nuevos Publicadores', c.newPublishers.current, c.newPublishers.previous, (c.newPublishers.percent*100).toFixed(2), 'person_add', 'secondary')}
+                            ${compareCard('Nuevos Bautizados', c.newBaptized.current, c.newBaptized.previous, (c.newBaptized.percent*100).toFixed(2), 'water_drop', 'primary')}
+                        </div>
+                    </div>
+                    ${collapsibleSection('pub-detail', 'Publicadores — ' + p.active + ' activos | Total: ' + p.total, 'groups', `
+                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+                            <div class="stat-card bg-surface-container-low p-3 rounded-lg text-center"><div class="text-2xl font-bold text-primary">${p.regularPioneers}</div><div class="text-xs text-on-surface-variant">P. Regulares</div></div>
+                            <div class="stat-card bg-surface-container-low p-3 rounded-lg text-center"><div class="text-2xl font-bold text-secondary">${p.auxiliaryPioneers}</div><div class="text-xs text-on-surface-variant">P. Auxiliares</div></div>
+                            <div class="stat-card bg-surface-container-low p-3 rounded-lg text-center"><div class="text-2xl font-bold text-tertiary">${p.elders}</div><div class="text-xs text-on-surface-variant">Ancianos</div></div>
+                            <div class="stat-card bg-surface-container-low p-3 rounded-lg text-center"><div class="text-2xl font-bold text-primary">${p.ministerialServants}</div><div class="text-xs text-on-surface-variant">S. Ministeriales</div></div>
+                            <div class="stat-card bg-surface-container-low p-3 rounded-lg text-center"><div class="text-2xl font-bold text-error">${p.irregular}</div><div class="text-xs text-on-surface-variant">Irregulares</div></div>
+                            <div class="stat-card bg-surface-container-low p-3 rounded-lg text-center"><div class="text-2xl font-bold">${p.inactive}</div><div class="text-xs text-on-surface-variant">Inactivos</div></div>
+                            <div class="stat-card bg-surface-container-low p-3 rounded-lg text-center"><div class="text-2xl font-bold">${p.restricted}</div><div class="text-xs text-on-surface-variant">Restringidos</div></div>
+                            <div class="stat-card bg-surface-container-low p-3 rounded-lg text-center"><div class="text-2xl font-bold text-error">${p.censured}</div><div class="text-xs text-on-surface-variant">Censurados</div></div>
+                            <div class="stat-card bg-surface-container-low p-3 rounded-lg text-center"><div class="text-2xl font-bold">${p.reactivated}</div><div class="text-xs text-on-surface-variant">Reactivados</div></div>
+                            <div class="stat-card bg-surface-container-low p-3 rounded-lg text-center"><div class="text-2xl font-bold">${p.readmitted}</div><div class="text-xs text-on-surface-variant">Readmitidos</div></div>
+                        </div>
+                        <div class="mt-4">
+                            <p class="text-xs font-semibold text-on-surface-variant mb-2">Publicadores por mes</p>
+                            ${miniBarChart(p.monthly, 'publishers', '#005bbf')}
+                        </div>
+                    `)}
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        ${collapsibleSection('pr-detail', 'Precursores Regulares', 'star', `
+                            <div class="space-y-3">
+                                <div class="flex justify-between text-sm"><span>Promedio PR/mes:</span><span class="font-bold">${pr.averages.count}</span></div>
+                                <div class="flex justify-between text-sm"><span>Horas promedio:</span><span class="font-bold">${pr.averages.hours}</span></div>
+                                <div class="flex justify-between text-sm"><span>Cursos B. promedio:</span><span class="font-bold">${pr.averages.courses}</span></div>
+                                ${pr.lowAverage ? '<div class="text-xs text-error font-bold bg-error-container/20 p-2 rounded">⚠️ Hay PR con promedio bajo</div>' : ''}
+                                <div class="pt-2">
+                                    <p class="text-xs font-semibold text-on-surface-variant mb-1">Horas mensuales PR</p>
+                                    ${miniBarChart(pr.monthly, 'hours', '#006e2c', 60)}
+                                </div>
+                            </div>
+                        `)}
+                        ${collapsibleSection('pa-detail', 'Precursores Auxiliares', 'workspace_premium', `
+                            <div class="space-y-3">
+                                <div class="flex justify-between text-sm"><span>Promedio PA/mes:</span><span class="font-bold">${pa.averages.count}</span></div>
+                                <div class="flex justify-between text-sm"><span>Horas promedio:</span><span class="font-bold">${pa.averages.hours}</span></div>
+                                <div class="flex justify-between text-sm"><span>Cursos B. promedio:</span><span class="font-bold">${pa.averages.courses}</span></div>
+                                <div class="pt-2">
+                                    <p class="text-xs font-semibold text-on-surface-variant mb-1">Cantidad PA por mes</p>
+                                    ${miniBarChart(pa.monthly, 'count', '#795900', 60)}
+                                </div>
+                            </div>
+                        `)}
+                    </div>
+                    ${collapsibleSection('meetings-detail', 'Asistencia a Reuniones', 'church', `
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="bg-surface-container-low p-4 rounded-xl">
+                                <div class="flex justify-between items-center mb-2"><span class="text-sm font-semibold">Entre Semana</span><span class="text-2xl font-bold text-primary">${m.weekday.average}</span></div>
+                                <div class="w-full bg-gray-200 rounded-full h-2.5 mb-1"><div class="bg-primary h-2.5 rounded-full" style="width: ${Math.min(m.weekday.percent, 100)}%"></div></div>
+                                <div class="text-xs text-on-surface-variant">${m.weekday.percent}% de asistencia</div>
+                            </div>
+                            <div class="bg-surface-container-low p-4 rounded-xl">
+                                <div class="flex justify-between items-center mb-2"><span class="text-sm font-semibold">Fin de Semana</span><span class="text-2xl font-bold text-secondary">${m.weekend.average}</span></div>
+                                <div class="w-full bg-gray-200 rounded-full h-2.5 mb-1"><div class="bg-secondary h-2.5 rounded-full" style="width: ${Math.min(m.weekend.percent, 100)}%"></div></div>
+                                <div class="text-xs text-on-surface-variant">${m.weekend.percent}% de asistencia</div>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <p class="text-xs font-semibold text-on-surface-variant mb-1">Asistencia mensual (Entre semana)</p>
+                            ${miniBarChart(m.monthly, 'weekday', '#005bbf', 60)}
+                        </div>
+                    `)}
+                    ${est.totalPub ? collapsibleSection('estadisticas-detail', 'Análisis y Estadísticas Detalladas', 'analytics', `
+                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                            <div class="stat-card bg-surface-container-low p-3 rounded-lg text-center"><div class="text-xl font-bold">${est.totalPub}</div><div class="text-xs text-on-surface-variant">Total Pub.</div></div>
+                            <div class="stat-card bg-surface-container-low p-3 rounded-lg text-center"><div class="text-xl font-bold text-primary">${est.regulares}</div><div class="text-xs text-on-surface-variant">Regulares</div></div>
+                            <div class="stat-card bg-surface-container-low p-3 rounded-lg text-center"><div class="text-xl font-bold text-error">${est.irregulares}</div><div class="text-xs text-on-surface-variant">Irregulares (${est.pctIrregularidad}%)</div></div>
+                            <div class="stat-card bg-surface-container-low p-3 rounded-lg text-center"><div class="text-xl font-bold">${est.bautizados}</div><div class="text-xs text-on-surface-variant">Bautizados</div></div>
+                            <div class="stat-card bg-surface-container-low p-3 rounded-lg text-center"><div class="text-xl font-bold text-secondary">${est.reactivados}</div><div class="text-xs text-on-surface-variant">Reactivados</div></div>
+                            <div class="stat-card bg-surface-container-low p-3 rounded-lg text-center"><div class="text-xl font-bold">${est.readmitidos}</div><div class="text-xs text-on-surface-variant">Readmitidos</div></div>
+                            <div class="stat-card bg-surface-container-low p-3 rounded-lg text-center"><div class="text-xl font-bold text-error">${est.censurados}</div><div class="text-xs text-on-surface-variant">Censurados</div></div>
+                            <div class="stat-card bg-surface-container-low p-3 rounded-lg text-center"><div class="text-xl font-bold">${est.inactivos}</div><div class="text-xs text-on-surface-variant">Inactivos</div></div>
+                            <div class="stat-card bg-surface-container-low p-3 rounded-lg text-center"><div class="text-xl font-bold">${est.restringidos}</div><div class="text-xs text-on-surface-variant">Restringidos</div></div>
+                            <div class="stat-card bg-surface-container-low p-3 rounded-lg text-center"><div class="text-xl font-bold">${est.sacados}</div><div class="text-xs text-on-surface-variant">Sacados</div></div>
+                            <div class="stat-card bg-surface-container-low p-3 rounded-lg text-center"><div class="text-xl font-bold">${est.desasociados}</div><div class="text-xs text-on-surface-variant">Desasociados</div></div>
+                            <div class="stat-card bg-surface-container-low p-3 rounded-lg text-center"><div class="text-xl font-bold text-primary">${est.horas}</div><div class="text-xs text-on-surface-variant">Horas</div></div>
+                            <div class="stat-card bg-surface-container-low p-3 rounded-lg text-center"><div class="text-xl font-bold text-tertiary">${est.cursosBiblicos}</div><div class="text-xs text-on-surface-variant">Cursos Bíblicos</div></div>
+                            <div class="stat-card bg-surface-container-low p-3 rounded-lg text-center"><div class="text-xl font-bold">${est.numCB}</div><div class="text-xs text-on-surface-variant">Núm. CB</div></div>
+                            <div class="stat-card bg-surface-container-low p-3 rounded-lg text-center"><div class="text-xl font-bold">${est.conducenEst}</div><div class="text-xs text-on-surface-variant">Conducen Est.</div></div>
+                            <div class="stat-card bg-surface-container-low p-3 rounded-lg text-center"><div class="text-xl font-bold text-secondary">${est.precEsp}</div><div class="text-xs text-on-surface-variant">Prec. Esp.</div></div>
+                        </div>
+                        ${est.nuevosPR ? `<div class="mt-3 text-sm"><span class="font-semibold">Nuevos PR:</span> ${est.nuevosPR} | <span class="font-semibold">PR Removidos:</span> ${est.prRemovidos || 0} | <span class="font-semibold">Nuevos Publ:</span> ${est.nuevosPubl || 0} | <span class="font-semibold">Nuevos Baut:</span> ${est.nuevosBaut || 0}</div>` : ''}
+                        ${est.pctAumento ? `<div class="mt-2 text-sm"><span class="font-semibold">% Aumento:</span> ${est.pctAumento}% | ${est.pctAumento2 || 0}%</div>` : ''}
+                        ${est.estTarahumara !== undefined ? `<div class="mt-2 text-sm"><span class="font-semibold">Estudios Tarahumara:</span> ${est.estTarahumara} | <span class="font-semibold">Bautizados Tarahumara:</span> ${est.bautTarahumara || 0} | <span class="font-semibold">Cónyuge Incrédulo:</span> ${est.conyugeIncredulo || 0}</div>` : ''}
+                    `) : ''}
+                    <div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-4">
+                        <h4 class="font-bold mb-3 text-sm uppercase tracking-wide">Totales del Período</h4>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                            <div class="text-center p-3 bg-surface-container-low rounded-lg"><div class="text-xl font-bold text-primary">${p.totals.publishers}</div><div class="text-xs text-on-surface-variant">Total Pub. Informes</div></div>
+                            <div class="text-center p-3 bg-surface-container-low rounded-lg"><div class="text-xl font-bold text-secondary">${p.totals.courses}</div><div class="text-xs text-on-surface-variant">Cursos Bíblicos</div></div>
+                            <div class="text-center p-3 bg-surface-container-low rounded-lg"><div class="text-xl font-bold text-tertiary">${pr.totals.hours}</div><div class="text-xs text-on-surface-variant">Horas PR Totales</div></div>
+                            <div class="text-center p-3 bg-surface-container-low rounded-lg"><div class="text-xl font-bold text-primary">${pa.totals.hours}</div><div class="text-xs text-on-surface-variant">Horas PA Totales</div></div>
+                        </div>
+                    </div>
+                    <button onclick="deleteStats()" class="w-full py-3 text-error border border-error/30 rounded-xl hover:bg-error-container/20 font-semibold text-sm flex items-center justify-center gap-2">
+                        <span class="material-symbols-outlined text-sm">delete</span> Eliminar estadísticas cargadas
+                    </button>
+                </div>`;
+        }        function toggleCollapse(id) {
+            const content = document.getElementById('content-' + id);
+            const icon = document.getElementById('icon-' + id);
+            content.classList.toggle('open');
+            icon.style.transform = content.classList.contains('open') ? 'rotate(0deg)' : 'rotate(-90deg)';
+        }
+        function deleteStats() {
+            if (!selectedCong) return;
+            if (!confirm("¿Eliminar las estadísticas de Excel de esta congregación?")) return;
+            selectedCong.stats = null;
+            save();
+            renderStatsTab(document.getElementById('detail-content'));
+            renderDashboard();
+            renderManageList();
+            showSnackbar("Estadísticas eliminadas");
+        }
         function generateCircuitReport() {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF('p', 'pt', 'letter');
             const pageWidth = doc.internal.pageSize.getWidth();
-
             doc.setFontSize(22);
             doc.setTextColor(0, 51, 102);
             doc.text("Informe de Circuito CHI-03", 40, 50);
-            
             doc.setFontSize(12);
             doc.setTextColor(100);
             doc.text(`Generado: ${new Date().toLocaleDateString()}`, 40, 70);
-
             let y = 100;
-
             state.congregations.forEach(c => {
                 if (y > 680) { doc.addPage(); y = 50; }
-
                 doc.setFontSize(14);
                 doc.setTextColor(0, 91, 191);
                 doc.text(c.name, 40, y);
                 doc.setTextColor(100);
                 doc.text(c.circuit, pageWidth - 100, y);
-                
                 y += 20;
-
+                if (c.stats) {
+                    const s = c.stats.pub;
+                    doc.setFontSize(10);
+                    doc.setTextColor(60);
+                    doc.text(`Pub. Activos: ${s.active} | PR: ${s.regularPioneers} | PA: ${s.auxiliaryPioneers} | Ancianos: ${s.elders} | SM: ${s.ministerialServants}`, 40, y);
+                    y += 15;
+                    doc.text(`Irregulares: ${s.irregular} | Inactivos: ${s.inactive} | Censurados: ${s.censured} | Reactivados: ${s.reactivated}`, 40, y);
+                    y += 15;
+                    if (c.stats.visitDate) { doc.text(`Visita: ${c.stats.visitDate}`, 40, y); y += 15; }
+                }
                 if (c.publishers.length > 0) {
                     const body = c.publishers.map(p => {
                         const last = p.history.length > 0 ? p.history[p.history.length-1].hours : 0;
@@ -627,56 +958,40 @@
                         const sign = diff > 0 ? '+' : '';
                         return [p.name, p.appointment, last, `${sign}${diff}`];
                     });
-
                     doc.autoTable({
-                        startY: y,
-                        head: [["Nombre", "Cargo", "Horas", "Var."]],
-                        body: body,
-                        theme: 'striped',
-                        headStyles: { fillColor: [0, 91, 191], textColor: 255, fontSize: 10 },
-                        bodyStyles: { fontSize: 9 },
-                        margin: { left: 40, right: 40 }
+                        startY: y, head: [["Nombre", "Cargo", "Horas", "Var."]], body: body,
+                        theme: 'striped', headStyles: { fillColor: [0, 91, 191], textColor: 255, fontSize: 10 },
+                        bodyStyles: { fontSize: 9 }, margin: { left: 40, right: 40 }
                     });
                     y = doc.lastAutoTable.finalY + 30;
                 } else {
-                    doc.setFontSize(10);
-                    doc.setTextColor(150);
-                    doc.text("Sin datos de publicadores.", 40, y);
-                    y += 30;
+                    doc.setFontSize(10); doc.setTextColor(150);
+                    doc.text("Sin datos de publicadores individuales.", 40, y); y += 20;
                 }
+                y += 10;
             });
-
             doc.save('Informe_Circuito_CHI03.pdf');
             showSnackbar("PDF Generado");
         }
-
-        // --- UTILS ---
         function showSnackbar(msg) {
             const sb = document.getElementById('snackbar');
             sb.innerText = msg;
             sb.className = "show";
             setTimeout(() => sb.className = "", 3000);
         }
-
         function clearAllData() {
             if(confirm("¿Borrar todos los datos y restaurar lista original?")) {
                 localStorage.removeItem('CHI03_PRO_APP_FINAL');
                 location.reload();
             }
         }
-
-        // Theme
         document.getElementById('themeToggle').addEventListener('click', () => {
             state.isDark = !state.isDark;
             document.documentElement.classList.toggle('dark');
             document.querySelector('#themeToggle .material-symbols-outlined').innerText = state.isDark ? 'light_mode' : 'dark_mode';
             save();
         });
-
-        // Start
         init();
-
-        // Global Access
         window.navTo = navTo;
         window.openCongregation = openCongregation;
         window.switchTab = switchTab;
@@ -687,7 +1002,8 @@
         window.generateCircuitReport = generateCircuitReport;
         window.handleExcelCircuit = handleExcelCircuit;
         window.clearAllData = clearAllData;
-
+        window.deleteStats = deleteStats;
+        window.toggleCollapse = toggleCollapse;
     </script>
 </body>
 </html>
